@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  type      Role     @default(SANTRI)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teacher Teachers?
+  student Students?
+  parent  Parents?
+}
+
+model Teachers {
+  id        String      @id @default(cuid())
+  name      String
+  userId    String      @unique
+  user      Users       @relation(fields: [userId], references: [id])
+  type      TeacherRole @default(ASATIDZ)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  divisions TeacherDivisions[]
+}
+
+model Divisions {
+  id        String   @id @default(cuid())
+  name      Field
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teachers TeacherDivisions[]
+  students StudentDivisions[]
+}
+
+model TeacherDivisions {
+  id         String   @id @default(cuid())
+  teacherId  String
+  divisionId String
+  createdAt  DateTime @default(now())
+
+  teacher  Teachers  @relation(fields: [teacherId], references: [id])
+  division Divisions @relation(fields: [divisionId], references: [id])
+
+  @@unique([teacherId, divisionId])
+}
+
+model Students {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String   @unique
+  user      Users    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  divisions StudentDivisions[]
+  parentId  String?
+  parent    Parents?           @relation(fields: [parentId], references: [id])
+}
+
+model StudentDivisions {
+  id         String   @id @default(cuid())
+  studentId  String
+  divisionId String
+  createdAt  DateTime @default(now())
+
+  student  Students  @relation(fields: [studentId], references: [id])
+  division Divisions @relation(fields: [divisionId], references: [id])
+
+  @@unique([studentId, divisionId])
+}
+
+model Parents {
+  id       String     @id @default(cuid())
+  userId   String     @unique
+  user     Users      @relation(fields: [userId], references: [id])
+  students Students[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Field {
+  TAHFIZH
+  IT
+  KARAKTER
+  BAHASA
+}
+
+enum Role {
+  ADMIN
+  KADIV
+  ASATIDZ
+  SANTRI
+  WALSAN
+}
+
+enum TeacherRole {
+  ASATIDZ
+  KADIV
+}
