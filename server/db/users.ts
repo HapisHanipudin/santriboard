@@ -22,6 +22,11 @@ export const getUserByUsername = async (username: string) => {
     where: {
       username,
     },
+    include: {
+      teacher: true,
+      student: true,
+      parent: true,
+    },
   });
 };
 
