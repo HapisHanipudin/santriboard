@@ -8,6 +8,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -37,6 +41,7 @@ model Teachers {
   updatedAt DateTime    @updatedAt
 
   divisions TeacherDivisions[]
+  classes   TeacherClasses[]
 }
 
 model Divisions {
@@ -45,20 +50,45 @@ model Divisions {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  classes  Classes[]
   teachers TeacherDivisions[]
-  students StudentDivisions[]
 }
 
 model TeacherDivisions {
   id         String   @id @default(cuid())
   teacherId  String
   divisionId String
+  role       TeacherRole @default(ASATIDZ)
   createdAt  DateTime @default(now())
 
   teacher  Teachers  @relation(fields: [teacherId], references: [id])
   division Divisions @relation(fields: [divisionId], references: [id])
 
   @@unique([teacherId, divisionId])
+}
+
+model Classes {
+  id         String    @id @default(cuid())
+  name       String
+  divisionId String
+  division   Divisions @relation(fields: [divisionId], references: [id])
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  teachers TeacherClasses[]
+  students StudentClasses[]
+}
+
+model TeacherClasses {
+  id        String   @id @default(cuid())
+  teacherId String
+  classId   String
+  createdAt DateTime @default(now())
+
+  teacher Teachers @relation(fields: [teacherId], references: [id])
+  class   Classes  @relation(fields: [classId], references: [id])
+
+  @@unique([teacherId, classId])
 }
 
 model Students {
@@ -69,28 +99,37 @@ model Students {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  divisions StudentDivisions[]
-  parentId  String?
-  parent    Parents?           @relation(fields: [parentId], references: [id])
+  classes StudentClasses[]
+  parent  ParentChildren[]
 }
 
-model StudentDivisions {
-  id         String   @id @default(cuid())
-  studentId  String
-  divisionId String
-  createdAt  DateTime @default(now())
+model StudentClasses {
+  id        String   @id @default(cuid())
+  studentId String
+  classId   String
+  createdAt DateTime @default(now())
 
-  student  Students  @relation(fields: [studentId], references: [id])
-  division Divisions @relation(fields: [divisionId], references: [id])
+  student Students @relation(fields: [studentId], references: [id])
+  class   Classes  @relation(fields: [classId], references: [id])
 
-  @@unique([studentId, divisionId])
+  @@unique([studentId, classId])
+}
+
+model ParentChildren {
+  id        String   @id @default(cuid())
+  parentId  String
+  studentId String
+  createdAt DateTime @default(now())
+
+  parent  Parents  @relation(fields: [parentId], references: [id])
+  student Students @relation(fields: [studentId], references: [id])
 }
 
 model Parents {
-  id       String     @id @default(cuid())
-  userId   String     @unique
-  user     Users      @relation(fields: [userId], references: [id])
-  students Students[]
+  id       String           @id @default(cuid())
+  userId   String           @unique
+  user     Users            @relation(fields: [userId], references: [id])
+  children ParentChildren[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
