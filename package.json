@@ -12,9 +12,14 @@
   "dependencies": {
     "@nuxt/ui": "^3.0.0-alpha.12",
     "@prisma/client": "^6.3.1",
+    "bcrypt": "^5.1.1",
     "nuxt": "^3.15.4",
-    "prisma": "^6.3.1",
     "vue": "latest",
     "vue-router": "latest"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "prisma": "^6.3.1",
+    "prisma-dbml-generator": "^0.12.0"
   }
 }

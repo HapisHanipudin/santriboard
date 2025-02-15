@@ -1,0 +1,161 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table Users {
+  id String [pk]
+  email String [unique, not null]
+  username String [unique, not null]
+  password String [not null]
+  type Role [not null, default: 'SANTRI']
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  teacher Teachers
+  student Students
+  parent Parents
+}
+
+Table Teachers {
+  id String [pk]
+  name String [not null]
+  userId String [unique, not null]
+  user Users [not null]
+  type TeacherRole [not null, default: 'ASATIDZ']
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  divisions TeacherDivisions [not null]
+  classes TeacherClasses [not null]
+}
+
+Table Divisions {
+  id String [pk]
+  name Field [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  classes Classes [not null]
+  teachers TeacherDivisions [not null]
+}
+
+Table TeacherDivisions {
+  id String [pk]
+  teacherId String [not null]
+  divisionId String [not null]
+  role TeacherRole [not null, default: 'ASATIDZ']
+  createdAt DateTime [default: `now()`, not null]
+  teacher Teachers [not null]
+  division Divisions [not null]
+
+  indexes {
+    (teacherId, divisionId) [unique]
+  }
+}
+
+Table Classes {
+  id String [pk]
+  name String [not null]
+  divisionId String [not null]
+  division Divisions [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  teachers TeacherClasses [not null]
+  students StudentClasses [not null]
+}
+
+Table TeacherClasses {
+  id String [pk]
+  teacherId String [not null]
+  classId String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  teacher Teachers [not null]
+  class Classes [not null]
+
+  indexes {
+    (teacherId, classId) [unique]
+  }
+}
+
+Table Students {
+  id String [pk]
+  name String [not null]
+  userId String [unique, not null]
+  user Users [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  classes StudentClasses [not null]
+  parent ParentChildren [not null]
+}
+
+Table StudentClasses {
+  id String [pk]
+  studentId String [not null]
+  classId String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  student Students [not null]
+  class Classes [not null]
+
+  indexes {
+    (studentId, classId) [unique]
+  }
+}
+
+Table ParentChildren {
+  id String [pk]
+  parentId String [not null]
+  studentId String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  parent Parents [not null]
+  student Students [not null]
+}
+
+Table Parents {
+  id String [pk]
+  userId String [unique, not null]
+  user Users [not null]
+  children ParentChildren [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Enum Field {
+  TAHFIZH
+  IT
+  KARAKTER
+  BAHASA
+}
+
+Enum Role {
+  ADMIN
+  KADIV
+  ASATIDZ
+  SANTRI
+  WALSAN
+}
+
+Enum TeacherRole {
+  ASATIDZ
+  KADIV
+}
+
+Ref: Teachers.userId - Users.id
+
+Ref: TeacherDivisions.teacherId > Teachers.id
+
+Ref: TeacherDivisions.divisionId > Divisions.id
+
+Ref: Classes.divisionId > Divisions.id
+
+Ref: TeacherClasses.teacherId > Teachers.id
+
+Ref: TeacherClasses.classId > Classes.id
+
+Ref: Students.userId - Users.id
+
+Ref: StudentClasses.studentId > Students.id
+
+Ref: StudentClasses.classId > Classes.id
+
+Ref: ParentChildren.parentId > Parents.id
+
+Ref: ParentChildren.studentId > Students.id
+
+Ref: Parents.userId - Users.id
