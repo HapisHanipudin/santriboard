@@ -10,12 +10,15 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxt/fonts": "^0.10.3",
     "@nuxt/ui": "^3.0.0-alpha.12",
+    "@nuxtjs/google-fonts": "^3.2.0",
     "@prisma/client": "^6.3.1",
     "bcrypt": "^5.1.1",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "nuxt": "^3.15.4",
+    "url-pattern": "^1.0.3",
     "vue": "latest",
     "vue-router": "latest"
   },

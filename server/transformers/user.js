@@ -1,5 +1,5 @@
 export const userTransformer = (user) => {
-  const user = {
+  const finalUser = {
     id: user.id,
     username: user.username,
     name: user.type === "ADMIN" ? "Admin" : user.type === "TEACHER" ? user.teacher.name : user.type === "STUDENT" ? user.student.name : user.type === "PARENT" ? user.parent.name : "Unknown",
@@ -8,5 +8,5 @@ export const userTransformer = (user) => {
     handle: "@" + user.username,
   };
 
-  return user;
+  return finalUser;
 };

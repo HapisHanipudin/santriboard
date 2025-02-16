@@ -1,2 +1,7 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+@theme {
+  --font-sans: "Poppins", sans-serif;
+  --shadow-atas: 0 100px 100px 0 red;
+}
