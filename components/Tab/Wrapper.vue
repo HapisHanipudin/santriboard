@@ -30,22 +30,22 @@ const props = defineProps({
     default: () => [
       {
         title: "tahfizh",
-        icon: false,
+        icon: "el:book",
         display: "Tahfizh",
       },
       {
         title: "it",
-        icon: false,
+        icon: "mynaui:desktop-solid",
         display: "IT",
       },
       {
         title: "karakter",
-        icon: false,
+        icon: "streamline:brain-cognitive-solid",
         display: "Karakter",
       },
       {
         title: "bahasa",
-        icon: false,
+        icon: "fa6-solid:language",
         display: "Bahasa",
       },
     ],
