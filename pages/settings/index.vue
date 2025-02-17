@@ -1,6 +1,6 @@
 <template>
   <div>
-    
+    ini settings
   </div>
 </template>
 
