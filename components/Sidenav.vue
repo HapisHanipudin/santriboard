@@ -7,7 +7,7 @@
       <NuxtLink to="/" class="p-4 flex items-center gap-4 z-10"> <UIcon name="solar:home-2-bold" size="30" /> <span class="text-xl">Home</span> </NuxtLink>
       <NuxtLink to="/leaderboard" class="p-4 flex items-center gap-4 z-10"> <UIcon name="solar:list-bold" size="30" /> <span class="text-xl">Leaderboard</span> </NuxtLink>
       <NuxtLink to="/profile" class="p-4 flex items-center gap-4 z-10"> <UIcon name="solar:notebook-bold" size="30" /> <span class="text-xl">Profile</span> </NuxtLink>
-      <NuxtLink to="/setting" class="p-4 flex items-center gap-4 z-10"> <UIcon name="solar:settings-bold" size="30" /> <span class="text-xl">Setting</span> </NuxtLink>
+      <NuxtLink to="/setting" class="p-4 flex items-center gap-4 z-10"> <UIcon name="solar:settings-bold" size="30" /> <span class="text-xl">Settings</span> </NuxtLink>
       <div
         :class="{
           'translate-y-[calc((62px+8px))]': $route.path === '/leaderboard',
