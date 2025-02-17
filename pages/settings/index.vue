@@ -7,11 +7,10 @@
       </div>
       <div class="flex-grow">
         <h1 class="text-2xl font-semibold">Azzam Hudiya
-          <span class="bg-green-100 text-green-800 text-sm font-medium px-2.5 py-0.5 rounded">PLP TAHFIZH</span>
+          <span class="bg-green-100 text-green-800 text-sm font-medium px-2.5 py-0.5 rounded">TOP #1</span>
         </h1>
         <p class="text-gray-600"><i class="fas fa-envelope"></i> hudiya777@gmail.com</p>
       </div>
-      
     </div>
 
     <div class="mt-6 border-b border-gray-200">
@@ -20,7 +19,7 @@
           v-for="tab in tabs" 
           :key="tab.id"
           @click="activeTab = tab.id"
-          class="py-4 px-1 text-gray-500 hover:text-gray-700"
+          class="py-4 px-1 text-gray-500 hover:text-gray-700 cursor-pointer"
           :class="{ 'active-tab text-indigo-600 border-indigo-600': activeTab === tab.id }"
         >
           {{ tab.label }}
@@ -33,7 +32,7 @@
         <div class="space-y-1">
           <label class="block text-sm font-medium text-gray-700">Nickname</label>
           <div class="relative">
-            <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm">
+            <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-[15px] shadow-sm">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <i class="fas fa-user text-gray-400"></i>
             </div>
@@ -42,7 +41,7 @@
         <div class="space-y-1">
           <label class="block text-sm font-medium text-gray-700">Email</label>
           <div class="relative">
-            <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm">
+            <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-[15px] shadow-sm">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <i class="fas fa-envelope text-gray-400"></i>
             </div>
@@ -51,15 +50,15 @@
         <div class="space-y-1">
           <label class="block text-sm font-medium text-gray-700">Bio</label>
           <div class="relative">
-            <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm">
+            <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-[15px] shadow-sm">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <i class="fas fa-info-circle text-gray-400"></i>
             </div>
           </div>
         </div>
         <div class="flex justify-end space-x-3">
-          <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">Cancel</button>
-          <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Changes</button>
+          <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-[15px] hover:bg-gray-300">Cancel</button>
+          <button class="px-4 py-2 bg-indigo-600 text-white rounded-[15px] hover:bg-indigo-700">Save Changes</button>
         </div>
       </div>
     </div>
@@ -68,19 +67,34 @@
       <div class="space-y-6">
         <div class="space-y-1">
           <label class="block text-sm font-medium text-gray-700">Old Password</label>
-          <input type="password" class="block w-full pl-3 py-2 border border-gray-300 rounded-md shadow-sm">
+          <div class="relative">
+            <input type="password" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-[15px] shadow-sm">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-lock text-gray-400"></i>
+            </div>
+          </div>
         </div>
         <div class="space-y-1">
           <label class="block text-sm font-medium text-gray-700">New Password</label>
-          <input type="password" class="block w-full pl-3 py-2 border border-gray-300 rounded-md shadow-sm">
+          <div class="relative">
+            <input type="password" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-[15px] shadow-sm">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-lock text-gray-400"></i>
+            </div>
+          </div>
         </div>
         <div class="space-y-1">
           <label class="block text-sm font-medium text-gray-700">Confirm New Password</label>
-          <input type="password" class="block w-full pl-3 py-2 border border-gray-300 rounded-md shadow-sm">
+          <div class="relative">
+            <input type="password" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-[15px] shadow-sm">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-lock text-gray-400"></i>
+            </div>
+          </div>
         </div>
         <div class="flex justify-end space-x-3">
-          <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">Cancel</button>
-          <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Changes</button>
+          <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-[15px] hover:bg-gray-300">Cancel</button>
+          <button class="px-4 py-2 bg-indigo-600 text-white rounded-[15px] hover:bg-indigo-700">Save Changes</button>
         </div>
       </div>
     </div>

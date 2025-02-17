@@ -25,7 +25,7 @@
         <table class="w-full table-auto rounded-[15px] overflow-hidden">
             <thead>
                 <tr class="bg-gray-800">
-                    <th class="px-4 py-2 text-center">Posisi</th>
+                    <th class="px-4 py-2 text-center">Ranking</th>
                     <th class="px-4 py-2 text-center">Nama Santri</th>
                     <th class="px-4 py-2 text-center">Kelas</th>
                     <th class="px-4 py-2 text-center">Tahfidz</th>
