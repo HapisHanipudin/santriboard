@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col gap-4">
     <div class="p-2 rounded-3xl bg-zinc-700">
       <div :style="{ 'grid-template-columns': `repeat(${props.tabs.length}, minmax(0, 1fr))` }" class="w-full grid relative">
         <button @click="selectTitle(tab.title)" v-for="(tab, index) in props.tabs" :key="index" class="flex cursor-pointer justify-center items-center gap-2 z-10 py-2">
@@ -30,22 +30,22 @@ const props = defineProps({
     default: () => [
       {
         title: "tahfizh",
-        icon: false,
+        icon: "el:book",
         display: "Tahfizh",
       },
       {
         title: "it",
-        icon: false,
+        icon: "mynaui:desktop-solid",
         display: "IT",
       },
       {
         title: "karakter",
-        icon: false,
+        icon: "streamline:brain-cognitive-solid",
         display: "Karakter",
       },
       {
         title: "bahasa",
-        icon: false,
+        icon: "fa6-solid:language",
         display: "Bahasa",
       },
     ],

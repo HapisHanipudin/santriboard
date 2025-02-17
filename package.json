@@ -14,10 +14,14 @@
     "@nuxt/ui": "^3.0.0-alpha.12",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@prisma/client": "^6.3.1",
+    "@prisma/extension-accelerate": "^1.2.2",
+    "@prisma/nuxt": "^0.3.0",
+    "@tailwindcss/vite": "^4.0.6",
     "bcrypt": "^5.1.1",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "nuxt": "^3.15.4",
+    "tailwindcss": "^4.0.6",
     "url-pattern": "^1.0.3",
     "vue": "latest",
     "vue-router": "latest"
@@ -25,6 +29,6 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "prisma": "^6.3.1",
-    "prisma-dbml-generator": "^0.12.0"
+    "prisma-dbml-generator": "^0.6.0"
   }
 }
