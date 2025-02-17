@@ -35,15 +35,15 @@
             </thead>
             <tbody>
                 <tr class="bg-gray-700">
-                    <td class="px-4 py-2 text-center"><i class="fas fa-caret-up text-green-500 mr-2"></i>4</td>
+                    <td class="px-4 py-2 text-center"><i class="fas fa-caret-up text-green-500 mr-2"></i><span class="bg-black font-bold text-yellow-400 px-2 py-1 rounded-full">1</span></td>
                     <td class="px-4 py-2 text-center"><div class="flex items-center justify-center"><img class="rounded-full w-8 h-8 mr-2" src="https://storage.googleapis.com/a1aa/image/zWku6vPRBxNksw5MobRrWxyMsAx0E3a7jtSLbUTzl_g.jpg" alt="Profile picture of the fourth place holder">Nama Santri</div></td>
                     <td class="px-4 py-2 text-center">3 QBS</td>
                     <td class="px-4 py-2 text-center">Ust Husain</td>
                     <td class="px-4 py-2 text-center">Programming</td>
-                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
+                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">9412</button></td>
                 </tr>
                 <tr class="bg-gray-800">
-                    <td class="px-4 py-2 text-center"><i class="fas fa-caret-down text-red-500 mr-2"></i>5</td>
+                    <td class="px-4 py-2 text-center"><i class="fas fa-caret-down text-red-500 mr-2"></i><span class="bg-black font-bold text-gray-400 px-2 py-1 rounded-full">2</span></td>
                     <td class="px-4 py-2 text-center"><div class="flex items-center justify-center"><img class="rounded-full w-8 h-8 mr-2" src="https://storage.googleapis.com/a1aa/image/XTa432WZNGUQ5MMWpGGP9HFuepDIv7PApYvDsFMdeJ0.jpg" alt="Profile picture of the fifth place holder">Nama Santri</div></td>
                     <td class="px-4 py-2 text-center">3 QBS</td>
                     <td class="px-4 py-2 text-center">Ust Husain</td>
@@ -51,44 +51,44 @@
                     <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
                 </tr>
                 <tr class="bg-gray-700">
-                    <td class="px-4 py-2 text-center"><i class="fas fa-caret-up text-green-500 mr-2"></i>6</td>
+                    <td class="px-4 py-2 text-center"><i class="fas fa-caret-up text-green-500 mr-2"></i><span class="bg-black font-bold text-amber-700 px-2 py-1 rounded-full">3</span></td>
                     <td class="px-4 py-2 text-center"><div class="flex items-center justify-center"><img class="rounded-full w-8 h-8 mr-2" src="https://storage.googleapis.com/a1aa/image/LYgrvEaHA7zVP2BkgUmNegAE_VQMRbJItu6C2mHXyuA.jpg" alt="Profile picture of the sixth place holder">Nama Santri</div></td>
                     <td class="px-4 py-2 text-center">3 QBS</td>
                     <td class="px-4 py-2 text-center">Ust Husain</td>
                     <td class="px-4 py-2 text-center">Programming</td>
-                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
+                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8239</button></td>
                 </tr>
                 <tr class="bg-gray-800">
-                    <td class="px-4 py-2 text-center"><i class="fas fa-caret-down text-red-500 mr-2"></i>7</td>
+                    <td class="px-4 py-2 text-center"><i class="fas fa-caret-down text-red-500 mr-2"></i>4</td>
                     <td class="px-4 py-2 text-center"><div class="flex items-center justify-center"><img class="rounded-full w-8 h-8 mr-2" src="https://storage.googleapis.com/a1aa/image/cKWoeIhfSohDXILqflNU7d25sQagUj_wJiOhuk8Vd9c.jpg" alt="Profile picture of the seventh place holder">Nama Santri</div></td>
                     <td class="px-4 py-2 text-center">3 QBS</td>
                     <td class="px-4 py-2 text-center">Ust Husain</td>
                     <td class="px-4 py-2 text-center">Programming</td>
-                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
+                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">7564</button></td>
                 </tr>
                 <tr class="bg-gray-700">
-                    <td class="px-4 py-2 text-center"><i class="fas fa-caret-up text-green-500 mr-2"></i>8</td>
+                    <td class="px-4 py-2 text-center"><i class="fas fa-caret-up text-green-500 mr-2"></i>5</td>
                     <td class="px-4 py-2 text-center"><div class="flex items-center justify-center"><img class="rounded-full w-8 h-8 mr-2" src="https://storage.googleapis.com/a1aa/image/p0Fx7hyF4XF0XOHMhgPyKvKpTvaiXQI3oDdIkr8MEQM.jpg" alt="Profile picture of the eighth place holder">Nama Santri</div></td>
                     <td class="px-4 py-2 text-center">3 QBS</td>
                     <td class="px-4 py-2 text-center">Ust Husain</td>
                     <td class="px-4 py-2 text-center">Programming</td>
-                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
+                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">6576</button></td>
                 </tr>
                 <tr class="bg-gray-800">
-                    <td class="px-4 py-2 text-center"><i class="fas fa-caret-down text-red-500 mr-2"></i>9</td>
+                    <td class="px-4 py-2 text-center"><i class="fas fa-caret-down text-red-500 mr-2"></i>6</td>
                     <td class="px-4 py-2 text-center"><div class="flex items-center justify-center"><img class="rounded-full w-8 h-8 mr-2" src="https://storage.googleapis.com/a1aa/image/HS6Tr9ys1DFZZNt4Mn7px_Lzeq6vS2j58ELD5gxa04g.jpg" alt="Profile picture of the ninth place holder">Nama Santri</div></td>
                     <td class="px-4 py-2 text-center">3 QBS</td>
                     <td class="px-4 py-2 text-center">Ust Husain</td>
                     <td class="px-4 py-2 text-center">Programming</td>
-                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
+                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">6499</button></td>
                 </tr>
                 <tr class="bg-gray-700">
-                    <td class="px-4 py-2 text-center"><i class="fas fa-caret-up text-green-500 mr-2"></i>10</td>
+                    <td class="px-4 py-2 text-center"><i class="fas fa-caret-up text-green-500 mr-2"></i>7</td>
                     <td class="px-4 py-2 text-center"><div class="flex items-center justify-center"><img class="rounded-full w-8 h-8 mr-2" src="https://storage.googleapis.com/a1aa/image/CqUNvW-yUJVn3rq_okHyTYYvoZoqZDsKl9VxIalm1Fc.jpg" alt="Profile picture of the tenth place holder">Nama Santri</div></td>
                     <td class="px-4 py-2 text-center">3 QBS</td>
                     <td class="px-4 py-2 text-center">Ust Husain</td>
                     <td class="px-4 py-2 text-center">Programming</td>
-                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
+                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">5524</button></td>
                 </tr>
             </tbody>
         </table>
