@@ -42,8 +42,8 @@
             <th class="px-4 py-4 text-center">Posisi</th>
             <th class="px-4 py-4 text-center">Nama Santri</th>
             <th class="px-4 py-4 text-center">Kelas</th>
-            <th class="px-4 py-4 text-center">Tahfidz</th>
-            <th class="px-4 py-4 text-center">IT</th>
+            <th v-if="props.title === 'tahfizh'" class="px-4 py-4 text-center">Halaqah</th>
+            <th v-if="props.title === 'it'" class="px-4 py-4 text-center">IT</th>
             <th class="px-4 py-4 text-center">Score</th>
           </tr>
         </thead>
@@ -57,7 +57,6 @@
             </td>
             <td class="px-4 py-2 text-center">3 QBS</td>
             <td class="px-4 py-2 text-center">Ust Husain</td>
-            <td class="px-4 py-2 text-center">Programming</td>
             <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
           </tr>
           <!-- <tr class="bg-gray-800">
@@ -82,6 +81,13 @@
 const getIndexInLeaderboard = (object: any) => {
   return leaderboard.value.findIndex((student) => student.nama === object.nama);
 };
+
+const props = defineProps({
+  title: {
+    type: String,
+    default: "tahfizh",
+  },
+});
 const leaderboard = ref([
   {
     nama: "Muhammad",
