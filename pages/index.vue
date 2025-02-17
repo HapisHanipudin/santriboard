@@ -40,7 +40,7 @@
                     <td class="px-4 py-2 text-center">3 QBS</td>
                     <td class="px-4 py-2 text-center">Ust Husain</td>
                     <td class="px-4 py-2 text-center">Programming</td>
-                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded">8452</button></td>
+                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
                 </tr>
                 <tr class="bg-gray-800">
                     <td class="px-4 py-2 text-center"><i class="fas fa-caret-down text-red-500 mr-2"></i>5</td>
@@ -48,7 +48,7 @@
                     <td class="px-4 py-2 text-center">3 QBS</td>
                     <td class="px-4 py-2 text-center">Ust Husain</td>
                     <td class="px-4 py-2 text-center">Programming</td>
-                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded">8452</button></td>
+                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
                 </tr>
                 <tr class="bg-gray-700">
                     <td class="px-4 py-2 text-center"><i class="fas fa-caret-up text-green-500 mr-2"></i>6</td>
@@ -56,7 +56,7 @@
                     <td class="px-4 py-2 text-center">3 QBS</td>
                     <td class="px-4 py-2 text-center">Ust Husain</td>
                     <td class="px-4 py-2 text-center">Programming</td>
-                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded">8452</button></td>
+                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
                 </tr>
                 <tr class="bg-gray-800">
                     <td class="px-4 py-2 text-center"><i class="fas fa-caret-down text-red-500 mr-2"></i>7</td>
@@ -64,7 +64,7 @@
                     <td class="px-4 py-2 text-center">3 QBS</td>
                     <td class="px-4 py-2 text-center">Ust Husain</td>
                     <td class="px-4 py-2 text-center">Programming</td>
-                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded">8452</button></td>
+                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
                 </tr>
                 <tr class="bg-gray-700">
                     <td class="px-4 py-2 text-center"><i class="fas fa-caret-up text-green-500 mr-2"></i>8</td>
@@ -72,7 +72,7 @@
                     <td class="px-4 py-2 text-center">3 QBS</td>
                     <td class="px-4 py-2 text-center">Ust Husain</td>
                     <td class="px-4 py-2 text-center">Programming</td>
-                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded">8452</button></td>
+                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
                 </tr>
                 <tr class="bg-gray-800">
                     <td class="px-4 py-2 text-center"><i class="fas fa-caret-down text-red-500 mr-2"></i>9</td>
@@ -80,7 +80,7 @@
                     <td class="px-4 py-2 text-center">3 QBS</td>
                     <td class="px-4 py-2 text-center">Ust Husain</td>
                     <td class="px-4 py-2 text-center">Programming</td>
-                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded">8452</button></td>
+                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
                 </tr>
                 <tr class="bg-gray-700">
                     <td class="px-4 py-2 text-center"><i class="fas fa-caret-up text-green-500 mr-2"></i>10</td>
@@ -88,7 +88,7 @@
                     <td class="px-4 py-2 text-center">3 QBS</td>
                     <td class="px-4 py-2 text-center">Ust Husain</td>
                     <td class="px-4 py-2 text-center">Programming</td>
-                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded">8452</button></td>
+                    <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
                 </tr>
             </tbody>
         </table>

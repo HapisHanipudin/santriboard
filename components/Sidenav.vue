@@ -1,7 +1,7 @@
 <template>
   <div class="bg-[#3E62FE] py-6 rounded-4xl px-4">
     <div>
-      <h1 class="text-3xl text-center p-4 my-6">SantriBoard</h1>
+      <h1 class="text-3xl text-center p-4 my-6">SI Board</h1>
     </div>
     <div class="flex flex-col px-2 gap-2 relative">
       <NuxtLink to="/" class="p-4 flex items-center gap-4 z-10"> <UIcon name="solar:home-2-bold" size="30" /> <span class="text-xl">Home</span> </NuxtLink>
