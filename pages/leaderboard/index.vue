@@ -1,7 +1,7 @@
 <template>
   <div>
     <TabWrapper>
-      <Tab title="tahfizh">tahfizh</Tab>
+      <Tab title="tahfizh"><Leaderboard /></Tab>
       <Tab title="it">it</Tab>
       <Tab title="karakter">karakter</Tab>
       <Tab title="bahasa">bahasa</Tab>
