@@ -18,9 +18,9 @@
             'to-[#38393a]': getIndexInLeaderboard(student) === 1,
             'to-[#35200c]': getIndexInLeaderboard(student) === 2,
           }"
-          class="flex items-center justify-center flex-col bg-gradient-to-tr via-[#191B2A] from-[#111111] from-10% via-85% to-95% rounded-t-4xl rounded-b-sm w-3/4 aspect-square"
+          class="flex items-center justify-center flex-col bg-gradient-to-tr via-[#191B2A] from-[#111111] from-10% via-85% to-95% rounded-t-4xl rounded-b-lg w-3/4 aspect-square"
         >
-          <span class="text-lg text-gray-400">{{ student.kelas }} | {{ student.halaqah }}</span>
+          <span class="text-lg text-gray-400">{{ student.kelas }} {{ props.title === "tahfizh" || props.title === "it" ? " | " : "" }} {{ props.title === "tahfizh" ? student.halaqah : props.title === "it" ? student.it : "" }}</span>
           <span
             :class="{
               'text-[#FFC02E]': getIndexInLeaderboard(student) === 0,
@@ -36,28 +36,31 @@
       </div>
     </div>
     <div class="w-full overflow-x-auto px-4 rounded-[15px] overflow-hidden">
-      <table class="w-full table-auto rounded-[15px] overflow-hidden">
-        <thead>
-          <tr class="bg-[#1D1E21] rounded-full">
-            <th class="px-4 py-4 text-center">Posisi</th>
-            <th class="px-4 py-4 text-center">Nama Santri</th>
-            <th class="px-4 py-4 text-center">Kelas</th>
-            <th v-if="props.title === 'tahfizh'" class="px-4 py-4 text-center">Halaqah</th>
-            <th v-if="props.title === 'it'" class="px-4 py-4 text-center">IT</th>
-            <th class="px-4 py-4 text-center">Score</th>
+      <table class="w-full table-auto overflow-hidden">
+        <thead class="">
+          <tr>
+            <th class="bg-[#1D1E21] px-4 py-4 text-center rounded-s-full">Posisi</th>
+            <th class="bg-[#1D1E21] px-4 py-4 text-center">Nama Santri</th>
+            <th class="bg-[#1D1E21] px-4 py-4 text-center">Kelas</th>
+            <th v-if="props.title === 'tahfizh'" class="bg-[#1D1E21] px-4 py-4 text-center">Halaqah</th>
+            <th v-if="props.title === 'it'" class="bg-[#1D1E21] px-4 py-4 text-center">IT</th>
+            <th class="bg-[#1D1E21] px-4 py-4 text-center rounded-e-full">Score</th>
           </tr>
         </thead>
         <tbody>
-          <tr class="">
-            <td class="px-4 py-2 text-center"><i class="fas fa-caret-up text-green-500 mr-2"></i>4</td>
-            <td class="px-4 py-2 text-center">
-              <div class="flex items-center justify-center">
-                <img class="rounded-full w-8 h-8 mr-2" src="https://storage.googleapis.com/a1aa/image/zWku6vPRBxNksw5MobRrWxyMsAx0E3a7jtSLbUTzl_g.jpg" alt="Profile picture of the fourth place holder" />Nama Santri
-              </div>
+          <tr v-for="student in leaderboard.slice(3)" class="">
+            <td class="px-4 py-3 text-center">
+              <!-- <UIcon name="fa-caret-up" class="text-green-500 mr-3" /> -->
+              {{ getIndexInLeaderboard(student) + 1 }}
             </td>
-            <td class="px-4 py-2 text-center">3 QBS</td>
-            <td class="px-4 py-2 text-center">Ust Husain</td>
-            <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
+            <td class="px-4 py-3">
+              <div class="flex items-center"><img class="rounded-full object-cover object-top w-8 h-8 mr-3" :src="student.image" :alt="`Profile picture of ${student.nama}`" />{{ student.nama }}</div>
+            </td>
+            <td class="px-4 py-3 text-center">{{ student.kelas }}</td>
+            <td v-if="props.title === 'tahfizh' || props.title === 'it'" class="px-4 py-3 text-center">{{ props.title === "tahfizh" ? student.halaqah : props.title === "it" ? student.it : "" }}</td>
+            <td class="px-4 py-3 text-center">
+              <button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">{{ student.nilai }}</button>
+            </td>
           </tr>
           <!-- <tr class="bg-gray-800">
             <td class="px-4 py-2 text-center"><i class="fas fa-caret-down text-red-500 mr-2"></i>5</td>
@@ -94,6 +97,7 @@ const leaderboard = ref([
     image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
     kelas: "3 QBS",
     halaqah: "Ust Husain",
+    it: "ODT",
     nilai: 100,
   },
   {
@@ -101,6 +105,7 @@ const leaderboard = ref([
     image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
     kelas: "3 QBS",
     halaqah: "Ust Husain",
+    it: "ODT",
     nilai: 90,
   },
   {
@@ -108,6 +113,7 @@ const leaderboard = ref([
     image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
     kelas: "3 QBS",
     halaqah: "Ust Husain",
+    it: "ODT",
     nilai: 80,
   },
   {
@@ -115,6 +121,7 @@ const leaderboard = ref([
     image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
     kelas: "3 QBS",
     halaqah: "Ust Husain",
+    it: "ODT",
     nilai: 70,
   },
   {
@@ -122,7 +129,48 @@ const leaderboard = ref([
     image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
     kelas: "3 QBS",
     halaqah: "Ust Husain",
+    it: "ODT",
     nilai: 60,
+  },
+  {
+    nama: "Abu Bakar",
+    image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
+    kelas: "3 QBS",
+    halaqah: "Ust Husain",
+    it: "ODT",
+    nilai: 50,
+  },
+  {
+    nama: "Harya Suryatama",
+    image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
+    kelas: "3 QBS",
+    halaqah: "Ust Husain",
+    it: "ODT",
+    nilai: 40,
+  },
+  {
+    nama: "Najwan Kamil",
+    image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
+    kelas: "3 QBS",
+    halaqah: "Ust Husain",
+    it: "ODT",
+    nilai: 30,
+  },
+  {
+    nama: "Arjun Rizki",
+    image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
+    kelas: "3 QBS",
+    halaqah: "Ust Husain",
+    it: "ODT",
+    nilai: 20,
+  },
+  {
+    nama: "Muhammad Dzulfikar",
+    image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
+    kelas: "3 QBS",
+    halaqah: "Ust Husain",
+    it: "ODT",
+    nilai: 10,
   },
 ]);
 </script>
