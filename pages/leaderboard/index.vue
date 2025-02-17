@@ -1,6 +1,7 @@
 <template>
   <div>
     <TabWrapper />
+    ini leaderboard
   </div>
 </template>
 
