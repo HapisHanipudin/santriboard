@@ -18,7 +18,7 @@
 const props = defineProps({
   titles: {
     type: Array,
-    default: () => ["tahfizh", "it", "karakter", "bahasa"],
+    default: () => ["Tahfizh", "IT", "Karakter", "Bahasa"],
   },
 });
 
