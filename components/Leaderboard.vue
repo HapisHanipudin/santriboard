@@ -10,24 +10,22 @@
           <div class="w-36 h-36 rounded-4xl bg-[#3E62FE]">
             <img class="w-full h-full object-cover object-top rounded-4xl" :src="student.image" :alt="student.nama" />
           </div>
-          <span class="text-lg font-bold">{{ student.nama }}</span>
+          <div class="flex flex-col items-center">
+            <span class="text-lg font-bold">{{ student.nama }}</span>
+            <span class="text-lg text-gray-400">{{ student.kelas }} {{ props.title === "tahfizh" || props.title === "it" ? " | " : "" }} {{ props.title === "tahfizh" ? student.halaqah : props.title === "it" ? student.it : "" }}</span>
+          </div>
         </div>
-        <div
-          :class="{
-            'to-[#3d2e08]': getIndexInLeaderboard(student) === 0,
-            'to-[#38393a]': getIndexInLeaderboard(student) === 1,
-            'to-[#35200c]': getIndexInLeaderboard(student) === 2,
-          }"
-          class="flex items-center justify-center flex-col bg-gradient-to-tr via-[#191B2A] from-[#111111] from-10% via-85% to-95% rounded-t-4xl rounded-b-lg w-3/4 aspect-square"
-        >
-          <span class="text-lg text-gray-400">{{ student.kelas }} {{ props.title === "tahfizh" || props.title === "it" ? " | " : "" }} {{ props.title === "tahfizh" ? student.halaqah : props.title === "it" ? student.it : "" }}</span>
+        <div class="flex items-center justify-center flex-col bg-gradient-to-tr to-[#191B2A] from-[#111111] from-10% via-85% to-95% rounded-t-4xl rounded-b-lg w-3/4 aspect-square">
+          <img class="w-12" v-if="getIndexInLeaderboard(student) === 0" src="~/assets/images/leaderboard/gold.png" alt="" />
+          <img class="w-12" v-else-if="getIndexInLeaderboard(student) === 1" src="~/assets/images/leaderboard/silver.png" alt="" />
+          <img class="w-12" v-else src="~/assets/images/leaderboard/bronze.png" alt="" />
           <span
             :class="{
               'text-[#FFC02E]': getIndexInLeaderboard(student) === 0,
               'text-[#B5B7BB]': getIndexInLeaderboard(student) === 1,
               'text-[#CD7F32]': getIndexInLeaderboard(student) === 2,
             }"
-            class="text-6xl"
+            class="text-6xl font-semibold"
           >
             {{ student.nilai }}</span
           >
@@ -42,8 +40,8 @@
             <th class="bg-[#1D1E21] px-4 py-4 text-center rounded-s-full">Posisi</th>
             <th class="bg-[#1D1E21] px-4 py-4 text-center">Nama Santri</th>
             <th class="bg-[#1D1E21] px-4 py-4 text-center">Kelas</th>
-            <th v-if="props.title === 'tahfizh'" class="bg-[#1D1E21] px-4 py-4 text-center">Halaqah</th>
-            <th v-if="props.title === 'it'" class="bg-[#1D1E21] px-4 py-4 text-center">IT</th>
+            <th v-if="props.title === 'tahfizh' || props.title === 'keseluruhan'" class="bg-[#1D1E21] px-4 py-4 text-center">Halaqah</th>
+            <th v-if="props.title === 'it' || props.title === 'keseluruhan'" class="bg-[#1D1E21] px-4 py-4 text-center">IT</th>
             <th class="bg-[#1D1E21] px-4 py-4 text-center rounded-e-full">Score</th>
           </tr>
         </thead>
@@ -57,7 +55,8 @@
               <div class="flex items-center"><img class="rounded-full object-cover object-top w-8 h-8 mr-3" :src="student.image" :alt="`Profile picture of ${student.nama}`" />{{ student.nama }}</div>
             </td>
             <td class="px-4 py-3 text-center">{{ student.kelas }}</td>
-            <td v-if="props.title === 'tahfizh' || props.title === 'it'" class="px-4 py-3 text-center">{{ props.title === "tahfizh" ? student.halaqah : props.title === "it" ? student.it : "" }}</td>
+            <td v-if="props.title === 'tahfizh' || props.title === 'keseluruhan'" class="px-4 py-3 text-center">{{ student.halaqah }}</td>
+            <td v-if="props.title === 'keseluruhan' || props.title === 'it'" class="px-4 py-3 text-center">{{ student.it }}</td>
             <td class="px-4 py-3 text-center">
               <button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">{{ student.nilai }}</button>
             </td>
@@ -88,13 +87,13 @@ const getIndexInLeaderboard = (object: any) => {
 const props = defineProps({
   title: {
     type: String,
-    default: "tahfizh",
+    default: "keseluruhan",
   },
 });
 const leaderboard = ref([
   {
-    nama: "Muhammad",
-    image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
+    nama: "Muhammad Hafizh Hanifuddin",
+    image: "https://app.dreamapps.id/storage/students/photo/222303192.webp",
     kelas: "3 QBS",
     halaqah: "Ust Husain",
     it: "ODT",
