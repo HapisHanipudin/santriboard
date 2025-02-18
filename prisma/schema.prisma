@@ -34,7 +34,7 @@ enum Role {
   ADMIN
   TEACHER
   STUDENT
-  FAMILY
+  PARENT
 }
 
 enum TeacherRole {
@@ -42,26 +42,20 @@ enum TeacherRole {
   KADIV
 }
 
-
 model Users {
-  id            String         @id @default(cuid())
-  email         String         @unique
-  username      String         @unique
-  password      String
-  type          Role           @default(STUDENT)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  type      Role     @default(STUDENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   teacher       Teachers?
-  student       Students?      @relation("UserToStudent", fields: [studentId], references: [id])
-  studentId     Int?           @unique  // One-to-one relation with Students
-  family        Families?      @relation("UserToFamily", fields: [familyId], references: [id])
-  familyId      Int?           @unique  // One-to-one relation with Families
+  student       Students?
+  parent        Parents?
   refreshTokens RefreshToken[]
 }
-
-
-
 
 model RefreshToken {
   id        String   @id @default(uuid())
@@ -69,7 +63,7 @@ model RefreshToken {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String
-  user      Users     @relation(fields: [userId], references: [id])
+  user      Users    @relation(fields: [userId], references: [id])
 }
 
 model Teachers {
@@ -88,60 +82,47 @@ model Teachers {
 }
 
 model Notes {
-  id          Int      @id @default(autoincrement())
-  student_id  Int
-  teacher_id  String
-  notes       String?
-  type        Boolean
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
+  id         String   @id @default(cuid())
+  student_id String
+  teacher_id String
+  notes      String?
+  type       Boolean
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
 
-  student     Students  @relation(fields: [student_id], references: [id])
-  teacher     Teachers  @relation(fields: [teacher_id], references: [id])
-}
-
-model PlpStudents {
-  id          Int       @id @default(autoincrement())
-  student_id  Int
-  plp_id      Int
-  semester_id Int
-
-  student     Students  @relation(fields: [student_id], references: [id])
-  plp         Plps      @relation(fields: [plp_id], references: [id])
-  semester    Semesters @relation(fields: [semester_id], references: [id])
-
-  @@unique([student_id, plp_id, semester_id])
+  student Students @relation(fields: [student_id], references: [id])
+  teacher Teachers @relation(fields: [teacher_id], references: [id])
 }
 
 model Behaviors {
-  id         Int      @id @default(autoincrement())
-  student_id Int
+  id         String  @id @default(cuid())
+  student_id String
   value      Int
   type       String?
 
-  student    Students @relation(fields: [student_id], references: [id])
+  student Students @relation(fields: [student_id], references: [id])
 }
 
 model Plans {
-  id         Int      @id @default(autoincrement())
-  student_id Int
+  id         String   @id @default(cuid())
+  student_id String
   title      String
   created_at DateTime
   updated_at DateTime
 
   plan_details PlanDetails[]
-  student      Students @relation(fields: [student_id], references: [id])
+  student      Students      @relation(fields: [student_id], references: [id])
 }
 
 model PlanDetails {
-  id         Int      @id @default(autoincrement())
-  plan_id    Int
+  id         String   @id @default(cuid())
+  plan_id    String
   type       PlanType
   content    String
   created_at DateTime
   updated_at DateTime
 
-  plan       Plans    @relation(fields: [plan_id], references: [id])
+  plan Plans @relation(fields: [plan_id], references: [id])
 }
 
 model Divisions {
@@ -150,8 +131,8 @@ model Divisions {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  classes   Classes[]
-  teachers  TeacherDivisions[]
+  classes  Classes[]
+  teachers TeacherDivisions[]
 }
 
 model TeacherDivisions {
@@ -161,41 +142,40 @@ model TeacherDivisions {
   role       TeacherRole @default(ASATIDZ)
   createdAt  DateTime    @default(now())
 
-  teacher    Teachers    @relation(fields: [teacherId], references: [id])
-  division   Divisions   @relation(fields: [divisionId], references: [id])
+  teacher  Teachers  @relation(fields: [teacherId], references: [id])
+  division Divisions @relation(fields: [divisionId], references: [id])
 
   @@unique([teacherId, divisionId])
 }
 
 model Classes {
-  id         String          @id @default(cuid())
+  id         String    @id @default(cuid())
   name       String
   divisionId String
-  division   Divisions       @relation(fields: [divisionId], references: [id])
-  createdAt  DateTime        @default(now())
-  updatedAt  DateTime        @updatedAt
+  division   Divisions @relation(fields: [divisionId], references: [id])
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
-  teachers   TeacherClasses[]
-  students   StudentClasses[]
+  teachers TeacherClasses[]
+  students StudentClasses[]
 }
 
 model TeacherClasses {
-id         String    @id @default(cuid())
-  teacherId  String    // Hapus @unique jika banyak ke satu
+  id         String   @id @default(cuid())
+  teacherId  String // Hapus @unique jika banyak ke satu
   classId    String
-  semesterId Int
-  createdAt  DateTime  @default(now())
+  semesterId String
+  createdAt  DateTime @default(now())
 
-  semester   Semesters @relation(fields: [semesterId], references: [id])
-  teacher    Teachers  @relation(fields: [teacherId], references: [id])
-  class      Classes   @relation(fields: [classId], references: [id])
+  semester Semesters @relation(fields: [semesterId], references: [id])
+  teacher  Teachers  @relation(fields: [teacherId], references: [id])
+  class    Classes   @relation(fields: [classId], references: [id])
 
   @@unique([teacherId, classId])
-
 }
 
 model Families {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(cuid())
   kk          String   @unique
   father_name String
   mother_name String
@@ -206,74 +186,82 @@ model Families {
   created_at  DateTime @default(now())
   updated_at  DateTime @default(now())
 
-  students    Students[]    // relasi yang tepat ke Students
-  user        Users?        @relation("UserToFamily")  // perbaikan nama relasi
+  childrens Students[] // relasi yang tepat ke Students
+  parents   Parents[]
 }
 
+model Parents {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String   @unique
+  familyId  String
+  user      Users    @relation(fields: [userId], references: [id])
+  nik       String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  family Families? @relation(fields: [familyId], references: [id])
+}
 
 model Students {
-  id           Int      @id @default(autoincrement())
-  title        String? 
-  level        Int?
+  id            String    @id @default(cuid())
+  level         Int?
   Pondok        Int?
   SekolahPayung String?
-  familiesId   Int?
-  nik          String?  @unique
-  nis          String?  @unique
-  name         String
-  nickname     String?
-  gender       Gender?
-  birth_date   DateTime?
-  birth_place  String?
-  birth_order  Int?
-  school       String?
-  height       Int?
-  weight       Int?
-  photo        String?
-  is_active    Boolean
-  is_graduated Boolean
-  created_at   DateTime @default(now())
-  updated_at   DateTime @default(now())
+  familiesId    String?
+  nik           String?   @unique
+  nis           String?   @unique
+  name          String
+  nickname      String?
+  gender        Gender?
+  birth_date    DateTime?
+  birth_place   String?
+  birth_order   Int?
+  school        String?
+  height        Int?
+  weight        Int?
+  photo         String?
+  is_active     Boolean
+  is_graduated  Boolean
+  userId        String?   @unique
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @default(now())
 
-  families      Families?        @relation(fields: [familiesId], references: [id])
+  family         Families?        @relation(fields: [familiesId], references: [id])
   grade_students GradeStudents[]
   notes          Notes[]
   behaviors      Behaviors[]
   plans          Plans[]
-    achievements Achievements[] // Relation to achievements
-  projects     Projects[] // Relation to projects
-  plp_students   PlpStudents[]
-    evaluations  Evaluations[]  // Relation to Evaluations model
-  classes      StudentClasses[]  // Relation to StudentClasses model
-  user           Users?          @relation("UserToStudent")  // perbaikan nama relasi
+  achievements   Achievements[] // Relation to achievements
+  projects       Projects[] // Relation to projects
+  classes        StudentClasses[] // Relation to StudentClasses model
+  user           Users?           @relation(fields: [userId], references: [id])
 }
 
 model Achievements {
-  id         Int      @id @default(autoincrement())
-  title      String
+  id          String   @id @default(cuid())
+  title       String
   description String
-  studentId  Int
-  createdAt  DateTime @default(now())
+  studentId   String
+  createdAt   DateTime @default(now())
 
-  student    Students  @relation(fields: [studentId], references: [id])
+  student Students @relation(fields: [studentId], references: [id])
 }
-
 
 model Projects {
-  id         Int      @id @default(autoincrement())
-  title      String
+  id          String  @id @default(cuid())
+  title       String
   description String
-  imageUrl   String?
-  studentId  Int
+  imageUrl    String?
+  studentId   String
 
-  student    Students  @relation(fields: [studentId], references: [id])
+  student Students @relation(fields: [studentId], references: [id])
 }
 
-
 model Grades {
-  id     Int      @id @default(autoincrement())
-  grade  String
-  type   String?
+  id    String  @id @default(cuid())
+  grade String
+  type  String?
 
   grade_students GradeStudents[]
 
@@ -281,65 +269,49 @@ model Grades {
 }
 
 model Semesters {
-  id       Int      @id @default(autoincrement())
+  id       String @id @default(cuid())
   semester Int
   period   String
 
-  Teacher_Classes  TeacherClasses[]
-  grade_students   GradeStudents[]
-  plp_students     PlpStudents[]
+  Teacher_Classes TeacherClasses[]
+  grade_students  GradeStudents[]
   classes_student StudentClasses[] // Relation to
 
   @@unique([semester, period])
 }
 
-model Plps {
-  id   Int      @id @default(autoincrement())
-  plp  String?
-  type String?
-
-  plp_students PlpStudents[]
-
-  @@unique([plp, type])
-}
-
 model GradeStudents {
-  id          Int        @id @default(autoincrement())
-  student_id  Int
-  grade_id    Int
-  semester_id Int
+  id          String @id @default(cuid())
+  student_id  String
+  grade_id    String
+  semester_id String
 
-  student     Students   @relation(fields: [student_id], references: [id])
-  grade       Grades     @relation(fields: [grade_id], references: [id])
-  semester    Semesters  @relation(fields: [semester_id], references: [id])
+  student  Students  @relation(fields: [student_id], references: [id])
+  grade    Grades    @relation(fields: [grade_id], references: [id])
+  semester Semesters @relation(fields: [semester_id], references: [id])
 
   @@unique([student_id, grade_id, semester_id])
 }
 
 model Evaluations {
-   id        Int      @id @default(autoincrement())
-  field     Field
-  score     Int
-  studentId Int      // Hapus @unique jika banyak ke satu
-  student   Students  @relation(fields: [studentId], references: [id])
+  id               String         @id @default(cuid())
+  field            Field
+  score            Int
+  studentClassesId String // Hapus @unique jika banyak ke satu
+  student          StudentClasses @relation(fields: [studentClassesId], references: [id])
 }
-
-
 
 model StudentClasses {
-id          String     @id @default(cuid())
-  studentId   Int        // Hapus @unique untuk relasi banyak ke satu
-  classId     String
-  semesterId  Int
-  createdAt   DateTime   @default(now())
+  id         String   @id @default(cuid())
+  studentId  String // Hapus @unique untuk relasi banyak ke satu
+  classId    String
+  semesterId String
+  createdAt  DateTime @default(now())
 
-  semester    Semesters  @relation(fields: [semesterId], references: [id])
-  student     Students   @relation(fields: [studentId], references: [id])
-  class       Classes    @relation(fields: [classId], references: [id])
+  semester    Semesters     @relation(fields: [semesterId], references: [id])
+  student     Students      @relation(fields: [studentId], references: [id])
+  class       Classes       @relation(fields: [classId], references: [id])
+  evaluations Evaluations[]
 
   @@unique([studentId, classId])
-
 }
-
-
-
