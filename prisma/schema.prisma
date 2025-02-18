@@ -53,12 +53,14 @@ model Users {
   updatedAt     DateTime       @updatedAt
 
   teacher       Teachers?
-  student       Students?      @relation("UserToStudent", fields: [studentId], references: [id]) // Relasi dengan Students
-  studentId     Int?           @unique // Foreign key harus unik untuk relasi satu-ke-satu
-  family        Families?      @relation("UserToFamily", fields: [familyId], references: [id])   // Relasi dengan Families
-  familyId      Int?           @unique // Foreign key harus unik untuk relasi satu-ke-satu
+  student       Students?      @relation("UserToStudent", fields: [studentId], references: [id])
+  studentId     Int?           @unique  // One-to-one relation with Students
+  family        Families?      @relation("UserToFamily", fields: [familyId], references: [id])
+  familyId      Int?           @unique  // One-to-one relation with Families
   refreshTokens RefreshToken[]
 }
+
+
 
 
 model RefreshToken {
@@ -178,15 +180,18 @@ model Classes {
 }
 
 model TeacherClasses {
-  id        String   @id @default(cuid())
-  teacherId String
-  classId   String
-  createdAt DateTime @default(now())
+id         String    @id @default(cuid())
+  teacherId  String    // Hapus @unique jika banyak ke satu
+  classId    String
+  semesterId Int
+  createdAt  DateTime  @default(now())
 
-  teacher   Teachers @relation(fields: [teacherId], references: [id])
-  class     Classes  @relation(fields: [classId], references: [id])
+  semester   Semesters @relation(fields: [semesterId], references: [id])
+  teacher    Teachers  @relation(fields: [teacherId], references: [id])
+  class      Classes   @relation(fields: [classId], references: [id])
 
   @@unique([teacherId, classId])
+
 }
 
 model Families {
@@ -208,6 +213,10 @@ model Families {
 
 model Students {
   id           Int      @id @default(autoincrement())
+  title        String? 
+  level        Int?
+  Pondok        Int?
+  SekolahPayung String?
   familiesId   Int?
   nik          String?  @unique
   nis          String?  @unique
@@ -231,11 +240,35 @@ model Students {
   notes          Notes[]
   behaviors      Behaviors[]
   plans          Plans[]
+    achievements Achievements[] // Relation to achievements
+  projects     Projects[] // Relation to projects
   plp_students   PlpStudents[]
     evaluations  Evaluations[]  // Relation to Evaluations model
   classes      StudentClasses[]  // Relation to StudentClasses model
   user           Users?          @relation("UserToStudent")  // perbaikan nama relasi
 }
+
+model Achievements {
+  id         Int      @id @default(autoincrement())
+  title      String
+  description String
+  studentId  Int
+  createdAt  DateTime @default(now())
+
+  student    Students  @relation(fields: [studentId], references: [id])
+}
+
+
+model Projects {
+  id         Int      @id @default(autoincrement())
+  title      String
+  description String
+  imageUrl   String?
+  studentId  Int
+
+  student    Students  @relation(fields: [studentId], references: [id])
+}
+
 
 model Grades {
   id     Int      @id @default(autoincrement())
@@ -252,8 +285,10 @@ model Semesters {
   semester Int
   period   String
 
+  Teacher_Classes  TeacherClasses[]
   grade_students   GradeStudents[]
   plp_students     PlpStudents[]
+  classes_student StudentClasses[] // Relation to
 
   @@unique([semester, period])
 }
@@ -282,24 +317,28 @@ model GradeStudents {
 }
 
 model Evaluations {
-  id        Int      @id @default(autoincrement())
+   id        Int      @id @default(autoincrement())
   field     Field
   score     Int
-  studentId Int      @unique  // Ensure it's unique for a one-to-one relation
+  studentId Int      // Hapus @unique jika banyak ke satu
   student   Students  @relation(fields: [studentId], references: [id])
 }
 
 
-model StudentClasses {
-  id        String   @id @default(cuid())
-  studentId Int      @unique  // Ensure it's unique for a one-to-one relation
-  classId   String
-  createdAt DateTime @default(now())
 
-  student   Students  @relation(fields: [studentId], references: [id])
-  class     Classes   @relation(fields: [classId], references: [id])
+model StudentClasses {
+id          String     @id @default(cuid())
+  studentId   Int        // Hapus @unique untuk relasi banyak ke satu
+  classId     String
+  semesterId  Int
+  createdAt   DateTime   @default(now())
+
+  semester    Semesters  @relation(fields: [semesterId], references: [id])
+  student     Students   @relation(fields: [studentId], references: [id])
+  class       Classes    @relation(fields: [classId], references: [id])
 
   @@unique([studentId, classId])
+
 }
 
 
