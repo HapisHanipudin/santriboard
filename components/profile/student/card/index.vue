@@ -1,6 +1,6 @@
 <template>
   <div class="bg-[#1D1E21] rounded-4xl flex items-center gap-4 w-full h-full p-6">
-    <div class="rounded-full w-40 h-40 overflow-hidden">
+    <div class="rounded-full w-40 h-auto aspect-square overflow-hidden">
       <img :src="student.image" class="object-cover object-top" alt="" />
     </div>
     <div class="flex flex-col gap-2">
@@ -21,14 +21,6 @@
 </template>
 
 <script lang="ts" setup>
-interface Student {
-  id: number;
-  name: string;
-  nickname: string;
-  image: string;
-  birthdate: string;
-}
-
 const calculateAge = (birthdate: string): number => {
   const today = new Date();
   const birthdateParts = birthdate.split("-");
