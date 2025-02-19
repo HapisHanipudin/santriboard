@@ -12,9 +12,7 @@ Table Users {
   updatedAt DateTime [not null]
   teacher Teachers
   student Students
-  studentId Int [unique]
-  family Families
-  familyId Int [unique]
+  parent Parents
   refreshTokens RefreshToken [not null]
 }
 
@@ -42,8 +40,8 @@ Table Teachers {
 }
 
 Table Notes {
-  id Int [pk, increment]
-  student_id Int [not null]
+  id String [pk]
+  student_id String [not null]
   teacher_id String [not null]
   notes String
   type Boolean [not null]
@@ -54,16 +52,16 @@ Table Notes {
 }
 
 Table Behaviors {
-  id Int [pk, increment]
-  student_id Int [not null]
+  id String [pk]
+  student_id String [not null]
   value Int [not null]
   type String
   student Students [not null]
 }
 
 Table Plans {
-  id Int [pk, increment]
-  student_id Int [not null]
+  id String [pk]
+  student_id String [not null]
   title String [not null]
   created_at DateTime [not null]
   updated_at DateTime [not null]
@@ -72,8 +70,8 @@ Table Plans {
 }
 
 Table PlanDetails {
-  id Int [pk, increment]
-  plan_id Int [not null]
+  id String [pk]
+  plan_id String [not null]
   type PlanType [not null]
   content String [not null]
   created_at DateTime [not null]
@@ -119,7 +117,7 @@ Table TeacherClasses {
   id String [pk]
   teacherId String [not null]
   classId String [not null]
-  semesterId Int [not null]
+  semesterId String [not null]
   createdAt DateTime [default: `now()`, not null]
   semester Semesters [not null]
   teacher Teachers [not null]
@@ -131,7 +129,7 @@ Table TeacherClasses {
 }
 
 Table Families {
-  id Int [pk, increment]
+  id String [pk]
   kk String [unique, not null]
   father_name String [not null]
   mother_name String [not null]
@@ -141,17 +139,30 @@ Table Families {
   address String
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [default: `now()`, not null]
-  students Students [not null]
-  user Users
+  childrens Students [not null]
+  parents Parents [not null]
+}
+
+Table Parents {
+  id String [pk]
+  name String [not null]
+  userId String [unique, not null]
+  familyId String [not null]
+  user Users [not null]
+  nik String [unique, not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  family Families
 }
 
 Table Students {
-  id Int [pk, increment]
-  title String
+
+  id String [pk]
   level Int
   Pondok Int
   SekolahPayung String
-  familiesId Int
+  familiesId String
+
   nik String [unique]
   nis String [unique]
   name String [not null]
@@ -166,40 +177,42 @@ Table Students {
   photo String
   is_active Boolean [not null]
   is_graduated Boolean [not null]
+  userId String [unique]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [default: `now()`, not null]
-  families Families
+  family Families
   grade_students GradeStudents [not null]
   notes Notes [not null]
   behaviors Behaviors [not null]
   plans Plans [not null]
   achievements Achievements [not null]
   projects Projects [not null]
-  evaluations Evaluations [not null]
   classes StudentClasses [not null]
   user Users
 }
 
 Table Achievements {
-  id Int [pk, increment]
+
+  id String [pk]
   title String [not null]
   description String [not null]
-  studentId Int [not null]
+  studentId String [not null]
   createdAt DateTime [default: `now()`, not null]
   student Students [not null]
 }
 
 Table Projects {
-  id Int [pk, increment]
+
+  id String [pk]
   title String [not null]
   description String [not null]
   imageUrl String
-  studentId Int [not null]
+  studentId String [not null]
   student Students [not null]
 }
 
 Table Grades {
-  id Int [pk, increment]
+  id String [pk]
   grade String [not null]
   type String
   grade_students GradeStudents [not null]
@@ -210,7 +223,7 @@ Table Grades {
 }
 
 Table Semesters {
-  id Int [pk, increment]
+  id String [pk]
   semester Int [not null]
   period String [not null]
   Teacher_Classes TeacherClasses [not null]
@@ -223,10 +236,10 @@ Table Semesters {
 }
 
 Table GradeStudents {
-  id Int [pk, increment]
-  student_id Int [not null]
-  grade_id Int [not null]
-  semester_id Int [not null]
+  id String [pk]
+  student_id String [not null]
+  grade_id String [not null]
+  semester_id String [not null]
   student Students [not null]
   grade Grades [not null]
   semester Semesters [not null]
@@ -237,22 +250,23 @@ Table GradeStudents {
 }
 
 Table Evaluations {
-  id Int [pk, increment]
+  id String [pk]
   field Field [not null]
   score Int [not null]
-  studentId Int [not null]
-  student Students [not null]
+  studentClassesId String [not null]
+  student StudentClasses [not null]
 }
 
 Table StudentClasses {
   id String [pk]
-  studentId Int [not null]
+  studentId String [not null]
   classId String [not null]
-  semesterId Int [not null]
+  semesterId String [not null]
   createdAt DateTime [default: `now()`, not null]
   semester Semesters [not null]
   student Students [not null]
   class Classes [not null]
+  evaluations Evaluations [not null]
 
   indexes {
     (studentId, classId) [unique]
@@ -282,17 +296,13 @@ Enum Role {
   ADMIN
   TEACHER
   STUDENT
-  FAMILY
+  PARENT
 }
 
 Enum TeacherRole {
   ASATIDZ
   KADIV
 }
-
-Ref: Users.studentId - Students.id
-
-Ref: Users.familyId - Families.id
 
 Ref: RefreshToken.userId > Users.id
 
@@ -320,7 +330,13 @@ Ref: TeacherClasses.teacherId > Teachers.id
 
 Ref: TeacherClasses.classId > Classes.id
 
+Ref: Parents.userId - Users.id
+
+Ref: Parents.familyId > Families.id
+
 Ref: Students.familiesId > Families.id
+
+Ref: Students.userId - Users.id
 
 Ref: Achievements.studentId > Students.id
 
@@ -332,7 +348,7 @@ Ref: GradeStudents.grade_id > Grades.id
 
 Ref: GradeStudents.semester_id > Semesters.id
 
-Ref: Evaluations.studentId > Students.id
+Ref: Evaluations.studentClassesId > StudentClasses.id
 
 Ref: StudentClasses.semesterId > Semesters.id
 
