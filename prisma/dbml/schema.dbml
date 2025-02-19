@@ -53,20 +53,6 @@ Table Notes {
   teacher Teachers [not null]
 }
 
-Table PlpStudents {
-  id Int [pk, increment]
-  student_id Int [not null]
-  plp_id Int [not null]
-  semester_id Int [not null]
-  student Students [not null]
-  plp Plps [not null]
-  semester Semesters [not null]
-
-  indexes {
-    (student_id, plp_id, semester_id) [unique]
-  }
-}
-
 Table Behaviors {
   id Int [pk, increment]
   student_id Int [not null]
@@ -161,6 +147,10 @@ Table Families {
 
 Table Students {
   id Int [pk, increment]
+  title String
+  level Int
+  Pondok Int
+  SekolahPayung String
   familiesId Int
   nik String [unique]
   nis String [unique]
@@ -183,10 +173,29 @@ Table Students {
   notes Notes [not null]
   behaviors Behaviors [not null]
   plans Plans [not null]
-  plp_students PlpStudents [not null]
+  achievements Achievements [not null]
+  projects Projects [not null]
   evaluations Evaluations [not null]
   classes StudentClasses [not null]
   user Users
+}
+
+Table Achievements {
+  id Int [pk, increment]
+  title String [not null]
+  description String [not null]
+  studentId Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  student Students [not null]
+}
+
+Table Projects {
+  id Int [pk, increment]
+  title String [not null]
+  description String [not null]
+  imageUrl String
+  studentId Int [not null]
+  student Students [not null]
 }
 
 Table Grades {
@@ -206,22 +215,10 @@ Table Semesters {
   period String [not null]
   Teacher_Classes TeacherClasses [not null]
   grade_students GradeStudents [not null]
-  plp_students PlpStudents [not null]
   classes_student StudentClasses [not null]
 
   indexes {
     (semester, period) [unique]
-  }
-}
-
-Table Plps {
-  id Int [pk, increment]
-  plp String
-  type String
-  plp_students PlpStudents [not null]
-
-  indexes {
-    (plp, type) [unique]
   }
 }
 
@@ -305,12 +302,6 @@ Ref: Notes.student_id > Students.id
 
 Ref: Notes.teacher_id > Teachers.id
 
-Ref: PlpStudents.student_id > Students.id
-
-Ref: PlpStudents.plp_id > Plps.id
-
-Ref: PlpStudents.semester_id > Semesters.id
-
 Ref: Behaviors.student_id > Students.id
 
 Ref: Plans.student_id > Students.id
@@ -330,6 +321,10 @@ Ref: TeacherClasses.teacherId > Teachers.id
 Ref: TeacherClasses.classId > Classes.id
 
 Ref: Students.familiesId > Families.id
+
+Ref: Achievements.studentId > Students.id
+
+Ref: Projects.studentId > Students.id
 
 Ref: GradeStudents.student_id > Students.id
 
