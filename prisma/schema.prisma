@@ -75,6 +75,7 @@ model Teachers {
   updatedAt DateTime    @updatedAt
   user      Users?       @relation(fields: [userId], references: [id])
 
+  user      Users?       @relation(fields: [userId], references: [id])
   notes     Notes[]
   divisions TeacherDivisions[]
   classes   TeacherClasses[]
@@ -302,6 +303,7 @@ model Evaluations {
 
 model StudentClasses {
   id         String   @id @default(cuid())
+
   studentId  String // Hapus @unique untuk relasi banyak ke satu
   classId    String
   semesterId String
