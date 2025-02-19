@@ -1,82 +1,45 @@
 import { defineEventHandler, getQuery } from "h3";
 import { getLeaderboardByDivision } from "../../db/divisions";
 
-// type PLP = "TAHFIZH" | "IT" | "BAHASA" | "KARAKTER";
+// type bidang = "TAHFIZH" | "IT" | "BAHASA" | "KARAKTER";
 
 // Inisialisasi Prisma Client
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
+  // Pastikan bidang adalah string
+  const bidang = typeof query.bidang === "string" ? query.bidang : "";
 
-  // Pastikan plp adalah string
-  const plp = typeof query.plp === "string" ? query.plp : "";
-
-  if (!plp) {
+  if (!bidang) {
     return {
       status: 400,
-      message: "PLP harus disertakan dalam query parameter",
+      message: "bidang harus disertakan dalam query parameter",
     };
   }
 
   // Ambil data students beserta kelas dan guru
-  const students = await getLeaderboardByDivision(plp);
-  // Jika tidak ada students ditemukan
-  if (students.length === 0) {
-    return {
-      status: 404,
-      message: "Tidak ada siswa yang ditemukan untuk PLP ini.",
-    };
-  }
+  const divisi = await getLeaderboardByDivision(bidang);
+  // // Jika tidak ada students ditemukan
+  // if (divisi?.classes.reduce((a, b) => a + b.students.length, 0) === 0) {
+  //   return {
+  //     status: 404,
+  //     message: "Tidak ada siswa yang ditemukan untuk bidang ini.",
+  //   };
+  // }
+  const students = divisi?.classes.flatMap(
+    (c) => c.students?.map((s) => s) ?? []
+  );
+
+  const score =
+    students?.map((s) => ({
+      ...s.student,
+      score: s.evaluations.reduce((a, b) => a + b.score, 0),
+    })) ?? [];
 
   // // Definisikan bidang yang akan dirangking
-  // const fields = ["TAHFIZH", "IT", "BAHASA", "KARAKTER"];
-
-  // // Inisialisasi rankings dengan tipe yang tepat
-  // const rankings: Record<
-  //   string,
-  //   { name: string; class: string; teacher: string; score: number }[]
-  // > = fields.reduce((acc, field) => {
-  //   acc[field] = [];
-  //   return acc;
-  // }, {} as Record<string, { name: string; class: string; teacher: string; score: number }[]>);
 
   // // Proses setiap student
-  // students.forEach((student) => {
-  //   // Hitung skor berdasarkan field
-  //   const scores = student.evaluations.reduce(
-  //     (acc: Record<string, number>, evaluation) => {
-  //       acc[evaluation.field] = (acc[evaluation.field] || 0) + evaluation.score;
-  //       return acc;
-  //     },
-  //     {} as Record<string, number>
-  //   );
-
-  //   // Ambil kelas dan guru
-  //   const className = student.classes[0]?.class?.name || "N/A";
-  //   const teacherName =
-  //     student.classes[0]?.class?.teachers[0]?.teacher?.name || "N/A";
-
-  //   // Tambahkan skor ke dalam rankings per field
-  //   fields.forEach((field) => {
-  //     rankings[field].push({
-  //       name: student.name,
-  //       class: className,
-  //       teacher: teacherName,
-  //       score: scores[field] || 0,
-  //     });
-  //   });
-  // });
-
-  // // Urutkan rankings berdasarkan skor tertinggi
-  // fields.forEach((field) => {
-  //   rankings[field].sort((a, b) => b.score - a.score);
-  // });
-
-  // // Kembalikan hasil ranking per bidang dalam format yang diinginkan
-  // const result = fields.map((field) => ({
-  //   field,
-  //   students: rankings[field],
-  // }));
-
-  return students;
+  // const scores = divisi?.classes.flatMap((c) => c.students.map((s) => ({})));
+  // // return students;
+  return score;
 });
