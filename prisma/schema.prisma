@@ -302,6 +302,7 @@ model Evaluations {
 
 model StudentClasses {
   id         String   @id @default(cuid())
+
   studentId  String // Hapus @unique untuk relasi banyak ke satu
   classId    String
   semesterId String

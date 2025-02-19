@@ -156,11 +156,13 @@ Table Parents {
 }
 
 Table Students {
+
   id String [pk]
   level Int
   Pondok Int
   SekolahPayung String
   familiesId String
+
   nik String [unique]
   nis String [unique]
   name String [not null]
@@ -190,6 +192,7 @@ Table Students {
 }
 
 Table Achievements {
+
   id String [pk]
   title String [not null]
   description String [not null]
@@ -199,6 +202,7 @@ Table Achievements {
 }
 
 Table Projects {
+
   id String [pk]
   title String [not null]
   description String [not null]
