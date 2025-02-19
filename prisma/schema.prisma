@@ -69,13 +69,12 @@ model RefreshToken {
 model Teachers {
   id        String      @id @default(cuid())
   name      String
-  userId    String      @unique
-  user      Users       @relation(fields: [userId], references: [id])
-  type      TeacherRole @default(ASATIDZ)
+  userId    String?      @unique
   nik       String      @unique
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
+  user      Users?       @relation(fields: [userId], references: [id])
   notes     Notes[]
   divisions TeacherDivisions[]
   classes   TeacherClasses[]
