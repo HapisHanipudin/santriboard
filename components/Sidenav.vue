@@ -1,25 +1,14 @@
 <template>
-  <div class="bg-[#3E62FE] py-6 rounded-4xl px-4">
+  <div class="bg-[#3E62FE] py-6 lg:rounded-4xl rounded-r-4xl px-4 max-lg:h-full">
     <div>
       <h1 class="text-3xl text-center p-4 my-6">SI Board</h1>
     </div>
     <div class="flex flex-col px-2 gap-2 relative">
-      <NuxtLink to="/" class="p-4 flex items-center gap-4 z-10">
-        <UIcon name="solar:home-2-bold" size="30" />
-        <span class="text-xl">Home</span>
-      </NuxtLink>
-      <NuxtLink to="/leaderboard" class="p-4 flex items-center gap-4 z-10">
-        <UIcon name="solar:list-bold" size="30" />
-        <span class="text-xl">Leaderboard</span>
-      </NuxtLink>
-      <NuxtLink to="/profile" class="p-4 flex items-center gap-4 z-10">
-        <UIcon name="solar:notebook-bold" size="30" />
-        <span class="text-xl">Profile</span>
-      </NuxtLink>
-      <NuxtLink to="/settings" class="p-4 flex items-center gap-4 z-10">
-        <UIcon name="solar:settings-bold" size="30" />
-        <span class="text-xl">Settings</span>
-      </NuxtLink>
+      <NuxtLink to="/" class="p-4 flex items-center gap-4 z-10"> <UIcon name="solar:home-2-bold" size="30" /> <span class="text-xl">Home</span> </NuxtLink>
+      <NuxtLink to="/leaderboard" class="p-4 flex items-center gap-4 z-10"> <UIcon name="ph:ranking-fill" size="30" /> <span class="text-xl">Leaderboard</span> </NuxtLink>
+      <NuxtLink to="/profile" class="p-4 flex items-center gap-4 z-10"> <UIcon name="solar:notebook-bold" size="30" /> <span class="text-xl">Profile</span> </NuxtLink>
+      <NuxtLink to="/settings" class="p-4 flex items-center gap-4 z-10"> <UIcon name="solar:settings-bold" size="30" /> <span class="text-xl">Settings</span> </NuxtLink>
+
       <div
         :class="{
           'translate-y-[calc((62px+8px))]': $route.path === '/leaderboard',

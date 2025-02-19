@@ -7,7 +7,8 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "vercel-build": "prisma generate && prisma migrate deploy && nuxt build"
   },
   "dependencies": {
     "@nuxt/fonts": "^0.10.3",
@@ -29,6 +30,6 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "prisma": "^6.3.1",
-    "prisma-dbml-generator": "^0.6.0"
+    "prisma-dbml-generator": "^0.12.0"
   }
 }
