@@ -1,5 +1,5 @@
 import { defineEventHandler, getQuery } from "h3";
-import { prisma } from "~/server/db";
+import { getLeaderboardByDivision } from "../../db/divisions";
 
 // type PLP = "TAHFIZH" | "IT" | "BAHASA" | "KARAKTER";
 
@@ -19,32 +19,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Ambil data students beserta kelas dan guru
-  const students = await prisma.divisions.findMany({
-    where: {
-      id: plp,
-    },
-    include: {
-      classes: {
-        include: {
-          teachers: {
-            include: {
-              teacher: true,
-            },
-          },
-          students: {
-            include: {
-              student: {
-                include: {
-                  evaluations: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  });
-
+  const students = await getLeaderboardByDivision(plp);
   // Jika tidak ada students ditemukan
   if (students.length === 0) {
     return {

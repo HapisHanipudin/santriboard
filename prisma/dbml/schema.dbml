@@ -28,12 +28,11 @@ Table RefreshToken {
 Table Teachers {
   id String [pk]
   name String [not null]
-  userId String [unique, not null]
-  user Users [not null]
-  type TeacherRole [not null, default: 'ASATIDZ']
+  userId String [unique]
   nik String [unique, not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  user Users
   notes Notes [not null]
   divisions TeacherDivisions [not null]
   classes TeacherClasses [not null]
@@ -156,13 +155,11 @@ Table Parents {
 }
 
 Table Students {
-
   id String [pk]
   level Int
   Pondok Int
   SekolahPayung String
   familiesId String
-
   nik String [unique]
   nis String [unique]
   name String [not null]
@@ -192,7 +189,6 @@ Table Students {
 }
 
 Table Achievements {
-
   id String [pk]
   title String [not null]
   description String [not null]
@@ -202,7 +198,6 @@ Table Achievements {
 }
 
 Table Projects {
-
   id String [pk]
   title String [not null]
   description String [not null]
