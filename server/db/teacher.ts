@@ -1,5 +1,46 @@
 import { prisma } from "../db";
 
+
+export async function getTeachers() {
+    try {
+      const teachers = await prisma.teachers.findMany({
+        select: {
+          name: true,
+          user: {
+            select: {
+              email: true,
+              username: true,
+            },
+          },
+          divisions: {
+            select: {
+              division: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          classes: {
+            select: {
+              class: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          notes: true,
+        },
+      });
+      return teachers;
+    } catch (error) {
+      throw new Error("Failed to fetch teachers");
+    }
+  }
+  
+  
+
 export async function createTeacher(
   name: string,
   divisions: { divisionId: string; role: string }[]

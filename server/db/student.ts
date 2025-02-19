@@ -1,5 +1,49 @@
 import { prisma } from ".";
 
+
+
+
+
+export async function createStudent(data) {
+    const { name, nickname, gender, birth_date, birth_place, nis, nik, is_active, is_graduated, familiesId } = data;
+  
+    if (!name || !gender || !birth_date || !nis || !nik) {
+      throw new Error("Invalid data format");
+    }
+  
+    // Validasi gender agar sesuai dengan enum di Prisma
+    const validGenders = ["Male", "Female"];
+    if (!validGenders.includes(gender)) {
+      throw new Error("Invalid gender value");
+    }
+  
+    // Validasi familiesId jika diberikan
+    let family = null;
+    if (familiesId) {
+      family = await prisma.families.findUnique({ where: { id: String(familiesId) } }); // Pastikan id bertipe string
+      if (!family) {
+        throw new Error("Family ID not found");
+      }
+    }
+  
+    const student = await prisma.students.create({
+      data: {
+        name,
+        nickname,
+        gender,
+        birth_date: new Date(birth_date),
+        birth_place,
+        nis,
+        nik,
+        is_active: is_active ?? true,
+        is_graduated: is_graduated ?? false,
+        familiesId: family ? String(familiesId) : null, // Pastikan id bertipe string
+      },
+    });
+  
+    return student;
+  }
+  
 export async function getStudentRankings(kategori: string) {
   if (!kategori) {
     throw new Error("Kategori harus disertakan dalam query parameter");
