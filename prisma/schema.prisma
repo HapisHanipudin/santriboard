@@ -73,7 +73,6 @@ model Teachers {
   nik       String      @unique
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  user      Users?       @relation(fields: [userId], references: [id])
 
   user      Users?       @relation(fields: [userId], references: [id])
   notes     Notes[]
