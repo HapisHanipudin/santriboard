@@ -12,4 +12,6 @@ interface Student {
   classes: Class[];
 }
 
+type teacherRole = "KADIV" | "ASATIDZ";
+
 type Field = "TAHFIZH" | "IT" | "BAHASA" | "KARAKTER";
