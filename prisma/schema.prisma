@@ -226,6 +226,7 @@ model Students {
   created_at    DateTime  @default(now())
   updated_at    DateTime  @default(now())
 
+  scores    Score[]
   family         Families?        @relation(fields: [familiesId], references: [id])
   grade_students GradeStudents[]
   notes          Notes[]
@@ -236,6 +237,24 @@ model Students {
   classes        StudentClasses[] // Relation to StudentClasses model
   user           Users?           @relation(fields: [userId], references: [id])
 }
+
+model Score {
+  id         String   @id @default(uuid())
+  studentId  String
+  type       ScoreType
+  value      Float
+  date       DateTime @default(now())
+
+  student    Students  @relation(fields: [studentId], references: [id])
+}
+
+enum ScoreType {
+  DAILY_EXAM
+  INITIATIVE
+  WEEKLY_EXAM
+  MONTHLY
+}
+
 
 model Achievements {
   id          String   @id @default(cuid())

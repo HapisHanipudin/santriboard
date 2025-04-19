@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
     const { name, nickname, gender, birth_date, birth_place, nis, nik, is_active, is_graduated, familiesId } = body;
 
     // Menggunakan fungsi modular createStudent
-    const student = await createStudent({
+    const student = await createStudent ({
       name,
       nickname,
       gender,
