@@ -11,9 +11,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum NotificationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
 enum Gender {
-  l
-  p
+  MALE
+  FEMALE
+}
+
+enum ProjectStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  COMPLETED
 }
 
 enum PlanType {
@@ -32,6 +45,7 @@ enum Field {
 
 enum Role {
   ADMIN
+  USER
   TEACHER
   STUDENT
   PARENT
@@ -59,25 +73,44 @@ model Users {
 
 model RefreshToken {
   id        String   @id @default(uuid())
-  token     String   @unique
+  tokenHash String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String
+  revoked   Boolean  @default(false)
   user      Users    @relation(fields: [userId], references: [id])
 }
 
 model Teachers {
-  id        String      @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
-  userId    String?      @unique
-  nik       String      @unique
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  userId    String?  @unique
+  nik       String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user      Users?       @relation(fields: [userId], references: [id])
-  notes     Notes[]
-  divisions TeacherDivisions[]
-  classes   TeacherClasses[]
+  user          Users?             @relation(fields: [userId], references: [id])
+  notes         Notes[]
+  divisions     TeacherDivisions[]
+  classes       TeacherClasses[]
+  notifications Notifications[] // Ditambahkan
+  projects      Projects[] // Ditambahkan
+}
+
+model Notifications {
+  id        String             @id @default(cuid())
+  title     String
+  message   String
+  status    NotificationStatus @default(PENDING)
+  studentId String
+  teacherId String
+  projectId String
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  student Students @relation(fields: [studentId], references: [id])
+  teacher Teachers @relation(fields: [teacherId], references: [id])
+  project Projects @relation(fields: [projectId], references: [id])
 }
 
 model Notes {
@@ -226,7 +259,9 @@ model Students {
   created_at    DateTime  @default(now())
   updated_at    DateTime  @default(now())
 
-  scores    Score[]
+  scores        Score[]
+  notifications Notifications[] // Ditambahkan
+
   family         Families?        @relation(fields: [familiesId], references: [id])
   grade_students GradeStudents[]
   notes          Notes[]
@@ -239,13 +274,13 @@ model Students {
 }
 
 model Score {
-  id         String   @id @default(uuid())
-  studentId  String
-  type       ScoreType
-  value      Float
-  date       DateTime @default(now())
+  id        String    @id @default(uuid())
+  studentId String
+  type      ScoreType
+  value     Float
+  date      DateTime  @default(now())
 
-  student    Students  @relation(fields: [studentId], references: [id])
+  student Students @relation(fields: [studentId], references: [id])
 }
 
 enum ScoreType {
@@ -255,25 +290,31 @@ enum ScoreType {
   MONTHLY
 }
 
-
 model Achievements {
   id          String   @id @default(cuid())
   title       String
   description String
   studentId   String
+  certificateImage String?   
+ certificatePdf   String? 
   createdAt   DateTime @default(now())
 
   student Students @relation(fields: [studentId], references: [id])
 }
 
 model Projects {
-  id          String  @id @default(cuid())
-  title       String
-  description String
-  imageUrl    String?
-  studentId   String
-
-  student Students @relation(fields: [studentId], references: [id])
+  id            String          @id @default(cuid())
+  title         String
+  description   String
+  proposalUrl   String?
+  studentId     String
+  status        ProjectStatus   @default(PENDING)
+  teacherId     String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  notifications Notifications[] 
+  student       Students        @relation(fields: [studentId], references: [id])
+  teacher       Teachers?       @relation(fields: [teacherId], references: [id]) // Diubah menjadi opsional
 }
 
 model Grades {
@@ -320,7 +361,7 @@ model Evaluations {
 }
 
 model StudentClasses {
-  id         String   @id @default(cuid())
+  id String @id @default(cuid())
 
   studentId  String // Hapus @unique untuk relasi banyak ke satu
   classId    String

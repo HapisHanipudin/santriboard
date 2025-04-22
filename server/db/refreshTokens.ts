@@ -1,21 +1,25 @@
+
 import { prisma } from ".";
 
-export const createRefreshToken = (data: any) => {
-  return prisma.refreshToken.create({
+// Fungsi untuk membuat refresh token baru
+export const createRefreshToken = async (data: any) => {
+  return await prisma.refreshToken.create({
     data,
   });
 };
 
-export const getRefreshTokenByToken = (token: string) => {
-  return prisma.refreshToken.findUnique({
+// Fungsi untuk mendapatkan refresh token berdasarkan token yang diberikan
+export const getRefreshTokenByToken = async (token: string) => {
+  return await prisma.refreshToken.findUnique({
     where: {
       token,
     },
   });
 };
 
-export const removeRefreshToken = (token: string | undefined) => {
-  return prisma.refreshToken.delete({
+// Fungsi untuk menghapus refresh token dari database
+export const removeRefreshToken = async (token: string) => {
+  return await prisma.refreshToken.delete({
     where: {
       token,
     },

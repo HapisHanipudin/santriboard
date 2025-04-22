@@ -1,5 +1,5 @@
 import { defineEventHandler, readBody } from "h3";
-import { assignStudentToClass } from "../../db/student";
+import { assignStudentToClass } from "../../db/studentClasses";
 
 export default defineEventHandler(async (event) => {
   try {

@@ -1,5 +1,5 @@
 import { defineEventHandler, getQuery } from "h3";
-import { deleteTeacher } from "../../db/teacher";
+import { deleteTeacher } from "../../../db/teacher";
 
 export default defineEventHandler(async (event) => {
   try {

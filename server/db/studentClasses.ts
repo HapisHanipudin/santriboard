@@ -1,6 +1,6 @@
 import { prisma } from "../db";
 
-export async function createStudentClass(
+export async function assignStudentToClass(
   studentId: string,
   classId: string,
   semesterId: string

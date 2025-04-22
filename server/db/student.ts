@@ -1,43 +1,35 @@
 import { prisma } from ".";
 
+import { Gender } from "@prisma/client";
 
-
-
-export async function assignStudentToClass(studentId: string, classId: string, semesterId: string) {
-  if (!studentId || !classId || !semesterId) {
-    throw new Error("Missing required fields");
-  }
-
-  return await prisma.$transaction(async (tx) => {
-    // Validasi apakah student, class, dan semester ada dalam database
-    await tx.students.findUniqueOrThrow({ where: { id: studentId } });
-    await tx.classes.findUniqueOrThrow({ where: { id: classId } });
-    await tx.semesters.findUniqueOrThrow({ where: { id: semesterId } });
-
-    // Cek apakah sudah ada entri yang sama
-    const existingEntry = await tx.studentClasses.findFirst({
-      where: { studentId, classId, semesterId },
-    });
-
-    if (existingEntry) {
-      throw new Error("Student is already assigned to this class for the given semester.");
-    }
-
-    // Menambahkan siswa ke dalam kelas pada semester tertentu
-    return await tx.studentClasses.create({
-      data: { studentId, classId, semesterId },
-    });
-  });
-}
-
-
-export async function createStudent(studentId: string, data: any) {
-  const { name, nickname, gender, birth_date, birth_place, nis, nik, is_active, is_graduated, familiesId } = data;
+export async function createStudent(data: {
+  name: string;
+  nickname?: string;
+  gender: string;
+  birth_date: string | Date;
+  birth_place: string;
+  nis: string;
+  nik: string;
+  is_active?: boolean;
+  is_graduated?: boolean;
+  familiesId?: string;
+}) {
+  const {
+    name,
+    nickname,
+    gender,
+    birth_date,
+    birth_place,
+    nis,
+    nik,
+    is_active,
+    is_graduated,
+    familiesId,
+  } = data;
 
   if (!name || !gender || !birth_date || !nis || !nik) {
     throw new Error("Invalid data format");
   }
-
 
   // Validasi familiesId jika diberikan
   let family = null;
@@ -48,29 +40,50 @@ export async function createStudent(studentId: string, data: any) {
     }
   }
 
-  const student = await prisma.students.create({
+  return await prisma.students.create({
     data: {
       name,
       nickname,
-      gender,
+      gender: gender.toUpperCase() as Gender,
       birth_date: new Date(birth_date),
       birth_place,
       nis,
       nik,
       is_active: is_active ?? true,
       is_graduated: is_graduated ?? false,
-      familiesId: family ? familiesId : null,
+      familiesId: familiesId, // BUKAN families
     },
   });
-
-  return student;
 }
+
+
+
+export async function getAllStudents() {
+  return await prisma.students.findMany();
+}
+
+export async function deleteStudent(id: string) {
+  return await prisma.students.delete({
+    where: { id },
+  });
+}
+
+export async function updateStudent(id: string, data: any) {
+  return await prisma.students.update({
+    where: { id },
+    data,
+  });
+}
+
+
+/**
+ * Mengambil peringkat berdasarkan kategori (division).
+ */
 export async function getStudentRankings(kategori: string) {
   if (!kategori) {
     throw new Error("Kategori harus disertakan dalam query parameter");
   }
 
-  // Ambil data students berdasarkan kategori beserta evaluations-nya
   const students = await prisma.students.findMany({
     where: {
       classes: {
@@ -97,19 +110,15 @@ export async function getStudentRankings(kategori: string) {
     throw new Error("Tidak ada siswa yang ditemukan untuk kategori ini.");
   }
 
-  // Definisikan bidang yang akan dirangking
   const fields = ["TAHFIZH", "IT", "BAHASA", "KARAKTER"];
 
-  // Inisialisasi rankings dengan tipe yang tepat
   const rankings: Record<string, { name: string; score: number }[]> =
     fields.reduce((acc, field) => {
       acc[field] = [];
       return acc;
     }, {} as Record<string, { name: string; score: number }[]>);
 
-  // Proses setiap student
   students.forEach((student) => {
-    // Hitung skor berdasarkan field
     const scores = student.classes.reduce((acc, c) => {
       const evaluationScores = c.evaluations.reduce((acc2, e) => {
         acc2[e.field] = (acc2[e.field] || 0) + e.score;
@@ -118,13 +127,11 @@ export async function getStudentRankings(kategori: string) {
       return { ...acc, ...evaluationScores };
     }, {} as Record<string, number>);
 
-    // Tambahkan skor ke dalam rankings per field
     fields.forEach((field) => {
       rankings[field].push({ name: student.name, score: scores[field] || 0 });
     });
   });
 
-  // Urutkan rankings berdasarkan skor tertinggi
   fields.forEach((field) => {
     rankings[field].sort((a, b) => b.score - a.score);
   });
@@ -132,11 +139,14 @@ export async function getStudentRankings(kategori: string) {
   return rankings;
 }
 
+/**
+ * Mendapatkan data lengkap satu student.
+ */
 export const getStudents = async (id: string) => {
   return await prisma.students.findUnique({
     where: { id },
     include: {
-      family: true, // Menyertakan relasi keluarga
+      family: true,
       achievements: {
         select: {
           title: true,
@@ -160,10 +170,10 @@ export const getStudents = async (id: string) => {
           },
           class: {
             select: {
-              name: true, // Nama kelas
+              name: true,
               division: {
                 select: {
-                  name: true, // Nama division
+                  name: true,
                 },
               },
             },
