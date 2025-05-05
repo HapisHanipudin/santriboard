@@ -17,6 +17,13 @@ enum NotificationStatus {
   REJECTED
 }
 
+enum Frequency {
+  HARIAN    // Daily
+  MINGGUAN  // Weekly
+  BULANAN   // Monthly
+}
+
+
 enum Gender {
   MALE
   FEMALE
@@ -55,6 +62,12 @@ enum TeacherRole {
   ASATIDZ
   KADIV
 }
+enum Division {
+  TAHFIZH
+  IT
+  BAHASA
+  KARAKTER
+}
 
 model Users {
   id        String   @id @default(cuid())
@@ -82,19 +95,42 @@ model RefreshToken {
 }
 
 model Teachers {
-  id        String   @id @default(cuid())
-  name      String
-  userId    String?  @unique
-  nik       String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String                @id @default(cuid())
+  name              String
+  nik               String                @unique
+  userId            String?               @unique
+  divisions         Division[]            @default([])
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
 
-  user          Users?             @relation(fields: [userId], references: [id])
-  notes         Notes[]
-  divisions     TeacherDivisions[]
-  classes       TeacherClasses[]
-  notifications Notifications[] // Ditambahkan
-  projects      Projects[] // Ditambahkan
+  // <-- tambahkan ini (atau ganti nama field lama)
+  teacherDivisions  TeacherDivisions[]    
+
+  user              Users?                @relation(fields: [userId], references: [id])
+  assessments            assessment[]
+  notes             Notes[]
+  classes           TeacherClasses[]
+  notifications     Notifications[]
+  projects          Projects[]
+}
+
+
+model assessment {
+  id          Int        @id @default(autoincrement())
+  studentId   String
+  teacherId   String
+  frequency   Frequency
+  division    Division
+  score       Float
+  note        String?    
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  student     Students   @relation(fields: [studentId], references: [id])
+  teacher     Teachers   @relation(fields: [teacherId], references: [id])
+
+  @@index([studentId, frequency])
+  @@index([teacherId])
 }
 
 model Notifications {
@@ -103,107 +139,112 @@ model Notifications {
   message   String
   status    NotificationStatus @default(PENDING)
   studentId String
-  teacherId String
-  projectId String
+  teacherId String?
+  projectId String?
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
 
   student Students @relation(fields: [studentId], references: [id])
-  teacher Teachers @relation(fields: [teacherId], references: [id])
-  project Projects @relation(fields: [projectId], references: [id])
+  teacher Teachers? @relation(fields: [teacherId], references: [id])
+  project Projects? @relation(fields: [projectId], references: [id])
 }
 
 model Notes {
   id         String   @id @default(cuid())
-  student_id String
-  teacher_id String
-  notes      String?
-  type       Boolean
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
+  studentId  String
+  teacherId  String
+  note       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  student Students @relation(fields: [student_id], references: [id])
-  teacher Teachers @relation(fields: [teacher_id], references: [id])
+  student    Students @relation(fields: [studentId], references: [id])
+  teacher    Teachers @relation(fields: [teacherId], references: [id])
 }
 
 model Behaviors {
-  id         String  @id @default(cuid())
-  student_id String
-  value      Int
-  type       String?
-
-  student Students @relation(fields: [student_id], references: [id])
-}
-
-model Plans {
   id         String   @id @default(cuid())
-  student_id String
-  title      String
-  created_at DateTime
-  updated_at DateTime
+  studentId  String
+  type       String?
+  value      Int
 
-  plan_details PlanDetails[]
-  student      Students      @relation(fields: [student_id], references: [id])
+  student    Students @relation(fields: [studentId], references: [id])
 }
+
+// Plans and details
+model Plans {
+  id         String       @id @default(cuid())
+  studentId  String
+  title      String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  student      Students      @relation(fields: [studentId], references: [id])
+  planDetails  PlanDetails[] @relation("PlanToDetails")
+}
+
 
 model PlanDetails {
-  id         String   @id @default(cuid())
-  plan_id    String
+  id         String    @id @default(cuid())
+  planId     String
   type       PlanType
   content    String
-  created_at DateTime
-  updated_at DateTime
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
-  plan Plans @relation(fields: [plan_id], references: [id])
+  plan       Plans     @relation(fields: [planId], references: [id], name: "PlanToDetails")
 }
 
 model Divisions {
-  id        String   @id @default(cuid())
+  id        String               @id @default(cuid())
   name      Field
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
 
-  classes  Classes[]
-  teachers TeacherDivisions[]
+  // relasi ke 
+  classes           Classes[]             
+  teacherDivisions  TeacherDivisions[]   
 }
 
 model TeacherDivisions {
-  id         String      @id @default(cuid())
-  teacherId  String
-  divisionId String
-  role       TeacherRole @default(ASATIDZ)
-  createdAt  DateTime    @default(now())
+  id          String      @id @default(cuid())
+  teacherId   String
+  divisionId  String
+  role        TeacherRole @default(ASATIDZ)
+  createdAt   DateTime    @default(now())
 
-  teacher  Teachers  @relation(fields: [teacherId], references: [id])
-  division Divisions @relation(fields: [divisionId], references: [id])
+  teacher     Teachers    @relation(fields: [teacherId], references: [id])
+  division    Divisions   @relation(fields: [divisionId], references: [id])
 
   @@unique([teacherId, divisionId])
 }
 
+// Classes
 model Classes {
   id         String    @id @default(cuid())
   name       String
+
   divisionId String
   division   Divisions @relation(fields: [divisionId], references: [id])
+
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
-  teachers TeacherClasses[]
-  students StudentClasses[]
+  teachers   TeacherClasses[]
+  students   StudentClasses[]
 }
 
 model TeacherClasses {
   id         String   @id @default(cuid())
-  teacherId  String // Hapus @unique jika banyak ke satu
+  teacherId  String
   classId    String
   semesterId String
   createdAt  DateTime @default(now())
 
-  semester Semesters @relation(fields: [semesterId], references: [id])
-  teacher  Teachers  @relation(fields: [teacherId], references: [id])
-  class    Classes   @relation(fields: [classId], references: [id])
+  teacher    Teachers @relation(fields: [teacherId], references: [id])
+  class      Classes  @relation(fields: [classId], references: [id])
+  semester   Semesters @relation(fields: [semesterId], references: [id])
 
-  @@unique([teacherId, classId])
+  @@unique([teacherId, classId, semesterId])
 }
 
 model Families {
@@ -235,6 +276,8 @@ model Parents {
   family Families? @relation(fields: [familyId], references: [id])
 }
 
+
+
 model Students {
   id            String    @id @default(cuid())
   level         Int?
@@ -259,6 +302,8 @@ model Students {
   created_at    DateTime  @default(now())
   updated_at    DateTime  @default(now())
 
+  user           Users?           @relation(fields: [userId], references: [id])
+  assessments   assessment[]
   scores        Score[]
   notifications Notifications[] // Ditambahkan
 
@@ -270,7 +315,6 @@ model Students {
   achievements   Achievements[] // Relation to achievements
   projects       Projects[] // Relation to projects
   classes        StudentClasses[] // Relation to StudentClasses model
-  user           Users?           @relation(fields: [userId], references: [id])
 }
 
 model Score {
@@ -291,87 +335,91 @@ enum ScoreType {
 }
 
 model Achievements {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  studentId   String
-  certificateImage String?   
- certificatePdf   String? 
-  createdAt   DateTime @default(now())
+  id                String   @id @default(cuid())
+  title             String
+  description       String
+  certificateImage  String?
+  certificatePdf    String?
+  studentId         String
+  createdAt         DateTime @default(now())
 
-  student Students @relation(fields: [studentId], references: [id])
+  student            Students @relation(fields: [studentId], references: [id])
 }
 
 model Projects {
   id            String          @id @default(cuid())
   title         String
   description   String
+    imageUrl    String? // Pastikan ada kolom ini
   proposalUrl   String?
   studentId     String
-  status        ProjectStatus   @default(PENDING)
   teacherId     String?
+  status        ProjectStatus   @default(PENDING)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
-  notifications Notifications[] 
+
   student       Students        @relation(fields: [studentId], references: [id])
-  teacher       Teachers?       @relation(fields: [teacherId], references: [id]) // Diubah menjadi opsional
+  teacher       Teachers?       @relation(fields: [teacherId], references: [id])
+  notifications Notifications[]
 }
-
 model Grades {
-  id    String  @id @default(cuid())
-  grade String
-  type  String?
+  id            String  @id @default(cuid())
+  grade         String
+  type          String?
 
-  grade_students GradeStudents[]
+  gradeStudents GradeStudents[]
 
   @@unique([grade, type])
 }
 
 model Semesters {
-  id       String @id @default(cuid())
-  semester Int
-  period   String
+  id              String            @id @default(cuid())
+  semester        Int
+  period          String
 
-  Teacher_Classes TeacherClasses[]
-  grade_students  GradeStudents[]
-  classes_student StudentClasses[] // Relation to
+  teacherClasses  TeacherClasses[]
+  gradeStudents   GradeStudents[]
+  studentClasses  StudentClasses[]
 
   @@unique([semester, period])
 }
 
 model GradeStudents {
-  id          String @id @default(cuid())
-  student_id  String
-  grade_id    String
-  semester_id String
+  id          String    @id @default(cuid())
+  studentId   String
+  gradeId     String
+  semesterId  String
 
-  student  Students  @relation(fields: [student_id], references: [id])
-  grade    Grades    @relation(fields: [grade_id], references: [id])
-  semester Semesters @relation(fields: [semester_id], references: [id])
+  student    Students   @relation(fields: [studentId], references: [id])
+  grade      Grades     @relation(fields: [gradeId], references: [id])
+  semester   Semesters  @relation(fields: [semesterId], references: [id])
 
-  @@unique([student_id, grade_id, semester_id])
+  @@unique([studentId, gradeId, semesterId])
 }
+
 
 model Evaluations {
-  id               String         @id @default(cuid())
-  field            Field
+  id               String           @id @default(cuid())
+  studentClassesId String
+  field            Division
   score            Int
-  studentClassesId String // Hapus @unique jika banyak ke satu
-  student          StudentClasses @relation(fields: [studentClassesId], references: [id])
+
+  studentClass    StudentClasses   @relation(fields: [studentClassesId], references: [id])
 }
 
-model StudentClasses {
-  id String @id @default(cuid())
 
-  studentId  String // Hapus @unique untuk relasi banyak ke satu
+
+model StudentClasses {
+  id         String    @id @default(cuid())
+  studentId  String
   classId    String
   semesterId String
-  createdAt  DateTime @default(now())
+  createdAt  DateTime  @default(now())
 
-  semester    Semesters     @relation(fields: [semesterId], references: [id])
-  student     Students      @relation(fields: [studentId], references: [id])
-  class       Classes       @relation(fields: [classId], references: [id])
+  student    Students   @relation(fields: [studentId], references: [id])
+  class      Classes    @relation(fields: [classId], references: [id])
+  semester   Semesters  @relation(fields: [semesterId], references: [id])
   evaluations Evaluations[]
 
-  @@unique([studentId, classId])
+  @@unique([studentId, classId, semesterId])
 }

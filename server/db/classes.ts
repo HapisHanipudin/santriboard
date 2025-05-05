@@ -1,4 +1,6 @@
 import { prisma } from '../db';
+import { Division, Frequency,Field  } from '@prisma/client';
+
 
 export async function getAllClasses() {
   return prisma.classes.findMany({
@@ -16,6 +18,43 @@ export async function getClassById(id: string) {
     }
   });
 }
+
+export async function getClassesByTeacher(
+  teacherId: string,
+  semesterId: string
+) {
+  return prisma.classes.findMany({
+    where: {
+      teachers: {
+        some: {
+          teacherId,
+          semesterId,
+        },
+      },
+      division: {
+        name: Field.TAHFIZH, // enum Field, sesuai Divisions.name
+      },
+    },
+    include: {
+      division: true,
+      teachers: { include: { teacher: true } },
+      students: {
+        include: {
+          student: {
+            include: {
+              assessments: {
+                where: { frequency: Frequency.HARIAN },
+                orderBy: { createdAt: 'desc' },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+
 
 export async function createClass(data: { name: string; divisionId: string }) {
   return prisma.classes.create({ data });

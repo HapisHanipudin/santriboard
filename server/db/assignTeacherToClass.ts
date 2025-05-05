@@ -13,13 +13,21 @@ export async function assignTeacherToClass(
 
 
 export async function removeTeacherFromClass(
-    classId: string,
-    teacherId: string
-  ) {
-    return await prisma.teacherClasses.delete({
-      where: { teacherId_classId: { classId, teacherId } }
-    });
-  }
+  classId: string,
+  teacherId: string,
+  semesterId: string
+) {
+  return await prisma.teacherClasses.delete({
+    where: {
+      teacherId_classId_semesterId: {
+        classId,
+        teacherId,
+        semesterId
+      }
+    }
+  });
+}
+
 
 
 export async function updateTeacherClassAssignment(
@@ -28,10 +36,17 @@ export async function updateTeacherClassAssignment(
   semesterId: string
 ) {
   return await prisma.teacherClasses.update({
-    where: { teacherId_classId: { classId, teacherId } },
-    data: { semesterId }
+    where: {
+      teacherId_classId_semesterId: {
+        classId,
+        teacherId,
+        semesterId
+      }
+    },
+    data: { semesterId } // Atau field lain kalau semesterId gak berubah
   });
 }
+
 
 
 export async function getTeachersByClass(
