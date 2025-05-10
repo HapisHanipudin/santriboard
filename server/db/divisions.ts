@@ -1,7 +1,7 @@
 import { prisma } from ".";
 
 export const getLeaderboardByDivision = async (plp: string) => {
-  return await prisma.divisions.findMany({
+  return await prisma.divisions.findUnique({
     where: {
       id: plp,
     },

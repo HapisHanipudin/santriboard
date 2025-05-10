@@ -18,63 +18,96 @@ Table Users {
 
 Table RefreshToken {
   id String [pk]
-  token String [unique, not null]
+  tokenHash String [unique, not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   userId String [not null]
+  revoked Boolean [not null, default: false]
   user Users [not null]
 }
 
 Table Teachers {
   id String [pk]
   name String [not null]
-  userId String [unique]
   nik String [unique, not null]
+  userId String [unique]
+  divisions Division[] [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  teacherDivisions TeacherDivisions [not null]
   user Users
+  assessments assessment [not null]
   notes Notes [not null]
-  divisions TeacherDivisions [not null]
   classes TeacherClasses [not null]
+  notifications Notifications [not null]
+  projects Projects [not null]
+}
+
+Table assessment {
+  id Int [pk, increment]
+  studentId String [not null]
+  teacherId String [not null]
+  frequency Frequency [not null]
+  division Division [not null]
+  score Float [not null]
+  note String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  student Students [not null]
+  teacher Teachers [not null]
+}
+
+Table Notifications {
+  id String [pk]
+  title String [not null]
+  message String [not null]
+  status NotificationStatus [not null, default: 'PENDING']
+  studentId String [not null]
+  teacherId String
+  projectId String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  student Students [not null]
+  teacher Teachers
+  project Projects
 }
 
 Table Notes {
   id String [pk]
-  student_id String [not null]
-  teacher_id String [not null]
-  notes String
-  type Boolean [not null]
-  created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [default: `now()`, not null]
+  studentId String [not null]
+  teacherId String [not null]
+  note String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
   student Students [not null]
   teacher Teachers [not null]
 }
 
 Table Behaviors {
   id String [pk]
-  student_id String [not null]
-  value Int [not null]
+  studentId String [not null]
   type String
+  value Int [not null]
   student Students [not null]
 }
 
 Table Plans {
   id String [pk]
-  student_id String [not null]
+  studentId String [not null]
   title String [not null]
-  created_at DateTime [not null]
-  updated_at DateTime [not null]
-  plan_details PlanDetails [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
   student Students [not null]
+  planDetails PlanDetails [not null]
 }
 
 Table PlanDetails {
   id String [pk]
-  plan_id String [not null]
+  planId String [not null]
   type PlanType [not null]
   content String [not null]
-  created_at DateTime [not null]
-  updated_at DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
   plan Plans [not null]
 }
 
@@ -84,7 +117,7 @@ Table Divisions {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   classes Classes [not null]
-  teachers TeacherDivisions [not null]
+  teacherDivisions TeacherDivisions [not null]
 }
 
 Table TeacherDivisions {
@@ -118,12 +151,12 @@ Table TeacherClasses {
   classId String [not null]
   semesterId String [not null]
   createdAt DateTime [default: `now()`, not null]
-  semester Semesters [not null]
   teacher Teachers [not null]
   class Classes [not null]
+  semester Semesters [not null]
 
   indexes {
-    (teacherId, classId) [unique]
+    (teacherId, classId, semesterId) [unique]
   }
 }
 
@@ -177,6 +210,10 @@ Table Students {
   userId String [unique]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [default: `now()`, not null]
+  user Users
+  assessments assessment [not null]
+  scores Score [not null]
+  notifications Notifications [not null]
   family Families
   grade_students GradeStudents [not null]
   notes Notes [not null]
@@ -185,13 +222,23 @@ Table Students {
   achievements Achievements [not null]
   projects Projects [not null]
   classes StudentClasses [not null]
-  user Users
+}
+
+Table Score {
+  id String [pk]
+  studentId String [not null]
+  type ScoreType [not null]
+  value Float [not null]
+  date DateTime [default: `now()`, not null]
+  student Students [not null]
 }
 
 Table Achievements {
   id String [pk]
   title String [not null]
   description String [not null]
+  certificateImage String
+  certificatePdf String
   studentId String [not null]
   createdAt DateTime [default: `now()`, not null]
   student Students [not null]
@@ -202,15 +249,22 @@ Table Projects {
   title String [not null]
   description String [not null]
   imageUrl String
+  proposalUrl String
   studentId String [not null]
+  teacherId String
+  status ProjectStatus [not null, default: 'PENDING']
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
   student Students [not null]
+  teacher Teachers
+  notifications Notifications [not null]
 }
 
 Table Grades {
   id String [pk]
   grade String [not null]
   type String
-  grade_students GradeStudents [not null]
+  gradeStudents GradeStudents [not null]
 
   indexes {
     (grade, type) [unique]
@@ -221,9 +275,9 @@ Table Semesters {
   id String [pk]
   semester Int [not null]
   period String [not null]
-  Teacher_Classes TeacherClasses [not null]
-  grade_students GradeStudents [not null]
-  classes_student StudentClasses [not null]
+  teacherClasses TeacherClasses [not null]
+  gradeStudents GradeStudents [not null]
+  studentClasses StudentClasses [not null]
 
   indexes {
     (semester, period) [unique]
@@ -232,24 +286,24 @@ Table Semesters {
 
 Table GradeStudents {
   id String [pk]
-  student_id String [not null]
-  grade_id String [not null]
-  semester_id String [not null]
+  studentId String [not null]
+  gradeId String [not null]
+  semesterId String [not null]
   student Students [not null]
   grade Grades [not null]
   semester Semesters [not null]
 
   indexes {
-    (student_id, grade_id, semester_id) [unique]
+    (studentId, gradeId, semesterId) [unique]
   }
 }
 
 Table Evaluations {
   id String [pk]
-  field Field [not null]
-  score Int [not null]
   studentClassesId String [not null]
-  student StudentClasses [not null]
+  field Division [not null]
+  score Int [not null]
+  studentClass StudentClasses [not null]
 }
 
 Table StudentClasses {
@@ -258,19 +312,38 @@ Table StudentClasses {
   classId String [not null]
   semesterId String [not null]
   createdAt DateTime [default: `now()`, not null]
-  semester Semesters [not null]
   student Students [not null]
   class Classes [not null]
+  semester Semesters [not null]
   evaluations Evaluations [not null]
 
   indexes {
-    (studentId, classId) [unique]
+    (studentId, classId, semesterId) [unique]
   }
 }
 
+Enum NotificationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+Enum Frequency {
+  HARIAN
+  MINGGUAN
+  BULANAN
+}
+
 Enum Gender {
-  l
-  p
+  MALE
+  FEMALE
+}
+
+Enum ProjectStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  COMPLETED
 }
 
 Enum PlanType {
@@ -289,6 +362,7 @@ Enum Field {
 
 Enum Role {
   ADMIN
+  USER
   TEACHER
   STUDENT
   PARENT
@@ -299,19 +373,43 @@ Enum TeacherRole {
   KADIV
 }
 
+Enum Division {
+  TAHFIZH
+  IT
+  BAHASA
+  KARAKTER
+}
+
+Enum ScoreType {
+  DAILY_EXAM
+  INITIATIVE
+  WEEKLY_EXAM
+  MONTHLY
+}
+
 Ref: RefreshToken.userId > Users.id
 
 Ref: Teachers.userId - Users.id
 
-Ref: Notes.student_id > Students.id
+Ref: assessment.studentId > Students.id
 
-Ref: Notes.teacher_id > Teachers.id
+Ref: assessment.teacherId > Teachers.id
 
-Ref: Behaviors.student_id > Students.id
+Ref: Notifications.studentId > Students.id
 
-Ref: Plans.student_id > Students.id
+Ref: Notifications.teacherId > Teachers.id
 
-Ref: PlanDetails.plan_id > Plans.id
+Ref: Notifications.projectId > Projects.id
+
+Ref: Notes.studentId > Students.id
+
+Ref: Notes.teacherId > Teachers.id
+
+Ref: Behaviors.studentId > Students.id
+
+Ref: Plans.studentId > Students.id
+
+Ref: PlanDetails.planId > Plans.id
 
 Ref: TeacherDivisions.teacherId > Teachers.id
 
@@ -319,34 +417,38 @@ Ref: TeacherDivisions.divisionId > Divisions.id
 
 Ref: Classes.divisionId > Divisions.id
 
-Ref: TeacherClasses.semesterId > Semesters.id
-
 Ref: TeacherClasses.teacherId > Teachers.id
 
 Ref: TeacherClasses.classId > Classes.id
+
+Ref: TeacherClasses.semesterId > Semesters.id
 
 Ref: Parents.userId - Users.id
 
 Ref: Parents.familyId > Families.id
 
+Ref: Students.userId - Users.id
+
 Ref: Students.familiesId > Families.id
 
-Ref: Students.userId - Users.id
+Ref: Score.studentId > Students.id
 
 Ref: Achievements.studentId > Students.id
 
 Ref: Projects.studentId > Students.id
 
-Ref: GradeStudents.student_id > Students.id
+Ref: Projects.teacherId > Teachers.id
 
-Ref: GradeStudents.grade_id > Grades.id
+Ref: GradeStudents.studentId > Students.id
 
-Ref: GradeStudents.semester_id > Semesters.id
+Ref: GradeStudents.gradeId > Grades.id
+
+Ref: GradeStudents.semesterId > Semesters.id
 
 Ref: Evaluations.studentClassesId > StudentClasses.id
-
-Ref: StudentClasses.semesterId > Semesters.id
 
 Ref: StudentClasses.studentId > Students.id
 
 Ref: StudentClasses.classId > Classes.id
+
+Ref: StudentClasses.semesterId > Semesters.id
