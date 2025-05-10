@@ -1,5 +1,5 @@
 import { defineEventHandler, readBody } from "h3";
-import { createTeacher } from "../../db/teacher";
+import { createTeacher } from "../../../db/teacher";
 
 export default defineEventHandler(async (event) => {
   try {

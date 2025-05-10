@@ -1,14 +1,11 @@
 import { defineEventHandler, readBody } from "h3";
-import { createStudent } from "../../db/student";
+import { createStudent } from "../../../db/student";
 
 export default defineEventHandler(async (event) => {
   try {
-    // Membaca data dari request body
     const body = await readBody(event);
-    const { name, nickname, gender, birth_date, birth_place, nis, nik, is_active, is_graduated, familiesId } = body;
 
-    // Menggunakan fungsi modular createStudent
-    const student = await createStudent({
+    const {
       name,
       nickname,
       gender,
@@ -19,6 +16,19 @@ export default defineEventHandler(async (event) => {
       is_active,
       is_graduated,
       familiesId,
+    } = body;
+
+    const student = await createStudent({
+      name,
+      nickname,
+      gender,
+      birth_date,
+      birth_place,
+      nis,
+      nik,
+      is_active,
+      is_graduated,
+      familiesId, // akan diolah di fungsi createStudent
     });
 
     return {
@@ -26,6 +36,8 @@ export default defineEventHandler(async (event) => {
       student,
     };
   } catch (error) {
-    return { error: error instanceof Error ? error.message : "Unknown error" };
+    return {
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 });
