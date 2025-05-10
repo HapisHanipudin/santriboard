@@ -17,8 +17,8 @@
 <script lang="ts" setup>
 const newClass = ref({
   name: "",
-  divisions: "TAHFIZH",
-} as { name: string; divisions: Field });
+  division: "TAHFIZH",
+} as { name: string; division: Field });
 
 const divisions = ref([
   { value: "TAHFIZH", label: "Tahfizh" },
