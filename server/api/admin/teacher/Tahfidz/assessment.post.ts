@@ -11,12 +11,6 @@ export default defineEventHandler(async (event) => {
 
   // Calculate score: 100 minus mistakes, min 0
   let score = Math.max(0, 100 - mistakes);
-  const record = await createDailyassessment(
-    studentId,
-    teacherId,
-    Division.TAHFIZH,
-    score,
-    mistakes > 0 ? `Mistakes: ${mistakes}` : undefined
-  );
+  const record = await createDailyassessment(studentId, teacherId, Division.TAHFIZH, score, mistakes > 0 ? `Mistakes: ${mistakes}` : undefined);
   return record;
 });

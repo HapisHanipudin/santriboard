@@ -3,7 +3,6 @@ import { prisma } from "../db";
 
 import bcrypt from "bcrypt";
 
-
 export async function getUserByIdV2(id: string) {
   return prisma.users.findUnique({
     where: { id },
@@ -14,7 +13,7 @@ export async function getUserByIdV2(id: string) {
       type: true,
       createdAt: true,
       updatedAt: true,
-    }
+    },
   });
 }
 
@@ -30,22 +29,19 @@ export async function getUsersv2(role?: Role) {
       createdAt: true,
       updatedAt: true,
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
   });
 }
 
-export interface UpdateUserPayload { 
-  username?: string; 
+export interface UpdateUserPayload {
+  username?: string;
   password?: string;
   email?: string;
 
   type?: Role;
 }
 
-export async function updateUserById(
-  id: string,
-  data: UpdateUserPayload
-) {
+export async function updateUserById(id: string, data: UpdateUserPayload) {
   const updateData: Partial<UpdateUserPayload> = {};
 
   if (data.username) updateData.username = data.username;
@@ -66,10 +62,9 @@ export async function updateUserById(
       username: true,
       type: true,
       updatedAt: true,
-    }
+    },
   });
 }
-
 
 export const createUser = async (data: any) => {
   const finalData = {
@@ -117,5 +112,8 @@ export const updateUser = async (id: string, data: any) => {
 };
 
 export const getUserByIdV1 = (id: string) => {
+  return prisma.users.findUnique({ where: { id } });
+};
+export const getUserById = (id: string) => {
   return prisma.users.findUnique({ where: { id } });
 };
