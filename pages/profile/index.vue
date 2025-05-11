@@ -4,6 +4,7 @@
   </div>
 </template>
 
+
 <script lang="ts" setup>
 const student = ref({
   id: 1,
@@ -23,5 +24,6 @@ const student = ref({
   ],
 });
 </script>
+
 
 <style></style>

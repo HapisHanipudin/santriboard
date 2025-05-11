@@ -1,21 +1,30 @@
 <template>
   <div class="flex flex-col gap-4">
-    <div class="grid grid-cols-3 gap-8 pb-16 px-12">
+    <div class="grid max-md:grid-cols-1 max-md:grid-rows-3 justify-center md:grid-cols-3 gap-8 pb-16 px-12">
       <div
-        v-for="student in [leaderboard[1], leaderboard[0], leaderboard[2]]"
-        :class="{ 'scale-110': getIndexInLeaderboard(student) === 0, 'translate-y-16': getIndexInLeaderboard(student) > 0, 'translate-y-10': getIndexInLeaderboard(student) === 0 }"
-        class="flex flex-col items-center gap-3"
+        v-for="student in leaderboard.slice(0, 3)"
+        :class="{
+          'md:scale-110 md:col-start-2 md:translate-y-10': getIndexInLeaderboard(student) === 0,
+          'md:translate-y-16': getIndexInLeaderboard(student) > 0,
+          'md:col-start-1 md:row-start-1': getIndexInLeaderboard(student) === 1,
+          'md:col-start-3 md:row-start-1': getIndexInLeaderboard(student) === 2,
+        }"
+        class="flex md:flex-col items-center gap-3 justify-center"
       >
-        <div class="flex flex-col items-center gap-2">
+        <div class="flex flex-col items-center gap-2 max-md:w-1/3">
           <div class="w-36 h-36 rounded-4xl bg-[#3E62FE]">
             <img class="w-full h-full object-cover object-top rounded-4xl" :src="student.image" :alt="student.nama" />
           </div>
-          <div class="flex flex-col items-center">
-            <span class="text-lg font-bold">{{ student.nama }}</span>
-            <span class="text-lg text-gray-400">{{ student.kelas }} {{ props.title === "tahfizh" || props.title === "it" ? " | " : "" }} {{ props.title === "tahfizh" ? student.halaqah : props.title === "it" ? student.it : "" }}</span>
+          <div class="flex flex-col items-center w-full">
+            <span class="text-lg font-bold text-center w-full">{{ student.nama }}</span>
+            <span class="text-lg text-gray-400 text-center"
+              >{{ student.kelas }} {{ props.title === "tahfizh" || props.title === "it" ? " | " : "" }} {{ props.title === "tahfizh" ? student.halaqah : props.title === "it" ? student.it : "" }}</span
+            >
           </div>
         </div>
-        <div class="flex items-center justify-center flex-col bg-gradient-to-tr to-[#191B2A] from-[#111111] from-10% via-85% to-95% rounded-t-4xl rounded-b-lg w-3/4 aspect-square">
+        <div
+          class="flex items-center justify-center flex-col bg-gradient-to-tr to-[#191B2A] from-[#111111] from-10% via-85% to-95% md:rounded-t-4xl max-md:rounded-r-4xl max-md:rounded-l-lg md:rounded-b-lg w-44 md:w-48 lg:w-44 xl:w-60 aspect-square"
+        >
           <img class="w-12" v-if="getIndexInLeaderboard(student) === 0" src="~/assets/images/leaderboard/gold.png" alt="" />
           <img class="w-12" v-else-if="getIndexInLeaderboard(student) === 1" src="~/assets/images/leaderboard/silver.png" alt="" />
           <img class="w-12" v-else src="~/assets/images/leaderboard/bronze.png" alt="" />
