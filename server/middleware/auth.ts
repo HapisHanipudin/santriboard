@@ -11,13 +11,18 @@ interface Endpoint {
 
 export default defineEventHandler(async (event: any) => {
   const endpoints: Endpoint[] = [];
+  const needTeacher: Endpoint[] = [];
 
-  const isHandled = endpoints.some(({ method, endpoint }) => {
-    const pattern = new UrlPattern(endpoint);
+  const isHandled = [...endpoints, ...needTeacher].some(
+    ({ method, endpoint }) => {
+      const pattern = new UrlPattern(endpoint);
 
-    // Cek apakah URL dan metode HTTP sesuai
-    return pattern.match(event.node.req.url) && event.node.req.method === method;
-  });
+      // Cek apakah URL dan metode HTTP sesuai
+      return (
+        pattern.match(event.node.req.url) && event.node.req.method === method
+      );
+    }
+  );
 
   if (!isHandled) {
     return;

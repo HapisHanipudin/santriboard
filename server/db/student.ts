@@ -2,6 +2,7 @@ import { prisma } from ".";
 
 import { Gender } from "@prisma/client";
 
+
 export async function createStudent(data: {
   name: string;
   nickname?: string;
@@ -9,7 +10,6 @@ export async function createStudent(data: {
   birth_date: string | Date;
   birth_place: string;
   nis: string;
-  nik: string;
   is_active?: boolean;
   is_graduated?: boolean;
   familiesId?: string;
@@ -21,14 +21,24 @@ export async function createStudent(data: {
     birth_date,
     birth_place,
     nis,
-    nik,
     is_active,
     is_graduated,
     familiesId,
   } = data;
 
-  if (!name || !gender || !birth_date || !nis || !nik) {
+  // Validasi data wajib
+  if (!name || !gender || !birth_date || !nis) {
     throw new Error("Invalid data format");
+  }
+
+  // Validasi gender untuk memastikan hanya 'L' atau 'P'
+  let genderEnum: Gender;
+  if (gender === 'L') {
+    genderEnum = Gender.L;
+  } else if (gender === 'P') {
+    genderEnum = Gender.P;
+  } else {
+    throw new Error("Invalid gender, must be 'L' or 'P'");
   }
 
   // Validasi familiesId jika diberikan
@@ -40,22 +50,21 @@ export async function createStudent(data: {
     }
   }
 
+  // Buat data student
   return await prisma.students.create({
     data: {
       name,
       nickname,
-      gender: gender.toUpperCase() as Gender,
+      gender: genderEnum, // Gunakan gender enum yang sudah valid
       birth_date: new Date(birth_date),
       birth_place,
       nis,
-      nik,
       is_active: is_active ?? true,
       is_graduated: is_graduated ?? false,
-      familiesId: familiesId, // BUKAN families
+      familiesId, // Jika ada, set familiesId
     },
   });
 }
-
 
 
 export async function getAllStudents() {
