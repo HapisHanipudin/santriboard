@@ -11,17 +11,26 @@ export default defineEventHandler(async (event) => {
   const { username, password } = body;
 
   if (!username || !password) {
-    return sendError(event, createError({ statusCode: 400, statusMessage: "Invalid Params" }));
+    return sendError(
+      event,
+      createError({ statusCode: 400, statusMessage: "Invalid Params" })
+    );
   }
 
   const user = await getUserByUsername(username);
   if (!user) {
-    return sendError(event, createError({ statusCode: 404, statusMessage: "User Not Found" }));
+    return sendError(
+      event,
+      createError({ statusCode: 404, statusMessage: "User Not Found" })
+    );
   }
 
   const passwordMatch = await bcrypt.compare(password, user.password);
   if (!passwordMatch) {
-    return sendError(event, createError({ statusCode: 401, statusMessage: "Invalid Password" }));
+    return sendError(
+      event,
+      createError({ statusCode: 401, statusMessage: "Invalid Password" })
+    );
   }
 
   // 🔐 Generate access + refresh token
@@ -30,7 +39,7 @@ export default defineEventHandler(async (event) => {
   // 🔐 Simpan hash refresh token
   const hashedToken = hashToken(refreshToken);
   await createRefreshToken({
-    token: hashedToken,
+    tokenHash: hashedToken,
     userId: user.id,
   });
 

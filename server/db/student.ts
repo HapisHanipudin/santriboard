@@ -31,12 +31,21 @@ export async function createStudent(data: {
     throw new Error("Invalid data format");
   }
 
+  // Cek apakah NIS sudah ada
+  const existingStudent = await prisma.students.findUnique({
+    where: { nis }
+  });
+
+  if (existingStudent) {
+    throw new Error("NIS sudah ada. Harap gunakan NIS yang Belum Terdaftar.");
+  }
+
   // Validasi gender untuk memastikan hanya 'L' atau 'P'
   let genderEnum: Gender;
   if (gender === 'L') {
-    genderEnum = Gender.L;
+    genderEnum = Gender.L;  // L berarti Male
   } else if (gender === 'P') {
-    genderEnum = Gender.P;
+    genderEnum = Gender.p;  // P berarti Female
   } else {
     throw new Error("Invalid gender, must be 'L' or 'P'");
   }
@@ -55,16 +64,17 @@ export async function createStudent(data: {
     data: {
       name,
       nickname,
-      gender: genderEnum, // Gunakan gender enum yang sudah valid
+      gender: genderEnum,  // Gunakan gender enum yang sudah valid
       birth_date: new Date(birth_date),
       birth_place,
       nis,
       is_active: is_active ?? true,
       is_graduated: is_graduated ?? false,
-      familiesId, // Jika ada, set familiesId
+      familiesId,  // Jika ada, set familiesId
     },
   });
 }
+
 
 
 export async function getAllStudents() {
@@ -78,11 +88,35 @@ export async function deleteStudent(id: string) {
 }
 
 export async function updateStudent(id: string, data: any) {
+  const updatedData = { ...data };
+
+  // Larang update NIS
+  if ('nis' in updatedData) {
+    delete updatedData.nis;
+  }
+
+  // Konversi gender jika ada
+  if (updatedData.gender) {
+    if (updatedData.gender === 'L') {
+      updatedData.gender = Gender.L;
+    } else if (updatedData.gender === 'P') {
+      updatedData.gender = Gender.p;
+    } else {
+      throw new Error("Invalid gender value. Must be 'L' or 'P'.");
+    }
+  }
+
+  // Konversi birth_date jika perlu
+  if (updatedData.birth_date) {
+    updatedData.birth_date = new Date(updatedData.birth_date);
+  }
+
   return await prisma.students.update({
     where: { id },
-    data,
+    data: updatedData,
   });
 }
+
 
 
 /**

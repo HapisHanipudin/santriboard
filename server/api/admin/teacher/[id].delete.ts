@@ -3,8 +3,7 @@ import { deleteTeacher } from "../../../db/teacher";
 
 export default defineEventHandler(async (event) => {
   try {
-    const query = getQuery(event);
-    const id = String(query.id); // Konversi ke string
+    const { id } = getRouterParams(event);
 
     if (!id) {
       throw new Error("Teacher ID is required");

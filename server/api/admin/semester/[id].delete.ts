@@ -1,8 +1,8 @@
-import { defineEventHandler, getQuery } from 'h3';
-import { deleteSemester } from '../../../db/semester';
+import { defineEventHandler, getQuery } from "h3";
+import { deleteSemester } from "../../../db/semester";
 
 export default defineEventHandler(async (event) => {
-  const { id } = getQuery(event);
+  const { id } = getRouterParams(event);
   await deleteSemester(String(id));
-  return { message: 'Semester deleted' };
+  return { message: "Semester deleted" };
 });

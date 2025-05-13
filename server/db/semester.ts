@@ -14,6 +14,7 @@ export async function getSemesters() {
     return prisma.semesters.create({ data });
   }
   
+
   export async function updateSemester(
     id: string,
     data: Partial<{ semester: number; period: string }>
