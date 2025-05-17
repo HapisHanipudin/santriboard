@@ -3,10 +3,42 @@ import { Division, Frequency,Field  } from '@prisma/client';
 
 
 export async function getAllClasses() {
-  return prisma.classes.findMany({
-    include: { division: true, teachers: true }
+  const allClasses = await prisma.classes.findMany({
+    include: {
+      division: true,
+      teachers: {
+        include: { teacher: true },
+      },
+    },
+    orderBy: [
+      {
+        division: {
+          name: 'asc',
+        },
+      },
+      {
+        name: 'asc',
+      },
+    ],
   });
+
+  const grouped: Record<string, { division: string; classes: any[] }> = {};
+
+  for (const cls of allClasses) {
+    const divisionName = cls.division?.name || 'Tanpa Divisi';
+    if (!grouped[divisionName]) {
+      grouped[divisionName] = {
+        division: divisionName,
+        classes: [],
+      };
+    }
+    grouped[divisionName].classes.push(cls);
+  }
+
+  // Konversi objek ke array
+  return Object.values(grouped);
 }
+
 
 export async function getClassById(id: string) {
   return prisma.classes.findUnique({
@@ -19,10 +51,7 @@ export async function getClassById(id: string) {
   });
 }
 
-export async function getClassesByTeacher(
-  teacherId: string,
-  semesterId: string
-) {
+export async function getClassesByTeacher(teacherId: string, semesterId: string) {
   return prisma.classes.findMany({
     where: {
       teachers: {
@@ -31,23 +60,13 @@ export async function getClassesByTeacher(
           semesterId,
         },
       },
-      division: {
-        name: Field.TAHFIZH, // enum Field, sesuai Divisions.name
-      },
     },
     include: {
       division: true,
       teachers: { include: { teacher: true } },
       students: {
         include: {
-          student: {
-            include: {
-              assessments: {
-                where: { frequency: Frequency.HARIAN },
-                orderBy: { createdAt: 'desc' },
-              },
-            },
-          },
+          student: true,
         },
       },
     },

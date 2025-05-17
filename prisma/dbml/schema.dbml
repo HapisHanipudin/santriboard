@@ -31,12 +31,10 @@ Table Teachers {
   name String [not null]
   nik String [unique, not null]
   userId String [unique]
-  divisions Division[] [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   teacherDivisions TeacherDivisions [not null]
   user Users
-  assessments assessment [not null]
   notes Notes [not null]
   classes TeacherClasses [not null]
   notifications Notifications [not null]
@@ -45,16 +43,14 @@ Table Teachers {
 
 Table assessment {
   id Int [pk, increment]
-  studentId String [not null]
-  teacherId String [not null]
+  studentClassesId String [not null]
   frequency Frequency [not null]
   division Division [not null]
   score Float [not null]
   note String
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
-  student Students [not null]
-  teacher Teachers [not null]
+  class StudentClasses [not null]
 }
 
 Table Notifications {
@@ -181,7 +177,6 @@ Table Parents {
   userId String [unique, not null]
   familyId String [not null]
   user Users [not null]
-  nik String [unique, not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   family Families
@@ -193,7 +188,6 @@ Table Students {
   Pondok Int
   SekolahPayung String
   familiesId String
-  nik String [unique]
   nis String [unique]
   name String [not null]
   nickname String
@@ -211,8 +205,6 @@ Table Students {
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [default: `now()`, not null]
   user Users
-  assessments assessment [not null]
-  scores Score [not null]
   notifications Notifications [not null]
   family Families
   grade_students GradeStudents [not null]
@@ -226,11 +218,11 @@ Table Students {
 
 Table Score {
   id String [pk]
-  studentId String [not null]
+  studentClassesId String [not null]
   type ScoreType [not null]
   value Float [not null]
   date DateTime [default: `now()`, not null]
-  student Students [not null]
+  class StudentClasses [not null]
 }
 
 Table Achievements {
@@ -315,7 +307,9 @@ Table StudentClasses {
   student Students [not null]
   class Classes [not null]
   semester Semesters [not null]
+  scores Score [not null]
   evaluations Evaluations [not null]
+  assesment assessment [not null]
 
   indexes {
     (studentId, classId, semesterId) [unique]
@@ -335,8 +329,8 @@ Enum Frequency {
 }
 
 Enum Gender {
-  MALE
-  FEMALE
+  p
+  L
 }
 
 Enum ProjectStatus {
@@ -391,9 +385,7 @@ Ref: RefreshToken.userId > Users.id
 
 Ref: Teachers.userId - Users.id
 
-Ref: assessment.studentId > Students.id
-
-Ref: assessment.teacherId > Teachers.id
+Ref: assessment.studentClassesId > StudentClasses.id
 
 Ref: Notifications.studentId > Students.id
 
@@ -431,7 +423,7 @@ Ref: Students.userId - Users.id
 
 Ref: Students.familiesId > Families.id
 
-Ref: Score.studentId > Students.id
+Ref: Score.studentClassesId > StudentClasses.id
 
 Ref: Achievements.studentId > Students.id
 

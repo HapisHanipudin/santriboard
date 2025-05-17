@@ -25,8 +25,8 @@ enum Frequency {
 
 
 enum Gender {
-  MALE
-  FEMALE
+p
+ L
 }
 
 enum ProjectStatus {
@@ -69,6 +69,9 @@ enum Division {
   KARAKTER
 }
 
+
+
+
 model Users {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -99,7 +102,6 @@ model Teachers {
   name              String
   nik               String                @unique
   userId            String?               @unique
-  divisions         Division[]            @default([])
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
 
@@ -107,7 +109,6 @@ model Teachers {
   teacherDivisions  TeacherDivisions[]    
 
   user              Users?                @relation(fields: [userId], references: [id])
-  assessments            assessment[]
   notes             Notes[]
   classes           TeacherClasses[]
   notifications     Notifications[]
@@ -117,8 +118,8 @@ model Teachers {
 
 model assessment {
   id          Int        @id @default(autoincrement())
-  studentId   String
-  teacherId   String
+  studentClassesId   String
+
   frequency   Frequency
   division    Division
   score       Float
@@ -126,11 +127,8 @@ model assessment {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
-  student     Students   @relation(fields: [studentId], references: [id])
-  teacher     Teachers   @relation(fields: [teacherId], references: [id])
+  class StudentClasses @relation(references: [id], fields: [studentClassesId])
 
-  @@index([studentId, frequency])
-  @@index([teacherId])
 }
 
 model Notifications {
@@ -266,10 +264,11 @@ model Families {
 model Parents {
   id        String   @id @default(cuid())
   name      String
+
   userId    String   @unique
   familyId  String
   user      Users    @relation(fields: [userId], references: [id])
-  nik       String   @unique
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -284,7 +283,6 @@ model Students {
   Pondok        Int?
   SekolahPayung String?
   familiesId    String?
-  nik           String?   @unique
   nis           String?   @unique
   name          String
   nickname      String?
@@ -303,8 +301,6 @@ model Students {
   updated_at    DateTime  @default(now())
 
   user           Users?           @relation(fields: [userId], references: [id])
-  assessments   assessment[]
-  scores        Score[]
   notifications Notifications[] // Ditambahkan
 
   family         Families?        @relation(fields: [familiesId], references: [id])
@@ -319,12 +315,12 @@ model Students {
 
 model Score {
   id        String    @id @default(uuid())
-  studentId String
+  studentClassesId String
   type      ScoreType
   value     Float
   date      DateTime  @default(now())
 
-  student Students @relation(fields: [studentId], references: [id])
+  class StudentClasses @relation(references: [id], fields: [studentClassesId])
 }
 
 enum ScoreType {
@@ -419,7 +415,9 @@ model StudentClasses {
   student    Students   @relation(fields: [studentId], references: [id])
   class      Classes    @relation(fields: [classId], references: [id])
   semester   Semesters  @relation(fields: [semesterId], references: [id])
+  scores    Score[]
   evaluations Evaluations[]
+  assesment assessment[]
 
   @@unique([studentId, classId, semesterId])
 }

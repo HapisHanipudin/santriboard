@@ -5,7 +5,7 @@ import { Role } from "@prisma/client";
 
 export default defineEventHandler(async (event) => {
   try {
-    authorize(event, [Role.ADMIN, Role.TEACHER]);
+    // authorize(event, [Role.ADMIN, Role.TEACHER]);
 
     const students = await getAllStudents();
     return {

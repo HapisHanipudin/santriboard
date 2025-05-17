@@ -5,16 +5,14 @@ import { Division, Frequency } from '@prisma/client';
  * Create a daily tahfidz deposit (setoran) record
  */
 export async function createDailyassessment(
-  studentId: string,
-  teacherId: string,
+  studentClassesId: string,
   division: Division,
   score: number = 100,
   note?: string
 ) {
   return prisma.assessment.create({
     data: {
-      studentId,
-      teacherId,
+      studentClassesId,
       division,
       frequency: Frequency.HARIAN,
       score,
