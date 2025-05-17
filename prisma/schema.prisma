@@ -264,6 +264,7 @@ model Families {
 model Parents {
   id        String   @id @default(cuid())
   name      String
+
   userId    String   @unique
   familyId  String
   user      Users    @relation(fields: [userId], references: [id])

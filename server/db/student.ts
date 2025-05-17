@@ -182,9 +182,6 @@ export async function getStudentRankings(kategori: string) {
   return rankings;
 }
 
-/**
- * Mendapatkan data lengkap satu student.
- */
 export const getStudents = async (id: string) => {
   return await prisma.students.findUnique({
     where: { id },
