@@ -22,17 +22,13 @@ export default defineEventHandler(async (event: any) => {
   ];
 
   // Tambahan: endpoint yang butuh role admin
-  const needAdmin: Endpoint[] = [
-    { method: "DELETE", endpoint: "/api/admin/*" },
-  ];
+  const needAdmin: Endpoint[] = [{ method: "DELETE", endpoint: "/api/admin/*" }];
 
   const allSecuredEndpoints = [...endpoints, ...needTeacher, ...needAdmin];
 
   const isSecured = allSecuredEndpoints.some(({ method, endpoint }) => {
     const pattern = new UrlPattern(endpoint);
-    return (
-      pattern.match(event.node.req.url) && event.node.req.method === method
-    );
+    return pattern.match(event.node.req.url) && event.node.req.method === method;
   });
 
   if (!isSecured) {
@@ -59,9 +55,7 @@ export default defineEventHandler(async (event: any) => {
 
     const isNeedTeacher = needTeacher.some(({ method, endpoint }) => {
       const pattern = new UrlPattern(endpoint);
-      return (
-        pattern.match(event.node.req.url) && event.node.req.method === method
-      );
+      return pattern.match(event.node.req.url) && event.node.req.method === method;
     });
 
     if (isNeedTeacher && transformed.role !== "teacher") {
@@ -70,9 +64,7 @@ export default defineEventHandler(async (event: any) => {
 
     const isNeedAdmin = needAdmin.some(({ method, endpoint }) => {
       const pattern = new UrlPattern(endpoint);
-      return (
-        pattern.match(event.node.req.url) && event.node.req.method === method
-      );
+      return pattern.match(event.node.req.url) && event.node.req.method === method;
     });
 
     if (isNeedAdmin && transformed.role !== "ADMIN") {
