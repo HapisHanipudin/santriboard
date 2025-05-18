@@ -1,11 +1,20 @@
-import { defineEventHandler, readBody } from "h3";
-import { deleteassessment } from "../../../../db/assessment";
+// server/api/assessment/[id].delete.ts
+import { defineEventHandler } from 'h3';
+import { deleteassessment } from '../../../../db/assessment';
 
 export default defineEventHandler(async (event) => {
-  const { id } = await readBody(event);
-  if (id == null) {
+  const id = Number(event.context.params?.id);
+
+  if (!id) {
     event.res.statusCode = 400;
     return { error: "id is required" };
   }
-  return await deleteassessment(id);
+
+  try {
+    const deleted = await deleteassessment(id);
+    return { success: true, data: deleted };
+  } catch (err) {
+    event.res.statusCode = 500;
+    return { error: "Failed to delete assessment", detail: err };
+  }
 });
