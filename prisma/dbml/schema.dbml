@@ -44,8 +44,9 @@ Table Teachers {
 Table assessment {
   id Int [pk, increment]
   studentClassesId String [not null]
+  page String
+  pagecount Int
   frequency Frequency [not null]
-  division Division [not null]
   score Float [not null]
   note String
   createdAt DateTime [default: `now()`, not null]

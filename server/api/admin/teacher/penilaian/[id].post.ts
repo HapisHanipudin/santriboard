@@ -1,16 +1,48 @@
-import { defineEventHandler, readBody } from "h3";
-import { createDailyassessment } from "../../../../db/assessment";
-import { Division } from "@prisma/client";
+import { defineEventHandler, readBody, sendError, createError } from "h3";
+import { createTahfizhAssessment } from "../../../../db/assessment";
 
 export default defineEventHandler(async (event) => {
-  const { studentClassesId, mistakes = 0 } = await readBody(event);
-  if (!studentClassesId ) {
-    event.res.statusCode = 400;
-    return { error: "studentId and teacherId are required" };
-  }
+  try {
+    const {
+      studentClassesId,
+      frequency,
+      page,
+      pageCount,
+      mistakeCount = 0,
+      repeatedCount = 0,
+      note,
+    } = await readBody(event);
 
-  // Calculate score: 100 minus mistakes, min 0
-  let score = Math.max(0, 100 - mistakes);
-  const record = await createDailyassessment(studentClassesId, Division.TAHFIZH, score, mistakes > 0 ? `Mistakes: ${mistakes}` : undefined);
-  return record;
+    if (!studentClassesId || !frequency || !page || !pageCount) {
+      throw new Error(
+        "Missing required fields: studentClassesId, frequency, page, or pageCount."
+      );
+    }
+
+    const baseScore = 100;
+    const deduction = mistakeCount + repeatedCount;
+    const finalScore = Math.max(baseScore - deduction, 0);
+
+    const assessment = await createTahfizhAssessment({
+      studentClassesId,
+      frequency,
+      page,
+      pagecount: pageCount,
+      score: finalScore,
+      note,
+    });
+
+    return assessment;
+  } catch (error: any) {
+    console.error(error);
+    return sendError(
+      event,
+      createError({
+        statusCode: 500,
+        statusMessage: error.message || "Internal Server Error",
+      })
+    );
+  }
 });
+
+

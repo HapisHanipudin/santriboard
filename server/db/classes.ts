@@ -51,29 +51,6 @@ export async function getClassById(id: string) {
   });
 }
 
-export async function getClassesByTeacher(teacherId: string, semesterId: string) {
-  return prisma.classes.findMany({
-    where: {
-      teachers: {
-        some: {
-          teacherId,
-          semesterId,
-        },
-      },
-    },
-    include: {
-      division: true,
-      teachers: { include: { teacher: true } },
-      students: {
-        include: {
-          student: true,
-        },
-      },
-    },
-  });
-}
-
-
 
 export async function createClass(data: { name: string; divisionId: string }) {
   return prisma.classes.create({ data });

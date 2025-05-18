@@ -119,9 +119,9 @@ model Teachers {
 model assessment {
   id          Int        @id @default(autoincrement())
   studentClassesId   String
-
+  page String?
+  pagecount Int?
   frequency   Frequency
-  division    Division
   score       Float
   note        String?    
   createdAt   DateTime   @default(now())

@@ -1,13 +1,19 @@
-// server/api/assessment/[id].delete.ts
 import { defineEventHandler } from 'h3';
 import { deleteassessment } from '../../../../db/assessment';
 
 export default defineEventHandler(async (event) => {
-  const id = Number(event.context.params?.id);
+  const idParam = event.context.params?.id;
 
-  if (!id) {
+  if (!idParam || typeof idParam !== 'string') {
     event.res.statusCode = 400;
-    return { error: "id is required" };
+    return { error: "Valid id is required" };
+  }
+
+  // Konversi id dari string ke number
+  const id = Number(idParam);
+  if (isNaN(id)) {
+    event.res.statusCode = 400;
+    return { error: "Id must be a number" };
   }
 
   try {
