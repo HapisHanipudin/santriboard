@@ -10,12 +10,8 @@ export default defineNuxtConfig({
   
   },
 
-  modules: [
-    "@nuxt/ui",
-    "@nuxt/fonts",
-    "@nuxtjs/google-fonts",
-    // "@prisma/nuxt"
-  ],
+  modules: ["@nuxt/ui", "@nuxt/fonts", // "@prisma/nuxt"
+  "@nuxtjs/google-fonts", "@pinia/nuxt"],
   googleFonts: {
     families: {
       Poppins: [400, 500, 600, 700],

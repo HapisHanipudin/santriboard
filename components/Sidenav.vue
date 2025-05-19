@@ -31,7 +31,22 @@
       <div class="w-full border my-4"></div>
     </div>
     <div class="flex justify-center">
-      <button class="flex items-center gap-2 pt-6 pb-24 hover:text-gray-200 cursor-pointer transition-colors duration-300">
+      <UModal v-if="!session.isAuthenticated">
+        <UButton icon="majesticons:login" class="" label="Login" size="xl" color="blue" variant="subtle" />
+
+        <template #content>
+          <div class="h-96 m-4 flex flex-col lg:grid lg:grid-cols-2 gap-4 p-4">
+            <div class="flex flex-col justify-center">
+              <span class="text-blue-600 font-light text-xl">Welcome To</span>
+              <span class="text-4xl font-semibold">SantriBoard</span>
+            </div>
+            <div class="bg-neutral-800 rounded-3xl">
+              <LoginForm />
+            </div>
+          </div>
+        </template>
+      </UModal>
+      <button v-else class="flex items-center gap-2 pt-6 pb-24 hover:text-gray-200 cursor-pointer transition-colors duration-300">
         <UIcon name="solar:logout-2-bold" size="30" />
         <span class="text-xl">Logout</span>
       </button>
@@ -39,6 +54,8 @@
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+const session = useSessionStore();
+</script>
 
 <style></style>
