@@ -1,36 +1,49 @@
-import { defineEventHandler, readBody } from 'h3'
-import { deleteAssessment } from '../../../../db/assessment'
-import { prisma } from '../../../../db'
+import { defineEventHandler, getRouterParam } from 'h3'
+import { deleteAssessment } from '~/server/db/assessment'
+import { prisma } from '~/server/db'
 
 export default defineEventHandler(async (event) => {
-  try {
-    const body = await readBody(event)
+  const idParam = getRouterParam(event, 'id')
 
-    if (!body.id || typeof body.id !== 'number') {
-      return { statusCode: 400, message: 'Assessment ID is required and must be a number' }
+  if (!idParam || isNaN(Number(idParam))) {
+    return {
+      statusCode: 400,
+      message: 'Invalid or missing assessment ID',
     }
+  }
 
-    // Validasi dulu apakah assessment ini tipe TAHFIZH
-    const existing = await prisma.assessment.findUnique({
-      where: { id: body.id },
-    })
+  const id = Number(idParam)
 
-    if (!existing || existing.type !== 'TAHFIZH') {
+  try {
+    // Pastikan assessment adalah tipe TAHFIZH
+    const existing = await prisma.assessment.findUnique({ where: { id } })
+
+    if (!existing) {
       return {
-        statusCode: 400,
-        message: 'Only TAHFIZH assessments can be deleted via this route',
+        statusCode: 404,
+        message: `Assessment with id ${id} not found`,
       }
     }
 
-    const deleted = await deleteAssessment(body.id)
+    if (existing.type !== 'TAHFIZH') {
+      return {
+        statusCode: 403,
+        message: 'Only TAHFIZH assessments can be deleted from this endpoint',
+      }
+    }
+
+    await deleteAssessment(id)
 
     return {
       statusCode: 200,
-      message: 'Tahfizh assessment deleted successfully',
-      data: deleted,
+      message: `Assessment TAHFIZH dengan id ${id} berhasil dihapus.`,
     }
   } catch (error: any) {
-    console.error('Delete error:', error)
-    return { statusCode: 500, message: 'Failed to delete assessment', error: error.message }
+    console.error('Error deleting TAHFIZH assessment:', error)
+    return {
+      statusCode: 500,
+      message: 'Internal Server Error',
+      error: error.message,
+    }
   }
 })

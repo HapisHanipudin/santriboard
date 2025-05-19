@@ -61,7 +61,7 @@ Table AssessmentDetail {
   bahasaAspect String
   karakterAspect String
   itTopic String
-  assessment Assessment [not null]
+  assessment Assessment
   assessmentId Int [unique, not null]
 }
 
@@ -409,7 +409,7 @@ Ref: Teachers.userId - Users.id
 
 Ref: Assessment.studentClassesId > StudentClasses.id
 
-Ref: AssessmentDetail.assessmentId - Assessment.id
+Ref: AssessmentDetail.assessmentId - Assessment.id [delete: Cascade]
 
 Ref: Notifications.studentId > Students.id
 
