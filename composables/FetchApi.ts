@@ -1,6 +1,6 @@
 import { useSessionStore } from "~/stores/session";
 
-export default async (url: string, options?: any) => {
+export default async (url: string, { headers, ...options }: { headers?: { [key: string]: any }; [key: string]: any } = {}) => {
   // Mengambil data dari store sesi
   const session = useSessionStore();
 
@@ -9,7 +9,7 @@ export default async (url: string, options?: any) => {
     const response = await $fetch(url, {
       ...options,
       headers: {
-        ...options.headers,
+        ...headers,
         authorization: `Bearer ${session.authToken}`,
       },
     });

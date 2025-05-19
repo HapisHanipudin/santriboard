@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode";
 interface AuthUser {
   id: string;
   username: string;
-  type: "ADMIN" | "USER" | string; // Sesuaikan dengan tipe user Anda
+  role: "ADMIN" | "USER" | string; // Sesuaikan dengan tipe user Anda
   [key: string]: any; // Untuk fleksibilitas properti tambahan
 }
 
@@ -26,7 +26,8 @@ export const useSessionStore = defineStore("SessionStore", {
 
   getters: {
     isAuthenticated: (state): boolean => !!state.authToken,
-    isAdmin: (state): boolean => state.authUser?.type === "ADMIN",
+    isAdmin: (state): boolean => state.authUser?.role === "ADMIN",
+    isTeacher: (state): boolean => state.authUser?.role === "TEACHER",
   },
 
   actions: {
@@ -46,18 +47,20 @@ export const useSessionStore = defineStore("SessionStore", {
       const toast = useToast();
 
       try {
-        const data = await $fetch<{ accessToken: string; user: AuthUser }>("/api/auth/login", {
+        const data = await $fetch<{ access_token: string; user: AuthUser }>("/api/auth/login", {
           method: "POST",
           body: { username, password },
         });
         console.log("Login data:", data);
-        this.setAuthToken(data.accessToken);
+        this.setAuthToken(data.access_token);
         this.setAuthUser(data.user);
-        toast.add({ title: "Success", description: "Login was successful!", color: "success" });
+        if (data) {
+          toast.add({ title: "Success", description: "Login was successful!", color: "success" });
+        }
 
         return true;
       } catch (err) {
-        toast.add({ title: "Failed", description: "Login was failed!", color: "success" });
+        toast.add({ title: "Failed", description: "Login failed: " + (err as Error).message, color: "error" });
 
         throw new Error("Login failed: " + (err as Error).message);
       }
@@ -65,10 +68,11 @@ export const useSessionStore = defineStore("SessionStore", {
 
     async refreshToken(): Promise<boolean> {
       try {
-        const data = await $fetch<{ accessToken: string }>("/api/auth/refresh", {
+        const data = await $fetch<{ access_token: string }>("/api/auth/refresh", {
           method: "POST",
         });
-        this.setAuthToken(data.accessToken);
+        console.log("Refresh token data:", data);
+        this.setAuthToken(data.access_token);
         return true;
       } catch (error) {
         this.setAuthToken(null);
@@ -121,7 +125,6 @@ export const useSessionStore = defineStore("SessionStore", {
         });
         this.setAuthToken(null);
         this.setAuthUser(null);
-        await navigateTo("/login"); // Arahkan ke halaman login
         return true;
       } catch (error) {
         throw new Error("Logout failed: " + (error as Error).message);
@@ -129,6 +132,7 @@ export const useSessionStore = defineStore("SessionStore", {
     },
 
     async initAuth(): Promise<boolean> {
+      console.log("Initializing auth...");
       this.setAuthLoading(true);
       try {
         await this.refreshToken();

@@ -20,8 +20,15 @@
 </template>
 
 <script setup>
+const session = useSessionStore();
+
 const changeCanvas = () => {
   mobileCanvas.value = !mobileCanvas.value;
 };
 const mobileCanvas = ref(false);
+
+onBeforeMount(() => {
+  // Add your onMounted logic here
+  session.initAuth();
+});
 </script>

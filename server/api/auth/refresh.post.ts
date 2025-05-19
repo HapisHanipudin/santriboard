@@ -12,15 +12,6 @@ export default defineEventHandler(async (event) => {
     return sendError(event, createError({ statusCode: 401, statusMessage: "Unauthorized" }));
   }
 
-
-  
-  const hashedToken = hashToken(refreshToken);
-  const storedToken = await getRefreshTokenByToken(hashedToken);
-
-  if (!storedToken) {
-    return sendError(event, createError({ statusCode: 403, statusMessage: "Refresh token revoked or not found" }));
-  }
-
   const decoded = decodeRefreshToken(refreshToken);
   if (!decoded || !decoded.userId) {
     return sendError(event, createError({ statusCode: 401, statusMessage: "Invalid Token" }));

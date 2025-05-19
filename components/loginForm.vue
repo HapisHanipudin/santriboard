@@ -30,7 +30,7 @@ const toast = useToast();
 
 const onSubmit = () => {};
 
-const state = ref({
+const state = reactive({
   username: "",
   password: "",
 });
