@@ -1,11 +1,4 @@
-import {
-  type Teachers,
-  type TeacherDivisions,
-  type Divisions,
-  Role,
-  Division,
-  TeacherRole,
-} from "@prisma/client";
+import { type Teachers, type TeacherDivisions, type Divisions, Role, Division, TeacherRole } from "@prisma/client";
 
 interface TeacherWithDivisionRelation extends Teachers {
   teacherDivisions: (TeacherDivisions & {
@@ -23,6 +16,7 @@ export function teacherTransformer(teacher: any) {
       id: td.division.id,
       name: td.division.name,
       role: td.role,
+      icon: td.division.icon,
     })),
   };
 }

@@ -46,10 +46,7 @@
           </div>
         </template>
       </UModal>
-      <button v-else class="flex items-center gap-2 pt-6 pb-24 hover:text-gray-200 cursor-pointer transition-colors duration-300">
-        <UIcon name="solar:logout-2-bold" size="30" />
-        <span class="text-xl">Logout</span>
-      </button>
+      <UButton @click="session.logout()" v-else icon="solar:logout-2-bold" class="" label="Logout" size="xl" color="blue" variant="subtle" />
     </div>
   </div>
 </template>

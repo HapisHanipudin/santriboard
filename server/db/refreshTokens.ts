@@ -12,7 +12,7 @@ export const createRefreshToken = async (data: any) => {
 export const getRefreshTokenByToken = async (token: string) => {
   return await prisma.refreshToken.findFirst({
     where: {
-      tokenHash: token,
+      token,
     },
   });
 };
@@ -21,7 +21,7 @@ export const getRefreshTokenByToken = async (token: string) => {
 export const removeRefreshToken = async (token: string) => {
   return await prisma.refreshToken.deleteMany({
     where: {
-      tokenHash: token,
+      token,
     },
   });
 };

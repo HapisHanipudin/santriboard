@@ -27,7 +27,7 @@ const changeCanvas = () => {
 };
 const mobileCanvas = ref(false);
 
-onMounted(() => {
+onBeforeMount(() => {
   // Add your onMounted logic here
   session.initAuth();
 });
