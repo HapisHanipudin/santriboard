@@ -1,27 +1,61 @@
 import { defineEventHandler, getQuery } from 'h3'
-import { getAssessments } from '../../../../db/assessment'
-import { AssessmentType, Frequency } from '@prisma/client'
+import { prisma } from '~/server/db'
 
 export default defineEventHandler(async (event) => {
-  try {
-    const query = getQuery(event)
+  const query = getQuery(event)
+  const studentClassesId = query.studentClassesId as string
 
-    const studentClassesId = query.studentClassesId as string
-    const frequency = query.frequency as Frequency | undefined
-
-    if (!studentClassesId) {
-      return { statusCode: 400, message: 'studentClassesId is required' }
+  if (!studentClassesId) {
+    return {
+      statusCode: 400,
+      message: 'Missing studentClassesId query parameter',
     }
+  }
 
-    const assessments = await getAssessments(studentClassesId, frequency, AssessmentType.TAHFIZH)
+  try {
+    const assessments = await prisma.assessment.findMany({
+      where: {
+        studentClassesId,
+        type: 'TAHFIZH',
+      },
+      orderBy: [
+        { frequency: 'asc' },
+        { createdAt: 'desc' },
+      ],
+      include: {
+        detail: true,
+      },
+    })
+
+    // Mapping ulang untuk memastikan output sesuai format contoh
+    const mappedData = assessments.map(item => ({
+      id: item.id,
+      studentClassesId: item.studentClassesId,
+      type: item.type,
+      frequency: item.frequency,
+      score: item.score,
+      note: item.note,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+      detail: item.detail
+        ? {
+            id: item.detail.id,
+            page: item.detail.page,
+            pageCount: item.detail.pageCount,
+          }
+        : null,
+    }))
 
     return {
       statusCode: 200,
-      message: 'Tahfizh assessments retrieved successfully',
-      data: assessments,
+      data: mappedData,
     }
   } catch (error: any) {
-    console.error('Get error:', error)
-    return { statusCode: 500, message: 'Failed to fetch assessments', error: error.message }
+    console.error('Error fetching TAHFIZH assessments:', error)
+    return {
+      statusCode: 500,
+      message: 'Internal Server Error',
+      error: error.message,
+    }
   }
 })

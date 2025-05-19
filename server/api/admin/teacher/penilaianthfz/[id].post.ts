@@ -1,5 +1,3 @@
-// server/api/assessment/tahfizh.post.ts
-
 import { defineEventHandler, readBody } from 'h3'
 import { createAssessment } from '../../../../db/assessment'
 import { AssessmentType, Frequency } from '@prisma/client'
@@ -39,11 +37,29 @@ export default defineEventHandler(async (event) => {
       pageCount: body.pageCount,
     })
 
+    
     return {
       statusCode: 200,
       message: `Assessment berhasil dibuat. Skor akhir: ${finalScore}`,
-      data: assessment,
+      data: {
+        id: assessment.id,
+        studentClassesId: assessment.studentClassesId,
+        type: assessment.type,
+        frequency: assessment.frequency,
+        score: assessment.score,
+        note: assessment.note,
+        detail: {
+          id: assessment.id,
+          page: assessment.page,
+          pageCount: assessment.pageCount,
+        } as {
+          id: number
+          page: string | null
+          pageCount: number | null
+        },
+      },
     }
+    
   } catch (error: any) {
     console.error('Error creating tahfizh assessment:', error)
     return {
@@ -53,3 +69,4 @@ export default defineEventHandler(async (event) => {
     }
   }
 })
+

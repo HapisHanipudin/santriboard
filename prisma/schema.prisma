@@ -89,7 +89,7 @@ model Users {
 
 model RefreshToken {
   id        String   @id @default(uuid())
-  tokenHash String   @unique
+  token String  @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String
@@ -119,30 +119,31 @@ model Teachers {
 
 model Assessment {
   id               Int               @id @default(autoincrement())
-  studentClassesId  String
+  studentClassesId String
   type             AssessmentType
   frequency        Frequency
+
   score            Int
   note             String?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 
-  detail           AssessmentDetail?  @relation
-    studentClass     StudentClasses @relation(fields: [studentClassesId], references: [id])
-
+  detail           AssessmentDetail? 
+  studentClass     StudentClasses    @relation(fields: [studentClassesId], references: [id])
 }
 
 model AssessmentDetail {
-  id             Int        @id @default(autoincrement())
-  page           String?
-  pageCount      Int?
-  bahasaAspect   String?
-  karakterAspect String?
-  itTopic        String?
+  id               Int          @id @default(autoincrement())
+  page             String?
+  pageCount        Int?
+  bahasaAspect     String?
+  karakterAspect   String?
+  itTopic          String?
+  assessment       Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
 
-  assessment     Assessment @relation(fields: [assessmentId], references: [id])
-  assessmentId   Int        @unique
+  assessmentId     Int          @unique
 }
+
 
 
 

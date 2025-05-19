@@ -1,39 +1,98 @@
 import { defineEventHandler, readBody } from 'h3'
-import { updateAssessment } from '../../../../db/assessment'
-import { AssessmentType } from '@prisma/client'
+import { prisma } from '~/server/db'
 
 export default defineEventHandler(async (event) => {
   try {
-    const body = await readBody(event)
+    const id = Number(event.context.params?.id)
 
-    if (!body.id || typeof body.id !== 'number') {
-      return { statusCode: 400, message: 'Assessment ID is required and must be a number' }
-    }
-
-    // Ambil dan validasi data minimal
-    const updated = await updateAssessment(body.id, {
-      frequency: body.frequency,
-      score: body.score,
-      note: body.note,
-      page: body.page,
-      pageCount: body.pageCount,
-    })
-
-    // Pastikan hanya assessment TAHFIZH yang boleh diupdate di route ini
-    if (updated.type !== AssessmentType.TAHFIZH) {
+    if (!id) {
       return {
         statusCode: 400,
-        message: 'Only TAHFIZH assessments can be updated via this route',
+        message: 'Missing assessment id in params',
       }
     }
 
+    const body = await readBody(event)
+    const {
+      studentClassesId,
+      frequency,
+      page,
+      pageCount,
+      mistakeCount,
+      repeatedCount,
+      type,
+      note,
+      score,
+    } = body
+
+    if (type !== 'TAHFIZH') {
+      return {
+        statusCode: 400,
+        message: 'Only TAHFIZH assessments can be updated here',
+      }
+    }
+
+    const existing = await prisma.assessment.findUnique({
+      where: { id },
+      include: { detail: true },
+    })
+
+    if (!existing) {
+      return {
+        statusCode: 404,
+        message: 'Assessment not found',
+      }
+    }
+
+    if (existing.type !== 'TAHFIZH') {
+      return {
+        statusCode: 400,
+        message: 'Assessment type mismatch, must be TAHFIZH',
+      }
+    }
+
+    const combinedNote = `Dikurangi ${mistakeCount} karena kesalahan, ${repeatedCount} karena pengulangan — ${note}`
+
+    const updatedAssessment = await prisma.assessment.update({
+      where: { id },
+      data: {
+        studentClassesId,
+        frequency,
+        note: combinedNote,
+        score,
+      },
+      include: { detail: true },
+    })
+
+    if (page !== undefined && pageCount !== undefined) {
+      console.log('updatedAssessment.detail:', updatedAssessment.detail)
+      if (updatedAssessment.detail) {
+        await prisma.detail.update({
+          where: { id: updatedAssessment.detail.id },
+          data: { page, pageCount },
+        })
+      } else {
+        await prisma.detail.create({
+          data: { assessmentId: id, page, pageCount },
+        })
+      }
+    }
+
+    const finalAssessment = await prisma.assessment.findUnique({
+      where: { id },
+      include: { detail: true },
+    })
+
     return {
       statusCode: 200,
-      message: 'Tahfizh assessment updated successfully',
-      data: updated,
+      data: finalAssessment,
     }
   } catch (error: any) {
-    console.error('Update error:', error)
-    return { statusCode: 500, message: 'Failed to update assessment', error: error.message }
+    console.error('Error updating TAHFIZH assessment:', error)
+    return {
+      statusCode: 500,
+      message: 'Internal Server Error',
+      error: error.message,
+    }
   }
 })
