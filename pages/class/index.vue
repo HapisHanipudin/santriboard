@@ -1,35 +1,37 @@
 <template>
   <div>
-    <div class="flex w-full">
-      <UForm :state="newClass" @submit="submit" class="flex flex-col w-full gap-4">
-        <UFormField label="Nama" class="w-full">
-          <UInput class="w-full" v-model="newClass.name" />
-        </UFormField>
-
-        <UFormField class="w-full" label="Divisi">
-          <UInputMenu class="w-full" v-model="newClass.division" value-key="value" :items="divisions" />
-        </UFormField>
-      </UForm>
-    </div>
+    <TabWrapper :tabs="tabTitles">
+      <Tab title="tahfizh"><ClassViews title="tahfizh" /></Tab>
+      <Tab title="it"><ClassViews title="it" /></Tab>
+      <Tab title="karakter"><ClassViews title="karakter" /></Tab>
+      <Tab title="bahasa"><ClassViews title="bahasa" /></Tab>
+    </TabWrapper>
   </div>
 </template>
 
 <script lang="ts" setup>
-const newClass = ref({
-  name: "",
-  division: "TAHFIZH",
-} as { name: string; division: Field });
-
-const divisions = ref([
-  { value: "TAHFIZH", label: "Tahfizh" },
-  { value: "IT", label: "IT" },
-  { value: "KARAKTER", label: "Karakter" },
-  { value: "BAHASA", label: "Bahasa" },
-] as { value: Field; label: string }[]);
-
-const submit = () => {
-  console.log(newClass.value);
-};
+const tabTitles = ref([
+  {
+    title: "tahfizh",
+    icon: "el:book",
+    display: "Tahfizh",
+  },
+  {
+    title: "it",
+    icon: "mynaui:desktop-solid",
+    display: "IT",
+  },
+  {
+    title: "karakter",
+    icon: "streamline:brain-cognitive-solid",
+    display: "Karakter",
+  },
+  {
+    title: "bahasa",
+    icon: "fa6-solid:language",
+    display: "Bahasa",
+  },
+]);
 </script>
 
 <style></style>

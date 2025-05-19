@@ -26,6 +26,7 @@ export default defineEventHandler(async (event: H3Event) => {
     { method: "GET", endpoint: "/api/admin/teacher/class" },
   ];
 
+  // Tambahan: endpoint yang butuh role admin
   const needAdmin: Endpoint[] = [
     { method: "DELETE", endpoint: "/api/admin/*" },
   ];
@@ -83,12 +84,14 @@ export default defineEventHandler(async (event: H3Event) => {
     }
     const { method, url } = event.node.req;
 
+
     const match = (rules: Endpoint[]) => {
       return rules.some(
         ({ method: m, endpoint }) =>
           new UrlPattern(endpoint).match(url || "") && m === method
       );
     };
+
 
     if (match(needAdmin) && !isAdmin(transformed)) {
       throw new Error("Hanya admin yang boleh mengakses endpoint ini");
@@ -99,6 +102,7 @@ export default defineEventHandler(async (event: H3Event) => {
         "Hanya guru dengan data lengkap yang boleh mengakses endpoint ini"
       );
     }
+
 
     if (match(needKadiv) && !isKadiv(transformed)) {
       throw new Error("Hanya Kadiv yang boleh mengakses endpoint ini");

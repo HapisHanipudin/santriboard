@@ -1,9 +1,9 @@
 <template>
   <div class="grid grid-cols-1 lg:grid-cols-5 grid-rows-12 lg:grid-rows-9 gap-4 grid-flow-row-dense">
-    <ProfileStudentCard class="col-span-3 row-span-2" :student="student" />
-    <ProfileStudentDetail :style="{ '--detail-row': student.classes.length + 4 }" class="col-span-2 row-span-(--detail-row) grid-rows-subgrid" :student="student" />
-    <ProfileStudentAchievement class="col-span-3 row-span-4" :student="student" />
-    <ProfileStudentProject class="col-span-3 row-span-3" :student="student" />
+    <ProfileStudentCard class="lg:col-span-3 row-span-2" :student="student" />
+    <ProfileStudentDetail :style="{ '--detail-row': student.classes.length + 4 }" class="lg:col-span-2 row-span-(--detail-row) grid-rows-subgrid" :student="student" />
+    <ProfileStudentAchievement class="lg:col-span-3 row-span-4" :student="student" />
+    <ProfileStudentProject class="lg:col-span-3 row-span-3" :student="student" />
   </div>
 </template>
 
