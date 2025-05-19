@@ -116,20 +116,47 @@ model Teachers {
 }
 
 
-model assessment {
-  id          Int        @id @default(autoincrement())
-  studentClassesId   String
 
-  frequency   Frequency
-  division    Division
-  score       Float
-  note        String?    
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+model Assessment {
+  id               Int               @id @default(autoincrement())
+  studentClassesId  String
+  type             AssessmentType
+  frequency        Frequency
+  score            Int
+  note             String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 
-  class StudentClasses @relation(references: [id], fields: [studentClassesId])
+  detail           AssessmentDetail?  @relation
+    studentClass     StudentClasses @relation(fields: [studentClassesId], references: [id])
 
 }
+
+model AssessmentDetail {
+  id             Int        @id @default(autoincrement())
+  page           String?
+  pageCount      Int?
+  bahasaAspect   String?
+  karakterAspect String?
+  itTopic        String?
+
+  assessment     Assessment @relation(fields: [assessmentId], references: [id])
+  assessmentId   Int        @unique
+}
+
+
+
+enum AssessmentType {
+  
+  TAHFIZH
+  BAHASA_ARAB
+  BAHASA_INGGRIS
+  BAHASA_PDKI
+  KARAKTER
+  IT
+}
+
+
 
 model Notifications {
   id        String             @id @default(cuid())
@@ -417,7 +444,7 @@ model StudentClasses {
   semester   Semesters  @relation(fields: [semesterId], references: [id])
   scores    Score[]
   evaluations Evaluations[]
-  assesment assessment[]
-
+  assesment   Assessment[]
   @@unique([studentId, classId, semesterId])
 }
+

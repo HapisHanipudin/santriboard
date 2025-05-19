@@ -22,6 +22,12 @@ export async function getAllClasses() {
     ],
   });
 
+
+  
+
+  
+  
+
   const grouped: Record<string, { division: string; classes: any[] }> = {};
 
   for (const cls of allClasses) {
@@ -51,29 +57,6 @@ export async function getClassById(id: string) {
   });
 }
 
-export async function getClassesByTeacher(teacherId: string, semesterId: string) {
-  return prisma.classes.findMany({
-    where: {
-      teachers: {
-        some: {
-          teacherId,
-          semesterId,
-        },
-      },
-    },
-    include: {
-      division: true,
-      teachers: { include: { teacher: true } },
-      students: {
-        include: {
-          student: true,
-        },
-      },
-    },
-  });
-}
-
-
 
 export async function createClass(data: { name: string; divisionId: string }) {
   return prisma.classes.create({ data });
@@ -92,3 +75,33 @@ export async function updateClass(
 export async function deleteClass(id: string) {
   return prisma.classes.delete({ where: { id } });
 }
+
+
+export async function getClassWithDetailsById(classId: string) {
+  return await prisma.classes.findUnique({
+    where: {
+      id: classId,
+    },
+    include: {
+      teachers: {
+        include: {
+          teacher: {
+            select: {
+              name: true
+            }
+          }
+        }
+      },
+      students: {
+        include: {
+          student: {
+            select: {
+              name: true
+            }
+          }
+        }
+      }
+    }
+  });
+}
+

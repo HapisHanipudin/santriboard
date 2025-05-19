@@ -1,74 +1,111 @@
 import UrlPattern from "url-pattern";
 import { decodeAccessToken } from "../utils/jwt";
-import { sendError } from "h3";
+import { sendError, H3Event } from "h3";
 import { getUserById } from "../db/users";
+import { getTeacherByUserId } from "../db/teacher";
 import { userTransformer } from "../transformers/user";
+import { teacherTransformer } from "../transformers/teacher";
+import { isAdmin, isTeacher, isKadiv } from "../utils/checkRoles";
 
 interface Endpoint {
   method: string;
   endpoint: string;
 }
 
-export default defineEventHandler(async (event: any) => {
-  // Daftar endpoint yang memerlukan autentikasi (bisa kosong kalau mau handle semua pakai pattern)
+export default defineEventHandler(async (event: H3Event) => {
   const endpoints: Endpoint[] = [
-    // { method: "GET", endpoint: "/api/some-endpoint" }
+    { method: "GET", endpoint: "/api/auth/user" },
+    { method: "PUT", endpoint: "/api/auth/user" },
+    { method: "PUT", endpoint: "/api/auth/user/profile" },
+    { method: "GET", endpoint: "/api/classes" },
   ];
 
-  // Daftar endpoint yang butuh role teacher
   const needTeacher: Endpoint[] = [
     { method: "POST", endpoint: "/api/teacher/*" },
     { method: "PUT", endpoint: "/api/teacher/*" },
+    { method: "GET", endpoint: "/api/admin/teacher/class" },
   ];
 
   // Tambahan: endpoint yang butuh role admin
-  const needAdmin: Endpoint[] = [{ method: "DELETE", endpoint: "/api/admin/*" }];
+  const needAdmin: Endpoint[] = [
+    { method: "DELETE", endpoint: "/api/admin/*" },
+  ];
 
-  const allSecuredEndpoints = [...endpoints, ...needTeacher, ...needAdmin];
+  const needKadiv: Endpoint[] = [
+    { method: "POST", endpoint: "/api/kadiv/*" },
+    { method: "PUT", endpoint: "/api/kadiv/*" },
+  ];
+
+  const allSecuredEndpoints = [
+    ...endpoints,
+    ...needTeacher,
+    ...needAdmin,
+    ...needKadiv,
+  ];
 
   const isSecured = allSecuredEndpoints.some(({ method, endpoint }) => {
     const pattern = new UrlPattern(endpoint);
-    return pattern.match(event.node.req.url) && event.node.req.method === method;
+    return (
+      pattern.match(event.node.req.url || "") &&
+      event.node.req.method === method
+    );
   });
 
-  if (!isSecured) {
-    return;
-  }
+  if (!isSecured) return;
 
   try {
     const token = event.node.req.headers["authorization"]?.split(" ")[1];
+    if (!token) throw new Error("Token tidak ditemukan");
 
     const decoded = decodeAccessToken(token);
-
-    if (!decoded) {
-      throw new Error("Token tidak valid");
-    }
+    if (!decoded) throw new Error("Token tidak valid");
 
     const user = await getUserById(decoded.userId);
-
-    if (!user) {
-      throw new Error("User tidak ditemukan");
-    }
+    if (!user) throw new Error("User tidak ditemukan");
 
     const transformed = userTransformer(user);
-    event.context.auth = transformed;
+    // console.log(transformed);
 
-    const isNeedTeacher = needTeacher.some(({ method, endpoint }) => {
-      const pattern = new UrlPattern(endpoint);
-      return pattern.match(event.node.req.url) && event.node.req.method === method;
-    });
+    let teacherState = false;
 
-    if (isNeedTeacher && transformed.role !== "teacher") {
-      throw new Error("Hanya guru yang boleh mengakses endpoint ini");
+    if (isTeacher(transformed)) {
+      const teacher = await getTeacherByUserId(transformed.id); // pastikan string
+      if (teacher) {
+        teacherState = true;
+        event.context.auth = {
+          ...transformed,
+          teacher: teacherTransformer(teacher),
+        };
+      } else {
+        event.context.auth = transformed;
+      }
+    } else {
+      event.context.auth = transformed;
+    }
+    const { method, url } = event.node.req;
+
+
+    const match = (rules: Endpoint[]) => {
+      return rules.some(
+        ({ method: m, endpoint }) =>
+          new UrlPattern(endpoint).match(url || "") && m === method
+      );
+    };
+
+
+    if (match(needAdmin) && !isAdmin(transformed)) {
+      throw new Error("Hanya admin yang boleh mengakses endpoint ini");
     }
 
-    const isNeedAdmin = needAdmin.some(({ method, endpoint }) => {
-      const pattern = new UrlPattern(endpoint);
-      return pattern.match(event.node.req.url) && event.node.req.method === method;
-    });
+    if (match(needTeacher) && !isTeacher(transformed) && !teacherState) {
+      throw new Error(
+        "Hanya guru dengan data lengkap yang boleh mengakses endpoint ini"
+      );
+    }
 
-    if (isNeedAdmin && transformed.role !== "ADMIN") {
-      throw new Error("Hanya admin yang boleh mengakses endpoint ini");
+
+    if (match(needKadiv) && !isKadiv(transformed)) {
+      throw new Error("Hanya Kadiv yang boleh mengakses endpoint ini");
     }
   } catch (error: any) {
     return sendError(

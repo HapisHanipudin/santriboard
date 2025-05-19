@@ -41,16 +41,28 @@ Table Teachers {
   projects Projects [not null]
 }
 
-Table assessment {
+Table Assessment {
   id Int [pk, increment]
   studentClassesId String [not null]
+  type AssessmentType [not null]
   frequency Frequency [not null]
-  division Division [not null]
-  score Float [not null]
+  score Int [not null]
   note String
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
-  class StudentClasses [not null]
+  detail AssessmentDetail
+  studentClass StudentClasses [not null]
+}
+
+Table AssessmentDetail {
+  id Int [pk, increment]
+  page String
+  pageCount Int
+  bahasaAspect String
+  karakterAspect String
+  itTopic String
+  assessment Assessment [not null]
+  assessmentId Int [unique, not null]
 }
 
 Table Notifications {
@@ -309,7 +321,7 @@ Table StudentClasses {
   semester Semesters [not null]
   scores Score [not null]
   evaluations Evaluations [not null]
-  assesment assessment [not null]
+  assesment Assessment [not null]
 
   indexes {
     (studentId, classId, semesterId) [unique]
@@ -374,6 +386,15 @@ Enum Division {
   KARAKTER
 }
 
+Enum AssessmentType {
+  TAHFIZH
+  BAHASA_ARAB
+  BAHASA_INGGRIS
+  BAHASA_PDKI
+  KARAKTER
+  IT
+}
+
 Enum ScoreType {
   DAILY_EXAM
   INITIATIVE
@@ -385,7 +406,9 @@ Ref: RefreshToken.userId > Users.id
 
 Ref: Teachers.userId - Users.id
 
-Ref: assessment.studentClassesId > StudentClasses.id
+Ref: Assessment.studentClassesId > StudentClasses.id
+
+Ref: AssessmentDetail.assessmentId - Assessment.id
 
 Ref: Notifications.studentId > Students.id
 
