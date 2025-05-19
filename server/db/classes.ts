@@ -22,6 +22,12 @@ export async function getAllClasses() {
     ],
   });
 
+
+  
+
+  
+  
+
   const grouped: Record<string, { division: string; classes: any[] }> = {};
 
   for (const cls of allClasses) {
@@ -69,3 +75,33 @@ export async function updateClass(
 export async function deleteClass(id: string) {
   return prisma.classes.delete({ where: { id } });
 }
+
+
+export async function getClassWithDetailsById(classId: string) {
+  return await prisma.classes.findUnique({
+    where: {
+      id: classId,
+    },
+    include: {
+      teachers: {
+        include: {
+          teacher: {
+            select: {
+              name: true
+            }
+          }
+        }
+      },
+      students: {
+        include: {
+          student: {
+            select: {
+              name: true
+            }
+          }
+        }
+      }
+    }
+  });
+}
+

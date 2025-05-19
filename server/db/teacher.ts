@@ -1,5 +1,6 @@
 import { prisma } from "../db";
 import { TeacherRole, Divisions } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 // Fetch all teachers with related data
 export async function getTeachers() {
@@ -44,6 +45,54 @@ export async function getTeachers() {
     throw new Error("Failed to fetch teachers");
   }
 }
+
+export function getTeacherByUserId(userId: string) {
+  return prisma.teachers.findUnique({
+    where: { userId },
+    include: {
+      teacherDivisions: {
+        include: {
+          division: true, // ini penting untuk mengambil info Division
+        },
+      },
+    },
+  });
+}
+
+export const getTeacherClasses = async (
+  teacherId: string,
+  divisionName?: Field
+) => {
+  const whereClause: Prisma.TeacherClassesWhereInput = {
+    teacherId,
+    ...(divisionName && {
+      class: {
+        division: {
+          name: divisionName, // Field enum
+        },
+      },
+    }),
+  };
+
+  const teacherClasses = await prisma.teacherClasses.findMany({
+    where: whereClause,
+    include: {
+      class: {
+        include: {
+          division: true,
+          students: true,
+        },
+      },
+    },
+  });
+
+  return teacherClasses.map((tc) => ({
+    id: tc.class.id,
+    name: tc.class.name,
+    studentCount: tc.class.students.length,
+    category: tc.class.division.name, // Ganti category → division name
+  }));
+};
 
 // Delete a teacher along with related data
 export async function deleteTeacher(id: string) {

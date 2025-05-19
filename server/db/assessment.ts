@@ -14,23 +14,38 @@ export async function createTahfizhAssessment(data: {
   });
 }
 
-/**
- * Update an existing assessment record
- */
-export async function updateassessment(
-  id: number,
-  score: number,
-  note?: string
+
+export async function updateTahfizhAssessment(
+  assessmentId: number,
+  data: {
+    frequency?: Frequency;
+    page?: string;
+    pageCount?: number;
+    score?: number;
+    note?: string;
+  }
 ) {
+  const existing = await prisma.assessment.findUnique({ where: { id: assessmentId } });
+  if (!existing) {
+    throw new Error(`Assessment with id ${assessmentId} not found.`);
+  }
+
+  // Filter data supaya tidak ada undefined
+  const updateData: Record<string, any> = {};
+  if (data.frequency !== undefined) updateData.frequency = data.frequency;
+  if (data.page !== undefined) updateData.page = data.page;
+  if (data.pageCount !== undefined) updateData.pageCount = data.pageCount;
+  if (data.score !== undefined) updateData.score = data.score;
+  if (data.note !== undefined) updateData.note = data.note;
+
   return prisma.assessment.update({
-    where: { id },
-    data: { score, note },
+    where: { id: assessmentId },
+    data: updateData,
   });
 }
 
-/**
- * Delete a assessment record
- */
+
+
 export async function deleteassessment(id: number) {
   const existing = await prisma.assessment.findUnique({ where: { id } });
   if (!existing) {
