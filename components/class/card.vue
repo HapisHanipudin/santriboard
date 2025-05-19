@@ -7,7 +7,7 @@
       </div>
       <div>
         <span class="text-sm text-gray-400">Pengajar</span>
-        <p class="text-3xl font-semibold truncate">{{ kelas.musyrif }}</p>
+        <p class="text-3xl font-semibold truncate">{{ kelas.teacher }}</p>
       </div>
     </div>
     <div class="bg-[#3E62FE] rounded-xl h-full p-3 flex flex-col items-center gap-4 justify-between">
@@ -21,10 +21,10 @@
 const { kelas, index } = defineProps<{
   index: number;
   kelas: {
-    id: number;
+    id: string;
     name: string;
     division: string;
-    musyrif: string;
+    teacher: string;
     studentCount: number;
   };
 }>();

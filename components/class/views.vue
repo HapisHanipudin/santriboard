@@ -5,33 +5,57 @@
 </template>
 
 <script setup>
+const { title } = defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
+});
+
 const classes = ref([
-  {
-    id: 1,
-    name: "PLP 3",
-    division: "Tahfizh",
-    musyrif: "Ust Mukhlis",
-    studentCount: 16,
-    path: "/class/PLP3",
-  },
-  {
-    id: 2,
-    name: "PLP 4",
-    division: "Tahfizh",
-    musyrif: "Ust Ali",
-    studentCount: 20,
-    path: "/class/PLP4",
-  },
-  {
-    id: 3,
-    name: "Tajwid 1",
-    division: "Tajwid",
-    musyrif: "Ust Ahmad",
-    studentCount: 18,
-    path: "/class/Tajwid1",
-  },
+  // {
+  //   id: "1",
+  //   name: "PLP 3",
+  //   division: "Tahfizh",
+  //   musyrif: "Ust Mukhlis",
+  //   studentCount: 16,
+  //   path: "/class/PLP3",
+  // },
+  // {
+  //   id: "2",
+  //   name: "PLP 4",
+  //   division: "Tahfizh",
+  //   musyrif: "Ust Ali",
+  //   studentCount: 20,
+  //   path: "/class/PLP4",
+  // },
+  // {
+  //   id: "3",
+  //   name: "Tajwid 1",
+  //   division: "Tajwid",
+  //   musyrif: "Ust Ahmad",
+  //   studentCount: 18,
+  //   path: "/class/Tajwid1",
+  // },
   // Add more classes here as needed
 ]);
+
+const getClasses = async () => {
+  try {
+    const response = await FetchApi("/api/admin/teacher/class");
+    classes.value = response.data;
+  } catch (error) {
+    console.error("Error fetching classes:", error);
+  }
+};
+
+onBeforeMount(() => {
+  getClasses();
+});
+
+// onMounted(() => {
+//   getClasses();
+// });
 </script>
 
 <style></style>

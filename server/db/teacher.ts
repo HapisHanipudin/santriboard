@@ -59,24 +59,24 @@ export function getTeacherByUserId(userId: string) {
   });
 }
 
-export const getTeacherClasses = async (
-  teacherId: string,
-  divisionName?: Field
-) => {
+export const getTeacherClasses = async (teacherId: string, divisionName?: Field) => {
   const whereClause: Prisma.TeacherClassesWhereInput = {
     teacherId,
-    ...(divisionName && {
-      class: {
-        division: {
-          name: divisionName, // Field enum
-        },
-      },
-    }),
+    ...(divisionName
+      ? {
+          class: {
+            division: {
+              name: divisionName, // Field enum
+            },
+          },
+        }
+      : {}),
   };
 
   const teacherClasses = await prisma.teacherClasses.findMany({
     where: whereClause,
     include: {
+      teacher: true, // Ambil data guru
       class: {
         include: {
           division: true,
@@ -86,9 +86,11 @@ export const getTeacherClasses = async (
     },
   });
 
-  return teacherClasses.map((tc) => ({
+  return teacherClasses.map((tc, index) => ({
     id: tc.class.id,
     name: tc.class.name,
+    division: tc.class.division.name,
+    teacher: tc.teacher.name,
     studentCount: tc.class.students.length,
     category: tc.class.division.name, // Ganti category → division name
   }));
@@ -120,11 +122,7 @@ export async function deleteTeacher(id: string) {
 }
 
 // Update teacher information
-export async function updateTeacher(
-  id: string,
-  name?: string,
-  divisions?: { divisionId: string; role: TeacherRole }[]
-) {
+export async function updateTeacher(id: string, name?: string, divisions?: { divisionId: string; role: TeacherRole }[]) {
   const existingTeacher = await prisma.teachers.findUnique({ where: { id } });
 
   if (!existingTeacher) {
