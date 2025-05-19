@@ -1,26 +1,36 @@
-import { defineEventHandler } from 'h3';
-import { deleteassessment } from '../../../../db/assessment';
+import { defineEventHandler, readBody } from 'h3'
+import { deleteAssessment } from '../../../../db/assessment'
+import { prisma } from '../../../../db'
 
 export default defineEventHandler(async (event) => {
-  const idParam = event.context.params?.id;
-
-  if (!idParam || typeof idParam !== 'string') {
-    event.res.statusCode = 400;
-    return { error: "Valid id is required" };
-  }
-
-  // Konversi id dari string ke number
-  const id = Number(idParam);
-  if (isNaN(id)) {
-    event.res.statusCode = 400;
-    return { error: "Id must be a number" };
-  }
-
   try {
-    const deleted = await deleteassessment(id);
-    return { success: true, data: deleted };
-  } catch (err) {
-    event.res.statusCode = 500;
-    return { error: "Failed to delete assessment", detail: err };
+    const body = await readBody(event)
+
+    if (!body.id || typeof body.id !== 'number') {
+      return { statusCode: 400, message: 'Assessment ID is required and must be a number' }
+    }
+
+    // Validasi dulu apakah assessment ini tipe TAHFIZH
+    const existing = await prisma.assessment.findUnique({
+      where: { id: body.id },
+    })
+
+    if (!existing || existing.type !== 'TAHFIZH') {
+      return {
+        statusCode: 400,
+        message: 'Only TAHFIZH assessments can be deleted via this route',
+      }
+    }
+
+    const deleted = await deleteAssessment(body.id)
+
+    return {
+      statusCode: 200,
+      message: 'Tahfizh assessment deleted successfully',
+      data: deleted,
+    }
+  } catch (error: any) {
+    console.error('Delete error:', error)
+    return { statusCode: 500, message: 'Failed to delete assessment', error: error.message }
   }
-});
+})

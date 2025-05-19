@@ -1,48 +1,55 @@
-import { defineEventHandler, readBody, sendError, createError } from "h3";
-import { createTahfizhAssessment } from "../../../../db/assessment";
+// server/api/assessment/tahfizh.post.ts
+
+import { defineEventHandler, readBody } from 'h3'
+import { createAssessment } from '../../../../db/assessment'
+import { AssessmentType, Frequency } from '@prisma/client'
 
 export default defineEventHandler(async (event) => {
-  try {
-    const {
-      studentClassesId,
-      frequency,
-      page,
-      pageCount,
-      mistakeCount = 0,
-      repeatedCount = 0,
-      note,
-    } = await readBody(event);
+  const body = await readBody(event)
 
-    if (!studentClassesId || !frequency || !page || !pageCount) {
-      throw new Error(
-        "Missing required fields: studentClassesId, frequency, page, or pageCount."
-      );
+  if (body.type !== AssessmentType.TAHFIZH) {
+    return {
+      statusCode: 400,
+      message: 'Assessment type must be TAHFIZH',
     }
-
-    const baseScore = 100;
-    const deduction = mistakeCount + repeatedCount;
-    const finalScore = Math.max(baseScore - deduction, 0);
-
-    const assessment = await createTahfizhAssessment({
-      studentClassesId,
-      frequency,
-      page,
-      pagecount: pageCount,
-      score: finalScore,
-      note,
-    });
-
-    return assessment;
-  } catch (error: any) {
-    console.error(error);
-    return sendError(
-      event,
-      createError({
-        statusCode: 500,
-        statusMessage: error.message || "Internal Server Error",
-      })
-    );
   }
-});
 
+  if (!body.studentClassesId || !body.frequency) {
+    return {
+      statusCode: 400,
+      message: 'studentClassesId and frequency are required',
+    }
+  }
 
+  const mistakeCount = typeof body.mistakeCount === 'number' ? body.mistakeCount : 0
+  const repeatedCount = typeof body.repeatedCount === 'number' ? body.repeatedCount : 0
+  const totalPenalty = mistakeCount + repeatedCount
+  const finalScore = Math.max(100 - totalPenalty, 0)
+
+  const autoNote = `Dikurangi ${mistakeCount} karena kesalahan, ${repeatedCount} karena pengulangan`
+
+  try {
+    const assessment = await createAssessment({
+      studentClassesId: body.studentClassesId,
+      type: AssessmentType.TAHFIZH,
+      frequency: body.frequency as Frequency,
+      score: finalScore,
+      note: `${autoNote}${body.note ? ' — ' + body.note : ''}`,
+      page: body.page,
+      pageCount: body.pageCount,
+    })
+
+    return {
+      statusCode: 200,
+      message: `Assessment berhasil dibuat. Skor akhir: ${finalScore}`,
+      data: assessment,
+    }
+  } catch (error: any) {
+    console.error('Error creating tahfizh assessment:', error)
+    return {
+      statusCode: 500,
+      message: 'Internal Server Error',
+      error: error.message,
+    }
+  }
+})

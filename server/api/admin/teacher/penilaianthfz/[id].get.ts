@@ -1,33 +1,27 @@
-import { defineEventHandler, getQuery, sendError, createError } from 'h3';
-import { getTahfidzScoreSummary, getTahfidzAssessments } from '../../../../db/assessment';
+import { defineEventHandler, getQuery } from 'h3'
+import { getAssessments } from '../../../../db/assessment'
+import { AssessmentType, Frequency } from '@prisma/client'
 
 export default defineEventHandler(async (event) => {
   try {
-    const query = getQuery(event);
-    const id = query.id as string | undefined;
+    const query = getQuery(event)
 
-    if (!id) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "Missing 'id' in query parameters",
-      });
+    const studentClassesId = query.studentClassesId as string
+    const frequency = query.frequency as Frequency | undefined
+
+    if (!studentClassesId) {
+      return { statusCode: 400, message: 'studentClassesId is required' }
     }
 
-    const [assessments, summary] = await Promise.all([
-      getTahfidzAssessments(id),
-      getTahfidzScoreSummary(id),
-    ]);
+    const assessments = await getAssessments(studentClassesId, frequency, AssessmentType.TAHFIZH)
 
-    return { assessments, summary };
+    return {
+      statusCode: 200,
+      message: 'Tahfizh assessments retrieved successfully',
+      data: assessments,
+    }
   } catch (error: any) {
-    console.error(error);
-    return sendError(
-      event,
-      createError({
-        statusCode: error.statusCode || 500,
-        statusMessage: error.statusMessage || 'Internal Server Error',
-        data: { message: error.message },
-      })
-    );
+    console.error('Get error:', error)
+    return { statusCode: 500, message: 'Failed to fetch assessments', error: error.message }
   }
-});
+})
