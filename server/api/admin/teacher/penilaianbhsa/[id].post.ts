@@ -1,33 +1,24 @@
 import { defineEventHandler, readBody, sendError, createError } from "h3";
-import { createTahfizhAssessment } from "../../../../db/assessment";
+import { createAssessment } from "../../../../db/assessment";
 
 export default defineEventHandler(async (event) => {
   try {
-    const {
-      studentClassesId,
-      frequency,
-      page,
-      pageCount,
-      mistakeCount = 0,
-      repeatedCount = 0,
-      note,
-    } = await readBody(event);
+    const { studentClassesId, frequency, page, type, pageCount, mistakeCount = 0, repeatedCount = 0, note } = await readBody(event);
 
     if (!studentClassesId || !frequency || !page || !pageCount) {
-      throw new Error(
-        "Missing required fields: studentClassesId, frequency, page, or pageCount."
-      );
+      throw new Error("Missing required fields: studentClassesId, frequency, page, or pageCount.");
     }
 
     const baseScore = 100;
     const deduction = mistakeCount + repeatedCount;
     const finalScore = Math.max(baseScore - deduction, 0);
 
-    const assessment = await createTahfizhAssessment({
+    const assessment = await createAssessment({
       studentClassesId,
       frequency,
       page,
-      pagecount: pageCount,
+      type,
+      pageCount,
       score: finalScore,
       note,
     });
@@ -44,5 +35,3 @@ export default defineEventHandler(async (event) => {
     );
   }
 });
-
-

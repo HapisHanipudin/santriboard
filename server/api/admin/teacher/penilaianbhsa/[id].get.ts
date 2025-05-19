@@ -1,5 +1,5 @@
-import { defineEventHandler, getQuery, sendError, createError } from 'h3';
-import { getTahfidzScoreSummary, getTahfidzAssessments } from '../../../../db/assessment';
+import { defineEventHandler, getQuery, sendError, createError } from "h3";
+import { getScoreSummary, getAssessments } from "../../../../db/assessment";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -13,10 +13,7 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const [assessments, summary] = await Promise.all([
-      getTahfidzAssessments(id),
-      getTahfidzScoreSummary(id),
-    ]);
+    const [assessments, summary] = await Promise.all([getAssessments(id), getScoreSummary(id)]);
 
     return { assessments, summary };
   } catch (error: any) {
@@ -25,7 +22,7 @@ export default defineEventHandler(async (event) => {
       event,
       createError({
         statusCode: error.statusCode || 500,
-        statusMessage: error.statusMessage || 'Internal Server Error',
+        statusMessage: error.statusMessage || "Internal Server Error",
         data: { message: error.message },
       })
     );

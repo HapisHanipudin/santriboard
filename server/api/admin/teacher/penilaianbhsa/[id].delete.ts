@@ -1,10 +1,10 @@
-import { defineEventHandler } from 'h3';
-import { deleteassessment } from '../../../../db/assessment';
+import { defineEventHandler } from "h3";
+import { deleteAssessment } from "../../../../db/assessment";
 
 export default defineEventHandler(async (event) => {
   const idParam = event.context.params?.id;
 
-  if (!idParam || typeof idParam !== 'string') {
+  if (!idParam || typeof idParam !== "string") {
     event.res.statusCode = 400;
     return { error: "Valid id is required" };
   }
@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const deleted = await deleteassessment(id);
+    const deleted = await deleteAssessment(id);
     return { success: true, data: deleted };
   } catch (err) {
     event.res.statusCode = 500;

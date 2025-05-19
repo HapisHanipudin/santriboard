@@ -1,5 +1,5 @@
-import { defineEventHandler, readBody } from 'h3';
-import { updateTahfizhAssessment } from '../../../../db/assessment';
+import { defineEventHandler, readBody } from "h3";
+import { updateAssessment } from "../../../../db/assessment";
 
 export default defineEventHandler(async (event) => {
   const id = Number(event.context.params?.id);
@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
   try {
-    const updated = await updateTahfizhAssessment(id, body);
+    const updated = await updateAssessment(id, body);
     return { success: true, data: updated };
   } catch (err: any) {
     event.res.statusCode = 500;

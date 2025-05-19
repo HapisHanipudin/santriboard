@@ -53,11 +53,13 @@ export const useSessionStore = defineStore("SessionStore", {
         console.log("Login data:", data);
         this.setAuthToken(data.accessToken);
         this.setAuthUser(data.user);
-        toast.add({ title: "Success", description: "Login was successful!", color: "success" });
+        if (data) {
+          toast.add({ title: "Success", description: "Login was successful!", color: "success" });
+        }
 
         return true;
       } catch (err) {
-        toast.add({ title: "Failed", description: "Login was failed!", color: "success" });
+        toast.add({ title: "Failed", description: "Login was failed!", color: "error" });
 
         throw new Error("Login failed: " + (err as Error).message);
       }
@@ -129,6 +131,7 @@ export const useSessionStore = defineStore("SessionStore", {
     },
 
     async initAuth(): Promise<boolean> {
+      console;
       this.setAuthLoading(true);
       try {
         await this.refreshToken();
