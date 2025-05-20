@@ -1,5 +1,5 @@
 <template>
-  <UForm :validate="validate" class="p-4 flex flex-col gap-4" @submit="session.login(state)" :state="state">
+  <UForm :validate="validate" class="p-4 flex flex-col gap-4 w-full" @submit="session.login(state)" :state="state">
     <UFormField label="Username" name="username">
       <UInput v-model="state.username" class="w-full" size="xl" icon="solar:user-outline" placeholder="Enter your Username" />
     </UFormField>

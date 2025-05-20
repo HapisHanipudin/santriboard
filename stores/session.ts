@@ -51,9 +51,8 @@ export const useSessionStore = defineStore("SessionStore", {
           method: "POST",
           body: { username, password },
         });
-        console.log("Login data:", data);
         this.setAuthToken(data.access_token);
-        this.setAuthUser(data.user);
+        await this.getUser();
         if (data) {
           toast.add({ title: "Success", description: "Login was successful!", color: "success" });
         }
