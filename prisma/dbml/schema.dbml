@@ -61,10 +61,7 @@ Table AssessmentDetail {
   bahasaAspect String
   karakterAspect String
   itTopic String
-<<<<<<< HEAD
   completion Int
-=======
->>>>>>> feb809ae2fed718190625d130f03f9843ea433d0
   assessment Assessment [not null]
   assessmentId Int [unique, not null]
 }
