@@ -1,45 +1,97 @@
-import { defineEventHandler, getQuery } from "h3";
-import { getLeaderboardByDivision } from "../../db/divisions";
+// server/api/leaderboard.get.ts
 
-// type bidang = "TAHFIZH" | "IT" | "BAHASA" | "KARAKTER";
-
-// Inisialisasi Prisma Client
+import { prisma } from '@/server/db'
+import { defineEventHandler, getQuery } from 'h3'
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event);
-  // Pastikan bidang adalah string
-  const bidang = typeof query.bidang === "string" ? query.bidang : "";
+  const { category } = getQuery(event)
 
-  if (!bidang) {
-    return {
-      status: 400,
-      message: "bidang harus disertakan dalam query parameter",
-    };
+  if (category) {
+    // Ambil dari division -> classes -> studentClasses -> student
+    const division = await prisma.division.findFirst({
+      where: { name: String(category) },
+      include: {
+        classes: {
+          include: {
+            studentClasses: {
+              include: {
+                student: {
+                  include: {
+                    scores: true,
+                    assessment: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+
+    if (!division) throw createError({ statusCode: 404, message: 'Division not found' })
+
+    const studentMap = new Map<string, {
+      id: string
+      nis: string
+      name: string
+      totalScore: number
+    }>()
+
+    for (const classItem of division.classes) {
+      for (const sc of classItem.studentClasses) {
+        const student = sc.student
+        const total = (student.scores ?? []).reduce((acc, s) => acc + s.score, 0) +
+                      (student.assessment ?? []).reduce((acc, a) => acc + a.score, 0)
+
+        if (!studentMap.has(student.id)) {
+          studentMap.set(student.id, {
+            id: student.id,
+            nis: student.nis,
+            name: student.name,
+            totalScore: total
+          })
+        } else {
+          studentMap.get(student.id)!.totalScore += total
+        }
+      }
+    }
+
+    const leaderboard = Array.from(studentMap.values()).sort((a, b) => b.totalScore - a.totalScore)
+    return leaderboard
   }
 
-  // Ambil data students beserta kelas dan guru
-  const divisi = await getLeaderboardByDivision(bidang);
-  // // Jika tidak ada students ditemukan
-  // if (divisi?.classes.reduce((a, b) => a + b.students.length, 0) === 0) {
-  //   return {
-  //     status: 404,
-  //     message: "Tidak ada siswa yang ditemukan untuk bidang ini.",
-  //   };
-  // }
-  const students = divisi?.classes.flatMap(
-    (c) => c.students?.map((s) => s) ?? []
-  );
+  // Tidak ada kategori: dari semua students -> studentClasses -> nilai dirata-ratakan
+  const students = await prisma.student.findMany({
+    include: {
+      studentClasses: {
+        include: {
+          class: true,
+          scores: true,
+          assessment: true
+        }
+      }
+    }
+  })
 
-  const score =
-    students?.map((s) => ({
-      ...s.student,
-      score: s.evaluations.reduce((a, b) => a + b.score, 0),
-    })) ?? [];
+  const leaderboard = students.map((student) => {
+    let totalScore = 0
+    let classCount = student.studentClasses.length
 
-  // // Definisikan bidang yang akan dirangking
+    for (const sc of student.studentClasses) {
+      const scoreSum = (sc.scores ?? []).reduce((acc, s) => acc + s.score, 0)
+      const assessmentSum = (sc.assessment ?? []).reduce((acc, a) => acc + a.score, 0)
+      totalScore += (scoreSum + assessmentSum)
+    }
 
-  // // Proses setiap student
-  // const scores = divisi?.classes.flatMap((c) => c.students.map((s) => ({})));
-  // // return students;
-  return score;
-});
+    const averageScore = classCount > 0 ? totalScore / classCount : 0
+
+    return {
+      id: student.id,
+      nis: student.nis,
+      name: student.name,
+      averageScore: Math.round(averageScore)
+    }
+  }).sort((a, b) => b.averageScore - a.averageScore)
+
+  return leaderboard
+})
