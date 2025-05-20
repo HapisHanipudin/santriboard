@@ -12,7 +12,6 @@ export default defineEventHandler(async (event) => {
       birth_date,
       birth_place,
       nis,
-      nik,
       is_active,
       is_graduated,
       familiesId,
@@ -25,10 +24,9 @@ export default defineEventHandler(async (event) => {
       birth_date,
       birth_place,
       nis,
-      nik,
       is_active,
       is_graduated,
-      familiesId, // akan diolah di fungsi createStudent
+      familiesId,
     });
 
     return {

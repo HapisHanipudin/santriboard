@@ -1,4 +1,3 @@
-
 import { prisma } from ".";
 
 // Fungsi untuk membuat refresh token baru

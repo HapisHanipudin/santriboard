@@ -28,9 +28,8 @@ export default defineEventHandler(async (event) => {
   const { accessToken, refreshToken } = generateTokens(user);
 
   // 🔐 Simpan hash refresh token
-  const hashedToken = hashToken(refreshToken);
   await createRefreshToken({
-    token: hashedToken,
+    token: refreshToken,
     userId: user.id,
   });
 

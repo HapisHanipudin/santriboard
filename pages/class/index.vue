@@ -1,35 +1,44 @@
 <template>
   <div>
-    <div class="flex w-full">
-      <UForm :state="newClass" @submit="submit" class="flex flex-col w-full gap-4">
-        <UFormField label="Nama" class="w-full">
-          <UInput class="w-full" v-model="newClass.name" />
-        </UFormField>
-
-        <UFormField class="w-full" label="Divisi">
-          <UInputMenu class="w-full" v-model="newClass.division" value-key="value" :items="divisions" />
-        </UFormField>
-      </UForm>
-    </div>
+    <TabWrapper :tabs="tabTitles">
+      <Tab v-for="tab in tabTitles" :title="tab.title"><ClassViews :title="tab.title" /></Tab>
+    </TabWrapper>
   </div>
 </template>
 
 <script lang="ts" setup>
-const newClass = ref({
-  name: "",
-  division: "TAHFIZH",
-} as { name: string; division: Field });
+const session = useSessionStore();
+const isAuthenticated = computed(() => session.isAuthenticated);
+const tabTitles = ref([
+  {
+    title: "semua",
+    icon: "fa:users",
+    display: "Semua",
+  },
+  ...((isAuthenticated.value === true
+    ? session.authUser?.teacher.divisions.map((division: any) => {
+        return {
+          title: division.id,
+          icon: division.icon,
+          display: division.name.charAt(0).toUpperCase() + division.name.slice(1),
+        };
+      })
+    : []) as any),
+]);
 
-const divisions = ref([
-  { value: "TAHFIZH", label: "Tahfizh" },
-  { value: "IT", label: "IT" },
-  { value: "KARAKTER", label: "Karakter" },
-  { value: "BAHASA", label: "Bahasa" },
-] as { value: Field; label: string }[]);
-
-const submit = () => {
-  console.log(newClass.value);
-};
+watch(isAuthenticated, () => {
+  if (isAuthenticated.value === true) {
+    tabTitles.value.push(
+      ...session.authUser?.teacher.divisions.map((division: any) => {
+        return {
+          title: division.id,
+          icon: division.icon,
+          display: division.name.charAt(0).toUpperCase() + division.name.slice(1),
+        };
+      })
+    );
+  }
+});
 </script>
 
 <style></style>

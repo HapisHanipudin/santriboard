@@ -4,7 +4,7 @@
       <div :style="{ 'grid-template-columns': `repeat(${props.tabs.length}, minmax(0, 1fr))` }" class="w-full grid relative">
         <button @click="selectTitle(tab.title)" v-for="(tab, index) in props.tabs" :key="index" class="flex cursor-pointer justify-center items-center gap-2 z-10 py-2">
           <UIcon v-if="tab.icon" :name="`${tab.icon}`" class="text-2xl" />
-          <span class="text-2xl capitalize max-md:hidden">{{ tab.display }}</span>
+          <span class="text-xl xl:text-2xl capitalize max-md:hidden truncate">{{ tab.display }}</span>
         </button>
         <div
           :style="{ transform: `translateX(${props.tabs.findIndex((tab) => tab.title === selectedTitle)}00%)`, width: `calc(1/${props.tabs.length} * 100%)` }"

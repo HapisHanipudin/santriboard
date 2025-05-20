@@ -40,7 +40,7 @@ export async function getParentById(id: string): Promise<Parents | null> {
  */
 export async function updateParent(
   id: string,
-  data: Partial<Pick<Parents, "name" | "familyId" | "nik">>
+  data: Partial<Pick<Parents, "name" | "familyId" >>
 ): Promise<Parents> {
   return prisma.parents.update({
     where: { id },

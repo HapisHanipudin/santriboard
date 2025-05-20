@@ -18,7 +18,7 @@ Table Users {
 
 Table RefreshToken {
   id String [pk]
-  tokenHash String [unique, not null]
+  token String [unique, not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   userId String [not null]
@@ -31,30 +31,42 @@ Table Teachers {
   name String [not null]
   nik String [unique, not null]
   userId String [unique]
-  divisions Division[] [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   teacherDivisions TeacherDivisions [not null]
   user Users
-  assessments assessment [not null]
   notes Notes [not null]
   classes TeacherClasses [not null]
   notifications Notifications [not null]
   projects Projects [not null]
 }
 
-Table assessment {
+Table Assessment {
   id Int [pk, increment]
-  studentId String [not null]
-  teacherId String [not null]
+  studentClassesId String [not null]
+  type AssessmentType [not null]
   frequency Frequency [not null]
-  division Division [not null]
-  score Float [not null]
+  score Int [not null]
   note String
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
-  student Students [not null]
-  teacher Teachers [not null]
+  detail AssessmentDetail
+  studentClass StudentClasses [not null]
+}
+
+Table AssessmentDetail {
+  id Int [pk, increment]
+  page String
+  pageCount Int
+  bahasaAspect String
+  karakterAspect String
+  itTopic String
+<<<<<<< HEAD
+  completion Int
+=======
+>>>>>>> feb809ae2fed718190625d130f03f9843ea433d0
+  assessment Assessment [not null]
+  assessmentId Int [unique, not null]
 }
 
 Table Notifications {
@@ -114,6 +126,7 @@ Table PlanDetails {
 Table Divisions {
   id String [pk]
   name Field [not null]
+  icon String
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   classes Classes [not null]
@@ -181,7 +194,6 @@ Table Parents {
   userId String [unique, not null]
   familyId String [not null]
   user Users [not null]
-  nik String [unique, not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   family Families
@@ -193,7 +205,6 @@ Table Students {
   Pondok Int
   SekolahPayung String
   familiesId String
-  nik String [unique]
   nis String [unique]
   name String [not null]
   nickname String
@@ -211,8 +222,6 @@ Table Students {
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [default: `now()`, not null]
   user Users
-  assessments assessment [not null]
-  scores Score [not null]
   notifications Notifications [not null]
   family Families
   grade_students GradeStudents [not null]
@@ -226,11 +235,11 @@ Table Students {
 
 Table Score {
   id String [pk]
-  studentId String [not null]
+  studentClassesId String [not null]
   type ScoreType [not null]
   value Float [not null]
   date DateTime [default: `now()`, not null]
-  student Students [not null]
+  class StudentClasses [not null]
 }
 
 Table Achievements {
@@ -315,7 +324,9 @@ Table StudentClasses {
   student Students [not null]
   class Classes [not null]
   semester Semesters [not null]
+  scores Score [not null]
   evaluations Evaluations [not null]
+  assesment Assessment [not null]
 
   indexes {
     (studentId, classId, semesterId) [unique]
@@ -335,8 +346,8 @@ Enum Frequency {
 }
 
 Enum Gender {
-  MALE
-  FEMALE
+  p
+  L
 }
 
 Enum ProjectStatus {
@@ -380,6 +391,15 @@ Enum Division {
   KARAKTER
 }
 
+Enum AssessmentType {
+  TAHFIZH
+  BAHASA_ARAB
+  BAHASA_INGGRIS
+  BAHASA_PDKI
+  KARAKTER
+  IT
+}
+
 Enum ScoreType {
   DAILY_EXAM
   INITIATIVE
@@ -391,9 +411,9 @@ Ref: RefreshToken.userId > Users.id
 
 Ref: Teachers.userId - Users.id
 
-Ref: assessment.studentId > Students.id
+Ref: Assessment.studentClassesId > StudentClasses.id
 
-Ref: assessment.teacherId > Teachers.id
+Ref: AssessmentDetail.assessmentId - Assessment.id [delete: Cascade]
 
 Ref: Notifications.studentId > Students.id
 
@@ -431,7 +451,7 @@ Ref: Students.userId - Users.id
 
 Ref: Students.familiesId > Families.id
 
-Ref: Score.studentId > Students.id
+Ref: Score.studentClassesId > StudentClasses.id
 
 Ref: Achievements.studentId > Students.id
 

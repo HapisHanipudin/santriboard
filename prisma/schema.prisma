@@ -25,8 +25,8 @@ enum Frequency {
 
 
 enum Gender {
-  MALE
-  FEMALE
+p
+ L
 }
 
 enum ProjectStatus {
@@ -69,6 +69,9 @@ enum Division {
   KARAKTER
 }
 
+
+
+
 model Users {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -86,7 +89,7 @@ model Users {
 
 model RefreshToken {
   id        String   @id @default(uuid())
-  tokenHash String   @unique
+  token     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String
@@ -99,7 +102,6 @@ model Teachers {
   name              String
   nik               String                @unique
   userId            String?               @unique
-  divisions         Division[]            @default([])
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
 
@@ -107,7 +109,6 @@ model Teachers {
   teacherDivisions  TeacherDivisions[]    
 
   user              Users?                @relation(fields: [userId], references: [id])
-  assessments            assessment[]
   notes             Notes[]
   classes           TeacherClasses[]
   notifications     Notifications[]
@@ -115,23 +116,50 @@ model Teachers {
 }
 
 
-model assessment {
-  id          Int        @id @default(autoincrement())
-  studentId   String
-  teacherId   String
-  frequency   Frequency
-  division    Division
-  score       Float
-  note        String?    
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
 
-  student     Students   @relation(fields: [studentId], references: [id])
-  teacher     Teachers   @relation(fields: [teacherId], references: [id])
+model Assessment {
+  id               Int               @id @default(autoincrement())
+  studentClassesId String
+  type             AssessmentType
+  frequency        Frequency
 
-  @@index([studentId, frequency])
-  @@index([teacherId])
+  score            Int
+  note             String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  detail           AssessmentDetail? 
+  studentClass     StudentClasses    @relation(fields: [studentClassesId], references: [id])
 }
+
+model AssessmentDetail {
+  id               Int          @id @default(autoincrement())
+  page             String?
+  pageCount        Int?
+  bahasaAspect     String?
+  karakterAspect   String?
+  itTopic          String?
+  completion       Int?         // Add this field
+
+  assessment       Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  assessmentId     Int          @unique
+}
+
+
+
+
+enum AssessmentType {
+  
+  TAHFIZH
+  BAHASA_ARAB
+  BAHASA_INGGRIS
+  BAHASA_PDKI
+  KARAKTER
+  IT
+}
+
+
 
 model Notifications {
   id        String             @id @default(cuid())
@@ -197,6 +225,7 @@ model PlanDetails {
 model Divisions {
   id        String               @id @default(cuid())
   name      Field
+  icon      String?
   createdAt DateTime             @default(now())
   updatedAt DateTime             @updatedAt
 
@@ -266,10 +295,11 @@ model Families {
 model Parents {
   id        String   @id @default(cuid())
   name      String
+
   userId    String   @unique
   familyId  String
   user      Users    @relation(fields: [userId], references: [id])
-  nik       String   @unique
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -284,7 +314,6 @@ model Students {
   Pondok        Int?
   SekolahPayung String?
   familiesId    String?
-  nik           String?   @unique
   nis           String?   @unique
   name          String
   nickname      String?
@@ -303,8 +332,6 @@ model Students {
   updated_at    DateTime  @default(now())
 
   user           Users?           @relation(fields: [userId], references: [id])
-  assessments   assessment[]
-  scores        Score[]
   notifications Notifications[] // Ditambahkan
 
   family         Families?        @relation(fields: [familiesId], references: [id])
@@ -319,12 +346,12 @@ model Students {
 
 model Score {
   id        String    @id @default(uuid())
-  studentId String
+  studentClassesId String
   type      ScoreType
   value     Float
   date      DateTime  @default(now())
 
-  student Students @relation(fields: [studentId], references: [id])
+  class StudentClasses @relation(references: [id], fields: [studentClassesId])
 }
 
 enum ScoreType {
@@ -419,7 +446,9 @@ model StudentClasses {
   student    Students   @relation(fields: [studentId], references: [id])
   class      Classes    @relation(fields: [classId], references: [id])
   semester   Semesters  @relation(fields: [semesterId], references: [id])
+  scores    Score[]
   evaluations Evaluations[]
-
+  assesment   Assessment[]
   @@unique([studentId, classId, semesterId])
 }
+

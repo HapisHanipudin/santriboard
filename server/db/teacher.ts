@@ -1,130 +1,206 @@
 import { prisma } from "../db";
+import { TeacherRole, Divisions } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
-
+// Fetch all teachers with related data
 export async function getTeachers() {
-    try {
-      const teachers = await prisma.teachers.findMany({
-        select: {
-          name: true,
-          user: {
-            select: {
-              email: true,
-              username: true,
-            },
+  try {
+    const teachers = await prisma.teachers.findMany({
+      select: {
+        id: true,
+        name: true,
+        user: {
+          select: {
+            email: true,
+            username: true,
           },
-          divisions: {
-            select: {
-              division: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-          classes: {
-            select: {
-              class: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-          notes: true,
         },
-      });
-      return teachers;
-    } catch (error) {
-      throw new Error("Failed to fetch teachers");
-    }
+        teacherDivisions: {
+          select: {
+            role: true,
+            division: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+        classes: {
+          select: {
+            class: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+        notes: true,
+      },
+    });
+    return teachers;
+  } catch (error: unknown) {
+    console.error("Error fetching teachers:", error);
+    throw new Error("Failed to fetch teachers");
   }
-  
-  
-  export async function deleteTeacher(id: string) {
-    const teacherId = String(id); // Konversi ID ke string
-  
-    const existingTeacher = await prisma.teachers.findUnique({
-      where: { id: teacherId }, // Pastikan ini string
-    });
-  
-    if (!existingTeacher) {
-      throw new Error("Teacher not found");
-    }
-  
-    await prisma.teacherDivisions.deleteMany({
-      where: { teacherId: teacherId }, // Gunakan string
-    });
-  
-    await prisma.teachers.delete({
-      where: { id: teacherId }, // Gunakan string
-    });
-  
-    return true;
-  }
+}
 
-export async function updateTeacher(
-  id: string,
-  name?: string,
-  divisions?: { divisionId: string; role: string }[]
-) {
-  // Cek apakah teacher ada
+export function getTeacherByUserId(userId: string) {
+  return prisma.teachers.findUnique({
+    where: { userId },
+    include: {
+      teacherDivisions: {
+        include: {
+          division: true, // ini penting untuk mengambil info Division
+        },
+      },
+    },
+  });
+}
+
+export const getTeacherClasses = async (teacherId: string, divisionName?: Field) => {
+  const whereClause: Prisma.TeacherClassesWhereInput = {
+    teacherId,
+    ...(divisionName
+      ? {
+          class: {
+            division: {
+              name: divisionName, // Field enum
+            },
+          },
+        }
+      : {}),
+  };
+
+  const teacherClasses = await prisma.teacherClasses.findMany({
+    where: whereClause,
+    include: {
+      teacher: true, // Ambil data guru
+      class: {
+        include: {
+          division: true,
+          students: true,
+        },
+      },
+    },
+  });
+
+  return teacherClasses.map((tc, index) => ({
+    id: tc.class.id,
+    name: tc.class.name,
+    division: tc.class.division.name,
+    teacher: tc.teacher.name,
+    studentCount: tc.class.students.length,
+    category: tc.class.division.name, // Ganti category → division name
+  }));
+};
+
+// Delete a teacher along with related data
+export async function deleteTeacher(id: string) {
+  const teacherId = String(id);
+
   const existingTeacher = await prisma.teachers.findUnique({
-    where: { id },
+    where: { id: teacherId },
   });
 
   if (!existingTeacher) {
-    throw new Error("Teacher not found");
+    throw new Error("Guru tidak ditemukan.");
   }
 
-  // Update data guru
+  // Remove related divisions first
+  await prisma.teacherDivisions.deleteMany({
+    where: { teacherId },
+  });
+
+  // Delete teacher record
+  await prisma.teachers.delete({
+    where: { id: teacherId },
+  });
+
+  return { success: true };
+}
+
+// Update teacher information
+export async function updateTeacher(id: string, name?: string, divisions?: { divisionId: string; role: TeacherRole }[]) {
+  const existingTeacher = await prisma.teachers.findUnique({ where: { id } });
+
+  if (!existingTeacher) {
+    throw new Error("Guru tidak ditemukan.");
+  }
+
+  // Update teacher's name if provided
   const updatedTeacher = await prisma.teachers.update({
     where: { id },
     data: { name },
   });
 
-  // Jika ada perubahan di divisions, update relasi teacherDivisions
-  if (divisions) {
-    await prisma.teacherDivisions.deleteMany({
-      where: { teacherId: id },
-    });
+  // If divisions data is provided, update them
+  if (divisions && divisions.length > 0) {
+    // Remove existing divisions
+    await prisma.teacherDivisions.deleteMany({ where: { teacherId: id } });
 
+    // Add new divisions
     await prisma.teacherDivisions.createMany({
-      data: divisions.map((division) => ({
+      data: divisions.map(({ divisionId, role }) => ({
         teacherId: id,
-        divisionId: division.divisionId,
-        role: division.role as any, // Enum TeacherRole
+        divisionId,
+        role,
       })),
     });
   }
 
   return updatedTeacher;
 }
-  
 
-export async function createTeacher(
-  name: string,
-  divisions: { divisionId: string; role: string }[]
-) {
-  if (!name || !divisions || !Array.isArray(divisions)) {
-    throw new Error("Invalid data format");
+export async function createTeacher(data: {
+  name: string;
+  nik: string;
+  divisionIds: string[]; // Menggunakan ID divisi, bukan nama
+  teacherRole?: TeacherRole;
+}) {
+  try {
+    if (!data.divisionIds || data.divisionIds.length === 0) {
+      throw new Error("Minimal satu divisi harus dipilih.");
+    }
+
+    // Pastikan semua divisionId valid
+    const validDivisions = await prisma.divisions.findMany({
+      where: {
+        id: {
+          in: data.divisionIds,
+        },
+      },
+    });
+
+    if (validDivisions.length !== data.divisionIds.length) {
+      throw new Error("Salah satu ID divisi tidak ditemukan.");
+    }
+
+    // Buat guru dan hubungkan ke divisi melalui tabel pivot teacherDivisions
+    const teacher = await prisma.teachers.create({
+      data: {
+        name: data.name,
+        nik: data.nik,
+        teacherDivisions: {
+          create: data.divisionIds.map((divisionId) => ({
+            divisionId,
+            role: data.teacherRole || "ASATIDZ",
+          })),
+        },
+      },
+      include: {
+        teacherDivisions: {
+          include: {
+            division: true,
+          },
+        },
+      },
+    });
+
+    return teacher;
+  } catch (error: any) {
+    console.error("Error creating teacher:", error);
+    throw new Error(error);
   }
-
-  // Membuat teacher baru
-  const teacher = await prisma.teachers.create({
-    data: {
-      name,
-      nik: `NIK${Date.now()}`, // Dummy NIK
-    },
-  });
-
-  // Membuat relasi teacherDivisions
-  await prisma.teacherDivisions.createMany({
-    data: divisions.map((division) => ({
-      teacherId: teacher.id,
-      divisionId: division.divisionId,
-      role: division.role as any, // Enum TeacherRole
-    })),
-  });
-
-  return teacher;
 }

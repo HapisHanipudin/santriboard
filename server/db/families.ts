@@ -21,10 +21,18 @@ export interface FamilyUpdateInput {
 }
 
 export async function getAllFamilies() {
-  return prisma.families.findMany();
+  return await prisma.families.findMany();
 }
 
 export async function createFamily(data: FamilyCreateInput) {
+  const existing = await prisma.families.findUnique({
+    where: { kk: data.kk },
+  });
+
+  if (existing) {
+    throw new Error("Nomor KK sudah terdaftar.");
+  }
+
   return prisma.families.create({ data });
 }
 

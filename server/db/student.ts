@@ -2,6 +2,7 @@ import { prisma } from ".";
 
 import { Gender } from "@prisma/client";
 
+
 export async function createStudent(data: {
   name: string;
   nickname?: string;
@@ -9,7 +10,6 @@ export async function createStudent(data: {
   birth_date: string | Date;
   birth_place: string;
   nis: string;
-  nik: string;
   is_active?: boolean;
   is_graduated?: boolean;
   familiesId?: string;
@@ -21,14 +21,33 @@ export async function createStudent(data: {
     birth_date,
     birth_place,
     nis,
-    nik,
     is_active,
     is_graduated,
     familiesId,
   } = data;
 
-  if (!name || !gender || !birth_date || !nis || !nik) {
+  // Validasi data wajib
+  if (!name || !gender || !birth_date || !nis) {
     throw new Error("Invalid data format");
+  }
+
+  // Cek apakah NIS sudah ada
+  const existingStudent = await prisma.students.findUnique({
+    where: { nis }
+  });
+
+  if (existingStudent) {
+    throw new Error("NIS sudah ada. Harap gunakan NIS yang Belum Terdaftar.");
+  }
+
+  // Validasi gender untuk memastikan hanya 'L' atau 'P'
+  let genderEnum: Gender;
+  if (gender === 'L') {
+    genderEnum = Gender.L;  // L berarti Male
+  } else if (gender === 'P') {
+    genderEnum = Gender.p;  // P berarti Female
+  } else {
+    throw new Error("Invalid gender, must be 'L' or 'P'");
   }
 
   // Validasi familiesId jika diberikan
@@ -40,18 +59,18 @@ export async function createStudent(data: {
     }
   }
 
+  // Buat data student
   return await prisma.students.create({
     data: {
       name,
       nickname,
-      gender: gender.toUpperCase() as Gender,
+      gender: genderEnum,  // Gunakan gender enum yang sudah valid
       birth_date: new Date(birth_date),
       birth_place,
       nis,
-      nik,
       is_active: is_active ?? true,
       is_graduated: is_graduated ?? false,
-      familiesId: familiesId, // BUKAN families
+      familiesId,  // Jika ada, set familiesId
     },
   });
 }
@@ -69,11 +88,35 @@ export async function deleteStudent(id: string) {
 }
 
 export async function updateStudent(id: string, data: any) {
+  const updatedData = { ...data };
+
+  // Larang update NIS
+  if ('nis' in updatedData) {
+    delete updatedData.nis;
+  }
+
+  // Konversi gender jika ada
+  if (updatedData.gender) {
+    if (updatedData.gender === 'L') {
+      updatedData.gender = Gender.L;
+    } else if (updatedData.gender === 'P') {
+      updatedData.gender = Gender.p;
+    } else {
+      throw new Error("Invalid gender value. Must be 'L' or 'P'.");
+    }
+  }
+
+  // Konversi birth_date jika perlu
+  if (updatedData.birth_date) {
+    updatedData.birth_date = new Date(updatedData.birth_date);
+  }
+
   return await prisma.students.update({
     where: { id },
-    data,
+    data: updatedData,
   });
 }
+
 
 
 /**
@@ -139,9 +182,6 @@ export async function getStudentRankings(kategori: string) {
   return rankings;
 }
 
-/**
- * Mendapatkan data lengkap satu student.
- */
 export const getStudents = async (id: string) => {
   return await prisma.students.findUnique({
     where: { id },

@@ -4,11 +4,10 @@ import { createTeacher } from "../../../db/teacher";
 export default defineEventHandler(async (event) => {
   try {
     // Membaca data dari request body
-    const body = await readBody(event);
-    const { name, divisions } = body;
+    const data = await readBody(event);
 
     // Menggunakan fungsi modular createTeacher
-    const teacher = await createTeacher(name, divisions);
+    const teacher = await createTeacher(data);
 
     return {
       message: "Teacher created successfully",
