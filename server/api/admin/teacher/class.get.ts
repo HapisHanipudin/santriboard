@@ -6,8 +6,8 @@ export default defineEventHandler(async (event) => {
   // console.log(user.teacher);
   const query = getQuery(event);
 
-  const teacherId = user.teacher.id; // gunakan id dari router param
-  const divisionName = query.divisionName as Field | undefined;
+  const teacherId = user.teacher.id;
+  const divisionName = query.category as Field | undefined;
 
   if (!teacherId) {
     throw createError({
@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const classes = await getTeacherClasses(teacherId);
+    const classes = await getTeacherClasses(teacherId, divisionName);
     console.log(classes);
     return {
       success: true,
