@@ -1,45 +1,48 @@
-import { defineEventHandler, getQuery } from "h3";
-import { getLeaderboardByDivision } from "../../db/divisions";
-
-// type bidang = "TAHFIZH" | "IT" | "BAHASA" | "KARAKTER";
-
-// Inisialisasi Prisma Client
+import { defineEventHandler, getQuery } from 'h3'
+import { prisma } from '@/server/db'
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event);
-  // Pastikan bidang adalah string
-  const bidang = typeof query.bidang === "string" ? query.bidang : "";
+  const query = getQuery(event)
+  const divisionId = query.divisionId as string | undefined
 
-  if (!bidang) {
-    return {
-      status: 400,
-      message: "bidang harus disertakan dalam query parameter",
-    };
+  if (!divisionId) {
+    return { error: 'Missing divisionId in query params' }
   }
 
-  // Ambil data students beserta kelas dan guru
-  const divisi = await getLeaderboardByDivision(bidang);
-  // // Jika tidak ada students ditemukan
-  // if (divisi?.classes.reduce((a, b) => a + b.students.length, 0) === 0) {
-  //   return {
-  //     status: 404,
-  //     message: "Tidak ada siswa yang ditemukan untuk bidang ini.",
-  //   };
-  // }
-  const students = divisi?.classes.flatMap(
-    (c) => c.students?.map((s) => s) ?? []
-  );
+  const classes = await prisma.classes.findMany({
+    where: { divisionId },
+    include: {
+      students: {
+        include: {
+          student: true,
+          scores: true,
+          assesment: true
+        }
+      }
+    }
+  })
 
-  const score =
-    students?.map((s) => ({
-      ...s.student,
-      score: s.evaluations.reduce((a, b) => a + b.score, 0),
-    })) ?? [];
+  const leaderboard: Record<string, { id: string, nis: string, name: string, totalScore: number }> = {}
 
-  // // Definisikan bidang yang akan dirangking
+  for (const cls of classes) {
+    for (const sc of cls.students) {
+      const student = sc.student
+      const scoreSum = sc.scores.reduce((sum, s) => sum + s.value, 0)
+      const assessmentSum = sc.assesment.reduce((sum, a) => sum + a.score, 0)
+      const total = scoreSum + assessmentSum
 
-  // // Proses setiap student
-  // const scores = divisi?.classes.flatMap((c) => c.students.map((s) => ({})));
-  // // return students;
-  return score;
-});
+      if (!leaderboard[student.id]) {
+        leaderboard[student.id] = {
+          id: student.id,
+          nis: student.nis ?? '',
+          name: student.name,
+          totalScore: total
+        }
+      } else {
+        leaderboard[student.id].totalScore += total
+      }
+    }
+  }
+
+  return Object.values(leaderboard).sort((a, b) => b.totalScore - a.totalScore)
+})
