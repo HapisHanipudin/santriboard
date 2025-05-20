@@ -1,18 +1,18 @@
-import { defineEventHandler, readBody } from 'h3'
-import { prisma } from '~/server/db'
+import { defineEventHandler, readBody } from "h3";
+import { prisma } from "~/server/db";
 
 export default defineEventHandler(async (event) => {
   try {
-    const id = Number(event.context.params?.id)
+    const id = Number(event.context.params?.id);
 
     if (!id) {
       return {
         statusCode: 400,
-        message: 'Missing assessment id in params',
-      }
+        message: "Missing assessment id in params",
+      };
     }
 
-    const body = await readBody(event)
+    const body = await readBody(event);
     const {
       studentClassesId,
       frequency,
@@ -23,35 +23,35 @@ export default defineEventHandler(async (event) => {
       type,
       note,
       score,
-    } = body
+    } = body;
 
-    if (type !== 'TAHFIZH') {
+    if (type !== "TAHFIZH") {
       return {
         statusCode: 400,
-        message: 'Only TAHFIZH assessments can be updated here',
-      }
+        message: "Only TAHFIZH assessments can be updated here",
+      };
     }
 
     const existing = await prisma.assessment.findUnique({
       where: { id },
       include: { detail: true },
-    })
+    });
 
     if (!existing) {
       return {
         statusCode: 404,
-        message: 'Assessment not found',
-      }
+        message: "Assessment not found",
+      };
     }
 
-    if (existing.type !== 'TAHFIZH') {
+    if (existing.type !== "TAHFIZH") {
       return {
         statusCode: 400,
-        message: 'Assessment type mismatch, must be TAHFIZH',
-      }
+        message: "Assessment type mismatch, must be TAHFIZH",
+      };
     }
 
-    const combinedNote = `Dikurangi ${mistakeCount} karena kesalahan, ${repeatedCount} karena pengulangan — ${note}`
+    const combinedNote = `Dikurangi ${mistakeCount} karena kesalahan, ${repeatedCount} karena pengulangan — ${note}`;
 
     const updatedAssessment = await prisma.assessment.update({
       where: { id },
@@ -62,37 +62,37 @@ export default defineEventHandler(async (event) => {
         score,
       },
       include: { detail: true },
-    })
+    });
 
     if (page !== undefined && pageCount !== undefined) {
-      console.log('updatedAssessment.detail:', updatedAssessment.detail)
+      console.log("updatedAssessment.detail:", updatedAssessment.detail);
       if (updatedAssessment.detail) {
-        await prisma.detail.update({
+        await prisma.assessmentDetail.update({
           where: { id: updatedAssessment.detail.id },
           data: { page, pageCount },
-        })
+        });
       } else {
-        await prisma.detail.create({
+        await prisma.assessmentDetail.create({
           data: { assessmentId: id, page, pageCount },
-        })
+        });
       }
     }
 
     const finalAssessment = await prisma.assessment.findUnique({
       where: { id },
       include: { detail: true },
-    })
+    });
 
     return {
       statusCode: 200,
       data: finalAssessment,
-    }
+    };
   } catch (error: any) {
-    console.error('Error updating TAHFIZH assessment:', error)
+    console.error("Error updating TAHFIZH assessment:", error);
     return {
       statusCode: 500,
-      message: 'Internal Server Error',
+      message: "Internal Server Error",
       error: error.message,
-    }
+    };
   }
-})
+});

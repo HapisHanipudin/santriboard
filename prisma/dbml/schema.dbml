@@ -61,7 +61,8 @@ Table AssessmentDetail {
   bahasaAspect String
   karakterAspect String
   itTopic String
-  assessment Assessment
+  completion Int
+  assessment Assessment [not null]
   assessmentId Int [unique, not null]
 }
 

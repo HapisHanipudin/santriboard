@@ -139,6 +139,8 @@ model AssessmentDetail {
   bahasaAspect     String?
   karakterAspect   String?
   itTopic          String?
+  completion       Int?         // Add this field
+
   assessment       Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
 
   assessmentId     Int          @unique
