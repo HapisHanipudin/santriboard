@@ -54,6 +54,22 @@ export async function createAssessment(data: {
 
 
 
+export async function getItTopicsCompletionByStudentAndFrequency(studentClassesId: string, frequency: Frequency) {
+  return prisma.assessmentDetail.findMany({
+    where: {
+      assessment: {
+        studentClassesId,
+        frequency,
+        type: "IT", // pastikan hanya untuk IT
+      },
+    },
+    select: {
+      completion: true, // nilai persen (0-100)
+    },
+  });
+}
+
+
 export async function updateAssessment(
   assessmentId: number,
   data: {
