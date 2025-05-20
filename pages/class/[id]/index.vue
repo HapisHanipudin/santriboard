@@ -11,88 +11,59 @@
 </template>
 
 <script lang="ts" setup>
-const students = ref([
+const { id } = useRoute().params;
+
+interface Student {
+  nis: string;
+  id: string;
+  name: string;
+}
+
+interface ApiResponse {
+  id: string;
+  name: string;
+  divisionId: string;
+  teachers: { id: string; teacherId: string; semesterId: string; teacher: { name: string } }[];
+  students: {
+    id: string;
+    studentId: string;
+    semesterId: string;
+    student: {
+      name: string;
+      nis: string;
+    };
+  }[];
+}
+
+const students = ref<Student[]>([]);
+const student = ref<Student[]>([
   {
     nis: "222303180",
     id: "222303180",
     name: "Muhammad Rizky",
   },
-  {
-    nis: "222303181",
-    id: "222303181",
-    name: "Muhammad Rizal",
-  },
-  {
-    nis: "222303182",
-    id: "222303182",
-    name: "Muhammad Rizqi",
-  },
-  {
-    nis: "222303183",
-    id: "222303183",
-    name: "Muhammad Rizqi",
-  },
-  {
-    nis: "222303184",
-    id: "222303184",
-    name: "Muhammad Rizqi",
-  },
-  {
-    nis: "222303185",
-    id: "222303185",
-    name: "Muhammad Rizqi",
-  },
-  {
-    nis: "222303186",
-    id: "222303186",
-    name: "Muhammad Rizqi",
-  },
-  {
-    nis: "222303187",
-    id: "222303187",
-    name: "Muhammad Rizqi",
-  },
-  {
-    nis: "222303188",
-    id: "222303188",
-    name: "Muhammad Rizqi",
-  },
-  {
-    nis: "222303189",
-    id: "222303189",
-    name: "Muhammad Rizqi",
-  },
-  {
-    nis: "222303190",
-    id: "222303190",
-    name: "Muhammad Rizqi",
-  },
-  {
-    nis: "222303191",
-    id: "222303191",
-    name: "Muhammad Rizqi",
-  },
-  {
-    nis: "222303192",
-    id: "222303192",
-    name: "Muhammad Rizqi",
-  },
-  {
-    nis: "222303193",
-    id: "222303193",
-    name: "Muhammad Rizqi",
-  },
-  {
-    nis: "222303194",
-    id: "222303194",
-    name: "Muhammad Rizqi",
-  },
-  {
-    nis: "222303195",
-    id: "222303195",
-    name: "Muhammad Rizqi",
-  },
 ]);
+
+const getClass = async () => {
+  try {
+    const data = await $fetch(`/api/admin/classes/${id}/student`);
+    const response = data as ApiResponse;
+    students.value.push(
+      ...response?.students.map((student: any) => ({
+        nis: student.nis,
+        id: student.id,
+        name: student.name,
+      }))
+    );
+  } catch (error) {
+    console.error(error);
+    // Handle the error here
+  }
+};
+
+onMounted(() => {
+  getClass();
+});
 </script>
 
 <style></style>

@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const classes = await getTeacherClasses(teacherId, divisionName);
-    console.log(classes);
+    // console.log(classes);
     return {
       success: true,
       data: classes,

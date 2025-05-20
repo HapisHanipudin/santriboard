@@ -40,7 +40,7 @@
               <span class="text-blue-600 font-light text-xl">Welcome To</span>
               <span class="text-4xl font-semibold">SantriBoard</span>
             </div>
-            <div class="bg-neutral-800 rounded-3xl">
+            <div class="bg-neutral-800 flex items-center rounded-3xl">
               <LoginForm />
             </div>
           </div>

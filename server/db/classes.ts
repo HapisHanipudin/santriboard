@@ -1,6 +1,5 @@
-import { prisma } from '../db';
-import { Division, Frequency,Field  } from '@prisma/client';
-
+import { prisma } from "../db";
+import { Division, Frequency, Field } from "@prisma/client";
 
 export async function getAllClasses() {
   const allClasses = await prisma.classes.findMany({
@@ -13,25 +12,19 @@ export async function getAllClasses() {
     orderBy: [
       {
         division: {
-          name: 'asc',
+          name: "asc",
         },
       },
       {
-        name: 'asc',
+        name: "asc",
       },
     ],
   });
 
-
-  
-
-  
-  
-
   const grouped: Record<string, { division: string; classes: any[] }> = {};
 
   for (const cls of allClasses) {
-    const divisionName = cls.division?.name || 'Tanpa Divisi';
+    const divisionName = cls.division?.name || "Tanpa Divisi";
     if (!grouped[divisionName]) {
       grouped[divisionName] = {
         division: divisionName,
@@ -45,37 +38,31 @@ export async function getAllClasses() {
   return Object.values(grouped);
 }
 
-
 export async function getClassById(id: string) {
   return prisma.classes.findUnique({
     where: { id },
     include: {
       division: true,
       teachers: { include: { teacher: true } },
-      students: true
-    }
+      students: true,
+    },
   });
 }
-
 
 export async function createClass(data: { name: string; divisionId: string }) {
   return prisma.classes.create({ data });
 }
 
-export async function updateClass(
-  id: string,
-  data: { name?: string; divisionId?: string }
-) {
+export async function updateClass(id: string, data: { name?: string; divisionId?: string }) {
   return prisma.classes.update({
     where: { id },
-    data
+    data,
   });
 }
 
 export async function deleteClass(id: string) {
   return prisma.classes.delete({ where: { id } });
 }
-
 
 export async function getClassWithDetailsById(classId: string) {
   return await prisma.classes.findUnique({
@@ -87,21 +74,16 @@ export async function getClassWithDetailsById(classId: string) {
         include: {
           teacher: {
             select: {
-              name: true
-            }
-          }
-        }
+              name: true,
+            },
+          },
+        },
       },
       students: {
         include: {
-          student: {
-            select: {
-              name: true
-            }
-          }
-        }
-      }
-    }
+          student: true,
+        },
+      },
+    },
   });
 }
-
