@@ -1,48 +1,69 @@
-import { defineEventHandler, getQuery } from 'h3'
-import { prisma } from '@/server/db'
+import { defineEventHandler, getQuery } from "h3";
+import { prisma } from "@/server/db";
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event)
-  const divisionId = query.divisionId as string | undefined
+  const query = getQuery(event);
+  const divisionId = query.kategori as string | undefined;
 
-  if (!divisionId) {
-    return { error: 'Missing divisionId in query params' }
-  }
-
-  const classes = await prisma.classes.findMany({
-    where: { divisionId },
+  const students = await prisma.students.findMany({
+    where: divisionId
+      ? {
+          classes: {
+            some: {
+              class: {
+                divisionId,
+              },
+            },
+          },
+        }
+      : undefined,
     include: {
-      students: {
+      classes: {
+        where: divisionId ? { class: { divisionId: divisionId } } : undefined,
         include: {
-          student: true,
+          class: true,
           scores: true,
-          assesment: true
-        }
-      }
+          assesment: true,
+        },
+      },
+    },
+  });
+
+  const result = students.map((student) => {
+    const studentClasses = student.classes;
+    if (!studentClasses || studentClasses.length === 0) {
+      return {
+        studentId: student.id,
+        name: student.name,
+        averageScore: 0,
+      };
     }
-  })
 
-  const leaderboard: Record<string, { id: string, nis: string, name: string, totalScore: number }> = {}
+    const totalScoresPerClass = studentClasses.map((sc) => {
+      const totalScoreValue = sc.scores.reduce(
+        (acc, score) => acc + score.value,
+        0
+      );
+      const totalAssessmentScore = sc.assesment.reduce(
+        (acc, assess) => acc + assess.score,
+        0
+      );
+      return totalScoreValue + totalAssessmentScore;
+    });
 
-  for (const cls of classes) {
-    for (const sc of cls.students) {
-      const student = sc.student
-      const scoreSum = sc.scores.reduce((sum, s) => sum + s.value, 0)
-      const assessmentSum = sc.assesment.reduce((sum, a) => sum + a.score, 0)
-      const total = scoreSum + assessmentSum
+    const classCount = studentClasses.length;
+    const totalScoreAllClasses = totalScoresPerClass.reduce(
+      (acc, val) => acc + val,
+      0
+    );
+    const averageScore = totalScoreAllClasses / classCount;
 
-      if (!leaderboard[student.id]) {
-        leaderboard[student.id] = {
-          id: student.id,
-          nis: student.nis ?? '',
-          name: student.name,
-          totalScore: total
-        }
-      } else {
-        leaderboard[student.id].totalScore += total
-      }
-    }
-  }
+    return {
+      studentId: student.id,
+      name: student.name,
+      averageScore,
+    };
+  });
 
-  return Object.values(leaderboard).sort((a, b) => b.totalScore - a.totalScore)
-})
+  return result;
+});
