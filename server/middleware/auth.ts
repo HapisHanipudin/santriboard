@@ -24,31 +24,22 @@ export default defineEventHandler(async (event: H3Event) => {
     { method: "POST", endpoint: "/api/teacher/*" },
     { method: "PUT", endpoint: "/api/teacher/*" },
     { method: "GET", endpoint: "/api/admin/teacher/class" },
+    { method: "GET", endpoint: "/api/admin/teacher/class?*" },
   ];
 
   // Tambahan: endpoint yang butuh role admin
-  const needAdmin: Endpoint[] = [
-    { method: "DELETE", endpoint: "/api/admin/*" },
-  ];
+  const needAdmin: Endpoint[] = [{ method: "DELETE", endpoint: "/api/admin/*" }];
 
   const needKadiv: Endpoint[] = [
     { method: "POST", endpoint: "/api/kadiv/*" },
     { method: "PUT", endpoint: "/api/kadiv/*" },
   ];
 
-  const allSecuredEndpoints = [
-    ...endpoints,
-    ...needTeacher,
-    ...needAdmin,
-    ...needKadiv,
-  ];
+  const allSecuredEndpoints = [...endpoints, ...needTeacher, ...needAdmin, ...needKadiv];
 
   const isSecured = allSecuredEndpoints.some(({ method, endpoint }) => {
     const pattern = new UrlPattern(endpoint);
-    return (
-      pattern.match(event.node.req.url || "") &&
-      event.node.req.method === method
-    );
+    return pattern.match(event.node.req.url || "") && event.node.req.method === method;
   });
 
   if (!isSecured) return;
@@ -84,25 +75,17 @@ export default defineEventHandler(async (event: H3Event) => {
     }
     const { method, url } = event.node.req;
 
-
     const match = (rules: Endpoint[]) => {
-      return rules.some(
-        ({ method: m, endpoint }) =>
-          new UrlPattern(endpoint).match(url || "") && m === method
-      );
+      return rules.some(({ method: m, endpoint }) => new UrlPattern(endpoint).match(url || "") && m === method);
     };
-
 
     if (match(needAdmin) && !isAdmin(transformed)) {
       throw new Error("Hanya admin yang boleh mengakses endpoint ini");
     }
 
     if (match(needTeacher) && !isTeacher(transformed) && !teacherState) {
-      throw new Error(
-        "Hanya guru dengan data lengkap yang boleh mengakses endpoint ini"
-      );
+      throw new Error("Hanya guru dengan data lengkap yang boleh mengakses endpoint ini");
     }
-
 
     if (match(needKadiv) && !isKadiv(transformed)) {
       throw new Error("Hanya Kadiv yang boleh mengakses endpoint ini");
