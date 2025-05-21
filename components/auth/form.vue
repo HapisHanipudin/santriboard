@@ -26,9 +26,6 @@ const validate = (state: any): FormError[] => {
   if (!state.password) errors.push({ name: "password", message: "Required" });
   return errors;
 };
-const toast = useToast();
-
-const onSubmit = () => {};
 
 const state = reactive({
   username: "",

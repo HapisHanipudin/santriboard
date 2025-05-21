@@ -2,17 +2,14 @@ import { defineEventHandler, readBody } from "h3";
 import { updateAssessment } from "~/server/db/assessment";
 import { AssessmentType } from "@prisma/client";
 
-const allowedTypes = [
-  AssessmentType.BAHASA_ARAB,
-  AssessmentType.BAHASA_INGGRIS,
-  AssessmentType.BAHASA_PDKI,
-];
+const allowedTypes = [AssessmentType.BAHASA_ARAB, AssessmentType.BAHASA_INGGRIS, AssessmentType.BAHASA_PDKI];
 
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
-    const idParam = event.context.params?.id; // ✅ dari path param
-    const assessmentId = Number(idParam);
+    const { id } = getRouterParams(event);
+
+    const assessmentId = Number(id);
 
     const { frequency, score, note, page, pageCount, bahasaAspect, type, errorCount, repetitionCount } = body;
 

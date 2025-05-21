@@ -5,3 +5,17 @@
   --font-sans: "Poppins", sans-serif;
   --shadow-atas: 0 100px 100px 0 red;
 }
+
+@theme static {
+  --color-blue-ribbon-50: #eef3ff;
+  --color-blue-ribbon-100: #dae3ff;
+  --color-blue-ribbon-200: #bcceff;
+  --color-blue-ribbon-300: #8eafff;
+  --color-blue-ribbon-400: #5984ff;
+  --color-blue-ribbon-500: #3e62fe;
+  --color-blue-ribbon-600: #1d37f3;
+  --color-blue-ribbon-700: #1523e0;
+  --color-blue-ribbon-800: #181fb5;
+  --color-blue-ribbon-900: #19218f;
+  --color-blue-ribbon-950: #141757;
+}

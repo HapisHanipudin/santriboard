@@ -3,9 +3,11 @@ import { prisma } from "~/server/db";
 
 export default defineEventHandler(async (event) => {
   try {
-    const id = Number(event.context.params?.id);
+    const { id } = getRouterParams(event);
 
-    if (!id) {
+    const numberId = Number(id);
+
+    if (!numberId) {
       return {
         statusCode: 400,
         message: "Missing assessment id in params",
@@ -13,17 +15,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const body = await readBody(event);
-    const {
-      studentClassesId,
-      frequency,
-      page,
-      pageCount,
-      mistakeCount,
-      repeatedCount,
-      type,
-      note,
-      score,
-    } = body;
+    const { studentClassesId, frequency, page, pageCount, mistakeCount, repeatedCount, type, note, score } = body;
 
     if (type !== "TAHFIZH") {
       return {
@@ -33,7 +25,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const existing = await prisma.assessment.findUnique({
-      where: { id },
+      where: { id: numberId },
       include: { detail: true },
     });
 
@@ -54,7 +46,7 @@ export default defineEventHandler(async (event) => {
     const combinedNote = `Dikurangi ${mistakeCount} karena kesalahan, ${repeatedCount} karena pengulangan — ${note}`;
 
     const updatedAssessment = await prisma.assessment.update({
-      where: { id },
+      where: { id: numberId },
       data: {
         studentClassesId,
         frequency,
@@ -73,13 +65,13 @@ export default defineEventHandler(async (event) => {
         });
       } else {
         await prisma.assessmentDetail.create({
-          data: { assessmentId: id, page, pageCount },
+          data: { assessmentId: numberId, page, pageCount },
         });
       }
     }
 
     const finalAssessment = await prisma.assessment.findUnique({
-      where: { id },
+      where: { id: numberId },
       include: { detail: true },
     });
 
