@@ -10,16 +10,16 @@
       <UModal>
         <UButton icon="gravity-ui:pencil-to-line" class="px-5 text-[#3E62FE]" size="xl" color="neutral" variant="solid" />
 
-        <template #content> <FormNote /> </template>
+        <template #content> <FormNote :kelas="kelas" :student="student" /> </template>
       </UModal>
       <UModal>
         <UButton icon="majesticons:file-plus" class="px-5 text-white" size="xl" color="primary" variant="solid" />
 
         <template #content>
-          <FormAssesmentTahfizh v-if="kelas.divisionId == 'tahfizh'" />
-          <FormAssesmentIt v-if="kelas.divisionId == 'it'" />
-          <FormAssesmentKarakter v-if="kelas.divisionId == 'karakter'" />
-          <FormAssesmentBahasa v-if="kelas.divisionId == 'bahasa'" />
+          <FormAssesmentTahfizh :kelas="kelas" :student="student" v-if="kelas.divisionId == 'it'" />
+          <FormAssesmentIt :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'tahfizh'" />
+          <FormAssesmentKarakter :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'karakter'" />
+          <FormAssesmentBahasa :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'bahasa'" />
         </template>
       </UModal>
       <!-- <button class="py-2 px-5 rounded-lg bg-white flex items-center justify-center"><UIcon name="gravity-ui:pencil-to-line" class="text-[#3E62FE]" size="25" /></button>
