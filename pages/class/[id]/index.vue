@@ -27,6 +27,7 @@ interface Student {
   student: {
     name: string;
     nis: string;
+    photo: string;
   };
 }
 

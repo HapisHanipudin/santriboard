@@ -12,6 +12,7 @@ export type Student = {
   studentId: string;
   semesterId: string;
   student: {
+    photo: string;
     name: string;
     nis?: string;
   };
@@ -50,6 +51,7 @@ export function filterClassData(
       student: {
         name: s.student.name,
         nis: s.student.nis,
+        photo: s.student.photo,
       },
     })),
   };

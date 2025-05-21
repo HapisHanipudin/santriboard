@@ -1,7 +1,7 @@
 <template>
   <div class="bg-[#1D1E21] px-3 py-5 rounded-2xl flex items-center flex-col gap-2 border-[0.5px] border-[#3E3E40]">
     <div class="rounded-lg w-32 h-auto aspect-square overflow-hidden">
-      <img :src="`https://app.dreamapps.id/storage/students/photo/${student.student.nis}.webp`" class="object-cover object-top" alt="" />
+      <img :src="`https://app.dreamapps.id/storage/students/photo/${student.student.photo}`" class="object-cover object-top" alt="" />
     </div>
     <div class="flex flex-col items-center gap-2">
       <p class="font-semibold text-center truncate">{{ student.student.name }}</p>
@@ -39,6 +39,7 @@ const { student, kelas } = defineProps<{
     student: {
       name: string;
       nis: string;
+      photo: string;
     };
   };
   kelas: {
