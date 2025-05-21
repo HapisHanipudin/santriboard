@@ -4,7 +4,15 @@
       <h3 class="text-2xl font-semibold">{{ student.student.name }}</h3>
       <p class="text-gray-500 text-lg">{{ kelas.name }}</p>
     </div>
-    <UForm class="w-full max-w-2xl flex flex-col gap-2">
+    <UForm
+      :validate="validate"
+      :state="state"
+      @submit.prevent="
+        onSubmit(state);
+        emit('close-modal');
+      "
+      class="w-full max-w-2xl flex flex-col gap-2"
+    >
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div class="flex flex-col gap-3">
           <UFormField name="pageCount" label="Jumlah setoran">
@@ -27,8 +35,8 @@
           </UFormField>
         </div>
         <div class="flex flex-col gap-3">
-          <UFormField name="mistakeCount" label="Jumlah Dikasih Tau">
-            <UInputNumber v-model="state.mistakeCount" class="w-full rounded-xl" size="xl" placeholder="Jumlah Dikasih Tau" />
+          <UFormField name="mistakeCount" label="Jumlah Kesalahan">
+            <UInputNumber v-model="state.mistakeCount" class="w-full rounded-xl" size="xl" placeholder="Jumlah Kesalahan" />
           </UFormField>
           <UFormField name="repeatedCount" label="Jumlah Dikasih Tau">
             <UInputNumber v-model="state.repeatedCount" class="w-full rounded-xl" size="xl" placeholder="Jumlah Dikasih Tau" />
@@ -50,21 +58,41 @@
         </UFormField>
       </div>
       <div class="flex justify-end gap-2">
-        <UButton color="neutral" variant="subtle" size="xl" class="w-full max-w-[200px]"> Batalkan </UButton>
-        <UButton color="primary" size="xl" class="w-full max-w-[200px]"> Simpan </UButton>
+        <UButton color="neutral" @click="emit('close-modal')" variant="subtle" size="xl" class="w-full max-w-[200px]"> Batalkan </UButton>
+        <UButton color="primary" type="submit" size="xl" class="w-full max-w-[200px]"> Simpan </UButton>
       </div>
     </UForm>
   </div>
 </template>
 
 <script lang="ts" setup>
+import type { FormError, FormSubmitEvent } from "@nuxt/ui";
 import { CalendarDate, DateFormatter, getLocalTimeZone } from "@internationalized/date";
 
 const df = new DateFormatter("en-US", {
   dateStyle: "medium",
 });
 
-const modelValue = shallowRef(new CalendarDate(2022, 1, 10));
+const emit = defineEmits(["close-modal"]);
+
+const toast = useToast();
+
+const onSubmit = async (input: any) => {
+  try {
+    const data = await $fetch("/api/admin/teacher/penilaian/tahfizh", {
+      method: "POST",
+      body: input,
+    });
+    if (data.statusCode == 200) {
+      toast.add({ title: "Success", description: data.message, color: "success" });
+    }
+  } catch (error: any) {
+    toast.add({ title: "Failed", description: "Failed: " + error?.message, color: "error" });
+  }
+};
+
+const now = new Date();
+const modelValue = shallowRef(new CalendarDate(now.getFullYear(), now.getMonth() + 1, now.getDate()));
 const { student, kelas } = defineProps<{
   student: {
     id: string;
@@ -81,6 +109,13 @@ const { student, kelas } = defineProps<{
     divisionId: string;
   };
 }>();
+
+const validate = (state: any): FormError[] => {
+  const errors = [];
+  if (!state.page) errors.push({ name: "page", message: "Required" });
+  if (!(state.pageCount > 0)) errors.push({ name: "pageCount", message: "Required" });
+  return errors;
+};
 
 const state = reactive({
   studentClassesId: student.id,

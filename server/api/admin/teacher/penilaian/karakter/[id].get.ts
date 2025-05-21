@@ -4,8 +4,9 @@ import { prisma } from "~/server/db";
 import { AssessmentType } from "@prisma/client";
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event);
-  const studentClassesId = query.studentClassesId as string;
+  const { id } = getRouterParams(event);
+
+  const studentClassesId = id as string;
 
   if (!studentClassesId) {
     return {

@@ -3,8 +3,8 @@ import { prisma } from "~/server/db";
 import { AssessmentType } from "@prisma/client";
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event);
-  const studentClassesId = query.studentClassesId as string;
+  const { id } = getRouterParams(event);
+  const studentClassesId = id as string;
 
   if (!studentClassesId) {
     return {
@@ -18,11 +18,7 @@ export default defineEventHandler(async (event) => {
       where: {
         studentClassesId,
         type: {
-          in: [
-            AssessmentType.BAHASA_ARAB,
-            AssessmentType.BAHASA_INGGRIS,
-            AssessmentType.BAHASA_PDKI,
-          ],
+          in: [AssessmentType.BAHASA_ARAB, AssessmentType.BAHASA_INGGRIS, AssessmentType.BAHASA_PDKI],
         },
       },
       include: {

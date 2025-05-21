@@ -1,15 +1,15 @@
-import { defineEventHandler, getQuery } from 'h3';
+import { defineEventHandler, getQuery } from "h3";
 import { prisma } from "~/server/db";
-import { AssessmentType } from '@prisma/client';
+import { AssessmentType } from "@prisma/client";
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event);
-  const studentClassesId = query.studentClassesId as string | undefined;
+  const { id } = getRouterParams(event);
+  const studentClassesId = id as string | undefined;
 
   if (!studentClassesId) {
     return {
       statusCode: 400,
-      message: 'studentClassesId query parameter is required',
+      message: "studentClassesId query parameter is required",
     };
   }
 
@@ -23,12 +23,12 @@ export default defineEventHandler(async (event) => {
         detail: true,
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
     });
 
     // Format ulang output agar sesuai contoh
-    const formattedData = assessments.map(a => ({
+    const formattedData = assessments.map((a) => ({
       id: a.id,
       studentClassesId: a.studentClassesId,
       type: a.type,
@@ -51,10 +51,10 @@ export default defineEventHandler(async (event) => {
       data: formattedData,
     };
   } catch (error: any) {
-    console.error('Error fetching IT assessments:', error);
+    console.error("Error fetching IT assessments:", error);
     return {
       statusCode: 500,
-      message: 'Internal Server Error',
+      message: "Internal Server Error",
       error: error.message,
     };
   }

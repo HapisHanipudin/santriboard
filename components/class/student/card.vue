@@ -12,14 +12,14 @@
 
         <template #content> <FormNote :kelas="kelas" :student="student" /> </template>
       </UModal>
-      <UModal>
+      <UModal v-model:open="isOpen">
         <UButton icon="majesticons:file-plus" class="px-5 text-white" size="xl" color="primary" variant="solid" />
 
         <template #content>
-          <FormAssesmentTahfizh :kelas="kelas" :student="student" v-if="kelas.divisionId == 'it'" />
-          <FormAssesmentIt :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'tahfizh'" />
-          <FormAssesmentKarakter :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'karakter'" />
-          <FormAssesmentBahasa :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'bahasa'" />
+          <FormAssesmentTahfizh @close-modal="isOpen = false" :kelas="kelas" :student="student" v-if="kelas.divisionId == 'tahfizh'" />
+          <FormAssesmentIt @close-modal="isOpen = false" :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'it'" />
+          <FormAssesmentKarakter @close-modal="isOpen = false" :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'karakter'" />
+          <FormAssesmentBahasa @close-modal="isOpen = false" :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'bahasa'" />
         </template>
       </UModal>
       <!-- <button class="py-2 px-5 rounded-lg bg-white flex items-center justify-center"><UIcon name="gravity-ui:pencil-to-line" class="text-[#3E62FE]" size="25" /></button>
@@ -29,6 +29,8 @@
 </template>
 
 <script lang="ts" setup>
+const isOpen = ref(false);
+
 const { student, kelas } = defineProps<{
   student: {
     id: string;
