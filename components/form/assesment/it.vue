@@ -53,8 +53,8 @@
         </UFormField>
       </div>
       <div class="flex justify-end gap-2">
-        <UButton color="neutral" @click="emit('close-modal')" variant="subtle" size="xl" class="w-full max-w-[200px]"> Batalkan </UButton>
-        <UButton color="primary" type="submit" size="xl" class="w-full max-w-[200px]"> Simpan </UButton>
+        <UButton color="neutral" @click="emit('close-modal')" variant="subtle" size="xl" class="w-full rounded-xl py-3 px-5 max-w-[200px]"> Cancel </UButton>
+        <UButton icon="mage:file-upload-fill" color="primary" type="submit" size="xl" class="w-full rounded-xl py-3 px-5 max-w-[200px] text-white"> Upload </UButton>
       </div>
     </UForm>
   </div>
