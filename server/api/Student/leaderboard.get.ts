@@ -35,6 +35,8 @@ export default defineEventHandler(async (event) => {
       return {
         studentId: student.id,
         name: student.name,
+        photo: student.photo ?? null,
+        pondok: student.Pondok ?? null,
         averageScore: 0,
       };
     }
@@ -61,6 +63,8 @@ export default defineEventHandler(async (event) => {
     return {
       studentId: student.id,
       name: student.name,
+      photo: student.photo ?? null,
+      pondok: student.Pondok ?? null,
       averageScore,
     };
   });
