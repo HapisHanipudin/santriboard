@@ -206,7 +206,7 @@ Table Students {
   name String [not null]
   nickname String
   gender Gender
-  birth_date DateTime
+  birth_date String
   birth_place String
   birth_order Int
   school String
@@ -344,7 +344,7 @@ Enum Frequency {
 
 Enum Gender {
   p
-  L
+  l
 }
 
 Enum ProjectStatus {

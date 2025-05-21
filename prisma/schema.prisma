@@ -26,7 +26,7 @@ enum Frequency {
 
 enum Gender {
 p
- L
+ l
 }
 
 enum ProjectStatus {
@@ -318,7 +318,7 @@ model Students {
   name          String
   nickname      String?
   gender        Gender?
-  birth_date    DateTime?
+  birth_date    String?
   birth_place   String?
   birth_order   Int?
   school        String?
