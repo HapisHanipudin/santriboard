@@ -3,23 +3,26 @@ import { prisma } from "../db";
 
 export async function getPlansByStudentId(studentId: string) {
   return await prisma.plans.findMany({
-    where: { student_id: studentId },
+    where: { studentId }, // ✅ camelCase
   });
 }
+
 
 export async function createPlan(studentId: string, title: string) {
   return await prisma.plans.create({
     data: {
-      student_id: studentId,
+      studentId, // ✅ camelCase
       title,
-      created_at: new Date(),
-      updated_at: new Date(),
+      createdAt: new Date(), // ✅ camelCase
+      updatedAt: new Date(), // ✅ camelCase
     },
   });
 }
 
+
 export async function getPlanDetails(planId: string) {
   return await prisma.planDetails.findMany({
-    where: { plan_id: planId },
+    where: { planId }, // ✅ camelCase
   });
 }
+
