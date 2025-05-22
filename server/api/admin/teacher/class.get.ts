@@ -11,6 +11,8 @@ export default defineEventHandler(async (event) => {
   const teacher = user.teacher;
   const divisionId = query.kategori as string | undefined;
 
+  console.log("divisionId", divisionId);
+
   if (divisionId) {
     const division = await getDivisionById(divisionId);
     if (!division) {

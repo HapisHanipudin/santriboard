@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-full flex items-center justify-center">
-    <div class="h-96 m-4 flex flex-col lg:grid lg:grid-cols-2 gap-4 p-4 border-[0.5px] border-gray-700">
+    <div class="h-96 m-4 flex flex-col lg:grid lg:grid-cols-2 gap-4 px-8 py-6 border-[0.5px] border-gray-700 rounded-2xl w-3xl">
       <div class="flex flex-col justify-center">
         <span class="text-blue-600 font-light text-xl">Welcome To</span>
         <span class="text-4xl font-semibold">SantriBoard</span>

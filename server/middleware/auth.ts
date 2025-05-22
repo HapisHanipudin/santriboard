@@ -83,11 +83,11 @@ export default defineEventHandler(async (event: H3Event) => {
       throw new Error("Hanya admin yang boleh mengakses endpoint ini");
     }
 
-    if (match(needTeacher) && !isTeacher(transformed) && !teacherState) {
+    if (match(needTeacher) && !isTeacher(transformed) && !teacherState && !isAdmin(transformed)) {
       throw new Error("Hanya guru dengan data lengkap yang boleh mengakses endpoint ini");
     }
 
-    if (match(needKadiv) && !isKadiv(transformed)) {
+    if (match(needKadiv) && !isKadiv(transformed) && !isAdmin(transformed)) {
       throw new Error("Hanya Kadiv yang boleh mengakses endpoint ini");
     }
   } catch (error: any) {
