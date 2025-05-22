@@ -42,7 +42,7 @@ const classes = ref([
 
 const getClasses = async () => {
   try {
-    const response = await FetchApi("/api/admin/teacher/class");
+    const response = await FetchApi(`/api/admin/teacher/class${title != "semua" ? "?kategori=" + title : ""}`);
     classes.value = response.data;
   } catch (error) {
     console.error("Error fetching classes:", error);

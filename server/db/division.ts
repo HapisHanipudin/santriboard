@@ -2,24 +2,29 @@ import { prisma } from "../db";
 import type { Field } from "@prisma/client";
 
 export async function getDivisions() {
-    return prisma.divisions.findMany();
-  }
+  return await prisma.divisions.findMany();
+}
 
 export async function createDivision(name: Field) {
-  return prisma.divisions.create({
-    data: { name }
+  return await prisma.divisions.create({
+    data: { name },
+  });
+}
+export async function getDivisionById(id: string) {
+  return await prisma.divisions.findUnique({
+    where: { id },
   });
 }
 
 export async function updateDivision(id: string, name: Field) {
-  return prisma.divisions.update({
+  return await prisma.divisions.update({
     where: { id },
-    data: { name }
+    data: { name },
   });
 }
 
 export async function deleteDivision(id: string) {
-  return prisma.divisions.delete({
-    where: { id }
+  return await prisma.divisions.delete({
+    where: { id },
   });
 }

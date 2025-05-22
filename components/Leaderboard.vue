@@ -13,13 +13,11 @@
       >
         <div class="flex flex-col items-center gap-2 max-md:w-1/3">
           <div class="max-w-36 aspect-square rounded-4xl bg-[#3E62FE] overflow-hidden">
-            <img class="w-full h-auto object-cover object-top rounded-4xl" :src="student.image" :alt="student.nama" />
+            <img class="w-full h-auto object-cover object-top rounded-4xl" :src="`https://app.dreamapps.id/storage/students/photo/${student.photo}`" :alt="student.name" />
           </div>
           <div class="flex flex-col items-center w-full">
-            <span class="text-lg font-bold text-center w-full max-sm:truncate">{{ student.nama }}</span>
-            <span class="text-lg text-gray-400 text-center max-sm:truncate"
-              >{{ student.kelas }} {{ props.title === "tahfizh" || props.title === "it" ? " | " : "" }} {{ props.title === "tahfizh" ? student.halaqah : props.title === "it" ? student.it : "" }}</span
-            >
+            <span class="text-lg font-bold text-center w-full max-sm:truncate">{{ student.name }}</span>
+            <span class="text-lg text-gray-400 text-center max-sm:truncate">Kelas {{ student.pondok }}</span>
           </div>
         </div>
         <div
@@ -34,9 +32,9 @@
               'text-[#B5B7BB]': getIndexInLeaderboard(student) === 1,
               'text-[#CD7F32]': getIndexInLeaderboard(student) === 2,
             }"
-            class="text-6xl font-semibold"
+            class="text-6xl font-semibold truncate max-w-full px-8"
           >
-            {{ student.nilai }}</span
+            {{ student.averageScore }}</span
           >
           <span class="text-lg">Nilai</span>
         </div>
@@ -49,8 +47,8 @@
             <th class="bg-[#1D1E21] px-4 py-4 text-center rounded-s-full">Posisi</th>
             <th class="bg-[#1D1E21] px-4 py-4 text-center">Nama Santri</th>
             <th class="bg-[#1D1E21] px-4 py-4 text-center max-sm:hidden">Kelas</th>
-            <th v-if="props.title === 'tahfizh' || props.title === 'keseluruhan'" class="bg-[#1D1E21] px-4 py-4 text-center max-sm:hidden">Halaqah</th>
-            <th v-if="props.title === 'it' || props.title === 'keseluruhan'" class="bg-[#1D1E21] px-4 py-4 text-center max-sm:hidden">IT</th>
+            <!-- <th v-if="props.title === 'tahfizh' || props.title === 'keseluruhan'" class="bg-[#1D1E21] px-4 py-4 text-center max-sm:hidden">Halaqah</th>
+            <th v-if="props.title === 'it' || props.title === 'keseluruhan'" class="bg-[#1D1E21] px-4 py-4 text-center max-sm:hidden">IT</th> -->
             <th class="bg-[#1D1E21] px-4 py-4 text-center rounded-e-full">Score</th>
           </tr>
         </thead>
@@ -62,14 +60,16 @@
             </td>
             <td class="px-4 py-3">
               <div class="flex items-center">
-                <img class="rounded-full object-cover object-top w-8 aspect-square mr-3" :src="student.image" :alt="`Profile picture of ${student.nama}`" /><span class="truncate">{{ student.nama }}</span>
+                <img class="rounded-full object-cover object-top w-8 aspect-square mr-3" :src="`https://app.dreamapps.id/storage/students/photo/${student.photo}`" :alt="`Profile picture of ${student.name}`" /><span class="truncate">{{
+                  student.name
+                }}</span>
               </div>
             </td>
-            <td class="px-4 py-3 text-center max-sm:hidden">{{ student.kelas }}</td>
-            <td v-if="props.title === 'tahfizh' || props.title === 'keseluruhan'" class="px-4 py-3 text-center max-sm:hidden">{{ student.halaqah }}</td>
-            <td v-if="props.title === 'keseluruhan' || props.title === 'it'" class="px-4 py-3 text-center max-sm:hidden">{{ student.it }}</td>
+            <td class="px-4 py-3 text-center max-sm:hidden">{{ student.pondok }}</td>
+            <!-- <td v-if="props.title === 'tahfizh' || props.title === 'keseluruhan'" class="px-4 py-3 text-center max-sm:hidden">{{ student.halaqah }}</td>
+            <td v-if="props.title === 'keseluruhan' || props.title === 'it'" class="px-4 py-3 text-center max-sm:hidden">{{ student.it }}</td> -->
             <td class="px-4 py-3 text-center">
-              <button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">{{ student.nilai }}</button>
+              <button class="bg-blue-500 text-white px-4 py-1 rounded-[25px] truncate max-w-full">{{ student.averageScore }}</button>
             </td>
           </tr>
           <!-- <tr class="bg-gray-800">
@@ -91,8 +91,16 @@
 </template>
 
 <script lang="ts" setup>
+interface studentLeaderboard {
+  studentId: string;
+  name: string;
+  photo: string;
+  pondok: number;
+  averageScore: number;
+}
+
 const getIndexInLeaderboard = (object: any) => {
-  return leaderboard.value.findIndex((student) => student.nama === object.nama);
+  return leaderboard.value.findIndex((student) => student.name === object.name);
 };
 
 const props = defineProps({
@@ -101,87 +109,34 @@ const props = defineProps({
     default: "keseluruhan",
   },
 });
-const leaderboard = ref([
-  {
-    nama: "Muhammad Hafizh Hanifuddin",
-    image: "https://app.dreamapps.id/storage/students/photo/222303192.webp",
-    kelas: "3 QBS",
-    halaqah: "Ust Husain",
-    it: "ODT",
-    nilai: 100,
-  },
-  {
-    nama: "Ahmad",
-    image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
-    kelas: "3 QBS",
-    halaqah: "Ust Husain",
-    it: "ODT",
-    nilai: 90,
-  },
-  {
-    nama: "Ali",
-    image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
-    kelas: "3 QBS",
-    halaqah: "Ust Husain",
-    it: "ODT",
-    nilai: 80,
-  },
-  {
-    nama: "Umar",
-    image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
-    kelas: "3 QBS",
-    halaqah: "Ust Husain",
-    it: "ODT",
-    nilai: 70,
-  },
-  {
-    nama: "Utsman",
-    image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
-    kelas: "3 QBS",
-    halaqah: "Ust Husain",
-    it: "ODT",
-    nilai: 60,
-  },
-  {
-    nama: "Abu Bakar",
-    image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
-    kelas: "3 QBS",
-    halaqah: "Ust Husain",
-    it: "ODT",
-    nilai: 50,
-  },
-  {
-    nama: "Harya Suryatama",
-    image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
-    kelas: "3 QBS",
-    halaqah: "Ust Husain",
-    it: "ODT",
-    nilai: 40,
-  },
-  {
-    nama: "Najwan Kamil",
-    image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
-    kelas: "3 QBS",
-    halaqah: "Ust Husain",
-    it: "ODT",
-    nilai: 30,
-  },
-  {
-    nama: "Arjun Rizki",
-    image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
-    kelas: "3 QBS",
-    halaqah: "Ust Husain",
-    it: "ODT",
-    nilai: 20,
-  },
-  {
-    nama: "Muhammad Dzulfikar",
-    image: "https://app.dreamapps.id/storage/students/photo/222303182.webp",
-    kelas: "3 QBS",
-    halaqah: "Ust Husain",
-    it: "ODT",
-    nilai: 10,
-  },
+
+const getLeaderboard = async () => {
+  try {
+    const data = await $fetch(`/api/student/leaderboard?kategori=${props.title != "keseluruhan" ? props.title : ""}`, {
+      method: "GET",
+    });
+    const leaderboardData = data as studentLeaderboard[];
+    if (data) {
+      leaderboard.value = leaderboardData;
+    }
+  } catch (error) {
+    console.error("Error fetching leaderboard data:", error);
+  }
+};
+
+onMounted(() => {
+  getLeaderboard();
+});
+
+const leaderboard = ref<studentLeaderboard[]>([
+  // {
+  //   name: "Muhammad Hafizh Hanifuddin",
+  //   photo: "https://app.dreamapps.id/storage/students/photo/222303192.webp",
+  //   pondok: "3 QBS",
+  //   // halaqah: "Ust Husain",
+  //   // it: "ODT",
+  //   averageScore: 100,
+  // },
 ]);
 </script>
 

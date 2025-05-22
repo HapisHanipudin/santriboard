@@ -1,5 +1,5 @@
 import { prisma } from "../db";
-import { TeacherRole, Divisions } from "@prisma/client";
+import { TeacherRole, Divisions, TeacherDivisions, Role } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 
 // Fetch all teachers with related data
@@ -59,14 +59,24 @@ export function getTeacherByUserId(userId: string) {
   });
 }
 
-export const getTeacherClasses = async (teacherId: string, divisionName?: Field) => {
+export const getTeacherClasses = async (teacherId: string, divisionId?: string, role?: Role) => {
+  const teacherDivisions: any = divisionId
+    ? await prisma.teacherDivisions.findUnique({
+        where: { teacherId_divisionId: { teacherId, divisionId } },
+      })
+    : ({} as TeacherDivisions);
+
   const whereClause: Prisma.TeacherClassesWhereInput = {
-    teacherId,
-    ...(divisionName
+    ...(teacherDivisions.role != TeacherRole.KADIV || role !== Role.ADMIN
+      ? {
+          teacherId,
+        }
+      : {}),
+    ...(divisionId
       ? {
           class: {
             division: {
-              name: divisionName, // Field enum
+              id: divisionId, // Field enum
             },
           },
         }
