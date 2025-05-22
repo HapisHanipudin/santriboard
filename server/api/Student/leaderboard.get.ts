@@ -42,22 +42,13 @@ export default defineEventHandler(async (event) => {
     }
 
     const totalScoresPerClass = studentClasses.map((sc) => {
-      const totalScoreValue = sc.scores.reduce(
-        (acc, score) => acc + score.value,
-        0
-      );
-      const totalAssessmentScore = sc.assesment.reduce(
-        (acc, assess) => acc + assess.score,
-        0
-      );
-      return totalScoreValue + totalAssessmentScore;
+      const totalScoreValue = sc.scores.reduce((acc, score) => acc + score.value, 0);
+      const totalAssessmentScore = sc.assesment.reduce((acc, assess) => acc + assess.score, 0);
+      return (totalScoreValue / sc.scores.length || 0) + (totalAssessmentScore / sc.assesment.length || 0);
     });
 
     const classCount = studentClasses.length;
-    const totalScoreAllClasses = totalScoresPerClass.reduce(
-      (acc, val) => acc + val,
-      0
-    );
+    const totalScoreAllClasses = totalScoresPerClass.reduce((acc, val) => acc + val, 0);
     const averageScore = totalScoreAllClasses / classCount;
 
     return {
@@ -68,6 +59,8 @@ export default defineEventHandler(async (event) => {
       averageScore,
     };
   });
+
+  result.sort((a, b) => b.averageScore - a.averageScore); // Sort the result by averageScore in descending order
 
   return result;
 });

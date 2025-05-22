@@ -1,5 +1,14 @@
 <template>
-  <div>
+  <div class="w-full h-full flex items-center justify-center">
+    <div class="h-96 m-4 flex flex-col lg:grid lg:grid-cols-2 gap-4 p-4 border-[0.5px] border-gray-700">
+      <div class="flex flex-col justify-center">
+        <span class="text-blue-600 font-light text-xl">Welcome To</span>
+        <span class="text-4xl font-semibold">SantriBoard</span>
+      </div>
+      <div class="bg-neutral-800 flex items-center rounded-3xl"></div>
+    </div>
+  </div>
+  <!-- <div>
 
     <div class="flex justify-center my-8">
         <div class="text-center mx-4">
@@ -119,7 +128,7 @@
     </div>
 
 
-  </div>
+  </div> -->
 </template>
 
 <script lang="ts" setup></script>

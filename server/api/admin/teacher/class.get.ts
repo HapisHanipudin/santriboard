@@ -1,15 +1,27 @@
 import { getTeacherClasses } from "../../../db/teacher";
+import { Role, TeacherRole, Users } from "@prisma/client";
 import { createError, getRouterParams, getQuery, defineEventHandler } from "h3"; // pastikan ini sudah diimport sesuai framework kamu
+import { getDivisionById, getDivisions } from "~/server/db/division";
 
 export default defineEventHandler(async (event) => {
   const user = event.context.auth;
   // console.log(user.teacher);
   const query = getQuery(event);
 
-  const teacherId = user.teacher.id;
-  const divisionName = query.category as Field | undefined;
+  const teacher = user.teacher;
+  const divisionId = query.kategori as string | undefined;
 
-  if (!teacherId) {
+  if (divisionId) {
+    const division = await getDivisionById(divisionId);
+    if (!division) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: "Category was not found",
+      });
+    }
+  }
+
+  if (!teacher.id) {
     throw createError({
       statusCode: 400,
       statusMessage: "teacherId is required",
@@ -17,7 +29,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const classes = await getTeacherClasses(teacherId, divisionName);
+    const classes = await getTeacherClasses(teacher.id, divisionId, user?.type as Role);
     // console.log(classes);
     return {
       success: true,

@@ -122,7 +122,7 @@ const state = reactive({
 const bahasaType = ref([
   { label: "Bahasa Arab", value: "BAHASA_ARAB" },
   { label: "Bahasa Inggris", value: "BAHASA_INGGRIS" },
-  { label: "PKDI", value: "BAHASA_PKDI" },
+  { label: "PKDI", value: "BAHASA_PDKI" },
 ]);
 
 const frequencies = ref([
