@@ -59,10 +59,10 @@
               {{ getIndexInLeaderboard(student) + 1 }}
             </td>
             <td class="px-4 py-3">
-              <div class="flex items-center">
-                <img class="rounded-full object-cover object-top w-8 aspect-square mr-3" :src="`https://app.dreamapps.id/storage/students/photo/${student.photo}`" :alt="`Profile picture of ${student.name}`" /><span class="truncate">{{
-                  student.name
-                }}</span>
+              <div class="flex items-center gap-2">
+                <UAvatar :src="`https://app.dreamapps.id/storage/students/photo/${student.photo}`" :alt="student.name" />
+                <!-- <img class="rounded-full object-cover object-top w-8 aspect-square mr-3" :src="`https://app.dreamapps.id/storage/students/photo/${student.photo}`" :alt="`Profile picture of ${student.name}`" /> -->
+                <span class="truncate max-w-fit">{{ student.name }}</span>
               </div>
             </td>
             <td class="px-4 py-3 text-center max-sm:hidden">{{ student.pondok }}</td>

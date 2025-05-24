@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   // console.log(user.teacher);
   const query = getQuery(event);
 
-  const teacher = user.teacher;
+  const teacher = user.teacher || undefined;
   const divisionId = query.kategori as string | undefined;
 
   console.log("divisionId", divisionId);
@@ -23,15 +23,8 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  if (!teacher.id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "teacherId is required",
-    });
-  }
-
   try {
-    const classes = await getTeacherClasses(teacher.id, divisionId, user?.type as Role);
+    const classes = await getTeacherClasses(teacher?.id, divisionId, user?.type as Role);
     // console.log(classes);
     return {
       success: true,

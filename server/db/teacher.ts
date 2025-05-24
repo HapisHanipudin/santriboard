@@ -60,11 +60,12 @@ export function getTeacherByUserId(userId: string) {
 }
 
 export const getTeacherClasses = async (teacherId: string, divisionId?: string, role?: Role) => {
-  const teacherDivisions: any = divisionId
-    ? await prisma.teacherDivisions.findUnique({
-        where: { teacherId_divisionId: { teacherId, divisionId } },
-      })
-    : ({} as TeacherDivisions);
+  const teacherDivisions: any =
+    divisionId && role !== Role.ADMIN
+      ? await prisma.teacherDivisions.findUnique({
+          where: { teacherId_divisionId: { teacherId, divisionId } },
+        })
+      : ({} as TeacherDivisions);
 
   const whereClause: Prisma.TeacherClassesWhereInput = {
     ...(teacherDivisions.role != TeacherRole.KADIV && role !== Role.ADMIN
