@@ -119,7 +119,8 @@ model Teachers {
 
 
 model Assessment {
-  id               Int               @id @default(autoincrement())
+  id                String                @id @default(cuid())
+
   studentClassesId String
   type             AssessmentType
   frequency        Frequency
@@ -134,7 +135,8 @@ model Assessment {
 }
 
 model AssessmentDetail {
-  id               Int          @id @default(autoincrement())
+  id                String                @id @default(cuid())
+
   page             String?
   pageCount        Int?
   bahasaAspect     String?
@@ -144,7 +146,7 @@ model AssessmentDetail {
 
   assessment       Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
 
-  assessmentId     Int          @unique
+  assessmentId     String          @unique
 }
 
 

@@ -42,7 +42,7 @@ Table Teachers {
 }
 
 Table Assessment {
-  id Int [pk, increment]
+  id String [pk]
   studentClassesId String [not null]
   type AssessmentType [not null]
   frequency Frequency [not null]
@@ -55,7 +55,7 @@ Table Assessment {
 }
 
 Table AssessmentDetail {
-  id Int [pk, increment]
+  id String [pk]
   page String
   pageCount Int
   bahasaAspect String
@@ -63,7 +63,7 @@ Table AssessmentDetail {
   itTopic String
   completion Int
   assessment Assessment [not null]
-  assessmentId Int [unique, not null]
+  assessmentId String [unique, not null]
 }
 
 Table Notifications {
