@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TabWrapper :tabs="tabTitles">
+    <TabWrapper v-if="session.isTeacher" :tabs="tabTitles">
       <Tab v-for="tab in tabTitles" :title="tab.title"><ClassViews :teacher="session.authUser?.teacher" :title="tab.title" /></Tab>
     </TabWrapper>
   </div>

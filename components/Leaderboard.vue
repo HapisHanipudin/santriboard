@@ -1,7 +1,9 @@
 <template>
   <div class="flex flex-col gap-4">
     <div class="grid max-md:grid-cols-1 max-md:grid-rows-3 justify-center md:grid-cols-3 gap-8 pb-16 px-12">
+      <div v-if="loading" v-for="i in 3" class="bg-white/10 rounded-xl w-full min-h-40 h-80 animate-pulse"></div>
       <div
+        v-else
         v-for="student in leaderboard.slice(0, 3)"
         :class="{
           'md:scale-110 md:col-start-2 md:translate-y-10': getIndexInLeaderboard(student) === 0,
@@ -53,7 +55,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="student in leaderboard.slice(3)" class="">
+          <tr v-if="loading" v-for="i in 10" class="">
+            <td class="px-4 py-3" v-for="i in 4"><div class="bg-white/10 rounded-xl w-full h-4 animate-pulse"></div></td>
+          </tr>
+          <tr v-else v-for="student in leaderboard.slice(3)" class="">
             <td class="px-4 py-3 text-center">
               <!-- <UIcon name="fa-caret-up" class="text-green-500 mr-3" /> -->
               {{ getIndexInLeaderboard(student) + 1 }}
@@ -110,6 +115,8 @@ const props = defineProps({
   },
 });
 
+const loading = ref(true);
+
 const getLeaderboard = async () => {
   try {
     const data = await $fetch(`/api/student/leaderboard?kategori=${props.title != "keseluruhan" ? props.title : ""}`, {
@@ -118,6 +125,7 @@ const getLeaderboard = async () => {
     const leaderboardData = data as studentLeaderboard[];
     if (data) {
       leaderboard.value = leaderboardData;
+      loading.value = false;
     }
   } catch (error) {
     console.error("Error fetching leaderboard data:", error);

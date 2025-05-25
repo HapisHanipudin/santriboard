@@ -27,7 +27,7 @@ export const useSessionStore = defineStore("SessionStore", {
   getters: {
     isAuthenticated: (state): boolean => !!state.authToken,
     isAdmin: (state): boolean => state.authUser?.role === "ADMIN",
-    isTeacher: (state): boolean => state.authUser?.role === "TEACHER",
+    isTeacher: (state): boolean => state.authUser?.role === "TEACHER" || state.authUser?.role === "ADMIN",
   },
 
   actions: {

@@ -12,10 +12,10 @@
 
       <div
         :class="{
-          'translate-y-[calc((62px+8px))]': $route.path === '/leaderboard',
-          'translate-y-[calc((62px+8px)*2)]': $route.path === '/profile',
-          'translate-y-[calc((62px+8px)*3)]': $route.path === '/settings',
-          'translate-y-[calc((62px+8px)*4)]': $route.path === '/settings',
+          'translate-y-[calc((62px+8px))]': routes.path.startsWith('/leaderboard'),
+          'translate-y-[calc((62px+8px)*2)]': routes.path.startsWith('/class'),
+          'translate-y-[calc((62px+8px)*3)]': routes.path.startsWith('/profile'),
+          'translate-y-[calc((62px+8px)*4)]': routes.path.startsWith('/settings'),
         }"
         class="absolute transition-transform duration-500 ease-in-out -top-0.5 -right-4 w-[105%] rounded-s-full h-16 bg-[#18181B] -z-0"
       >
@@ -38,6 +38,8 @@
 
 <script lang="ts" setup>
 const session = useSessionStore();
+const $route = useRouter();
+const routes = useRoute();
 </script>
 
 <style></style>

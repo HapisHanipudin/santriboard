@@ -5,6 +5,8 @@ import { generateTokens, sendRefreshToken } from "~/server/utils/jwt";
 import { userTransformer } from "~/server/transformers/user";
 import { createRefreshToken } from "~/server/db/refreshTokens";
 import { hashToken } from "../../utils/hash"; // buat helper baru
+import { getTeacherByUserId } from "~/server/db/teacher";
+import { teacherTransformer } from "~/server/transformers/teacher";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -27,6 +29,16 @@ export default defineEventHandler(async (event) => {
   // 🔐 Generate access + refresh token
   const { accessToken, refreshToken } = generateTokens(user);
 
+  let teacher = {} as any; // Inisialisasi teacher sebagai objek kosong
+
+  if (user.type == "TEACHER") {
+    const teac = await getTeacherByUserId(user.id);
+    if (teac) {
+      teacher = teac;
+      // return sendError(event, createError({ statusCode: 404, statusMessage: "Teacher Not Found" }));
+    }
+  }
+
   // 🔐 Simpan hash refresh token
   await createRefreshToken({
     token: refreshToken,
@@ -39,6 +51,9 @@ export default defineEventHandler(async (event) => {
   // ✅ Kirim access token dan user info
   return {
     access_token: accessToken,
-    user: userTransformer(user),
+    user: {
+      ...userTransformer(user),
+      ...(Object.keys(teacher).length > 0 ? { teacher: teacherTransformer(teacher) } : {}),
+    },
   };
 });
