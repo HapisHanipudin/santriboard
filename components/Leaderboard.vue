@@ -1,15 +1,15 @@
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="flex flex-col gap-4 max-w-full">
+    <!-- Top 3 Leaderboard -->
     <div class="grid max-md:grid-cols-1 max-md:grid-rows-3 justify-center md:grid-cols-3 gap-8 pb-16 px-12">
-      <div v-if="loading" v-for="i in 3" class="bg-white/10 rounded-xl w-full min-h-40 h-80 animate-pulse"></div>
       <div
-        v-else
-        v-for="student in leaderboard.slice(0, 3)"
+        v-for="student in data?.slice(0, 3)"
+        :key="student.studentId"
         :class="{
-          'md:scale-110 md:col-start-2 md:translate-y-10': getIndexInLeaderboard(student) === 0,
-          'md:translate-y-16': getIndexInLeaderboard(student) > 0,
-          'md:col-start-1 md:row-start-1': getIndexInLeaderboard(student) === 1,
-          'md:col-start-3 md:row-start-1': getIndexInLeaderboard(student) === 2,
+          'md:scale-110 md:col-start-2 md:translate-y-10': getPositionInLeaderboard(student) === 1,
+          'md:translate-y-16': getPositionInLeaderboard(student) > 1,
+          'md:col-start-1 md:row-start-1': getPositionInLeaderboard(student) === 2,
+          'md:col-start-3 md:row-start-1': getPositionInLeaderboard(student) === 3,
         }"
         class="flex md:flex-col items-center max-sm:gap-4 gap-3 justify-center"
       >
@@ -25,88 +25,39 @@
         <div
           class="flex items-center justify-center flex-col sm:bg-gradient-to-tr to-[#191B2A] from-[#111111] from-10% via-85% to-95% md:rounded-t-4xl max-md:rounded-r-4xl max-md:rounded-l-lg md:rounded-b-lg w-44 md:w-48 lg:w-44 xl:w-60 aspect-square"
         >
-          <img class="w-12" v-if="getIndexInLeaderboard(student) === 0" src="~/assets/images/leaderboard/gold.png" alt="" />
-          <img class="w-12" v-else-if="getIndexInLeaderboard(student) === 1" src="~/assets/images/leaderboard/silver.png" alt="" />
-          <img class="w-12" v-else src="~/assets/images/leaderboard/bronze.png" alt="" />
+          <img class="w-12" v-if="getPositionInLeaderboard(student) === 1" src="~/assets/images/leaderboard/gold.png" alt="Gold" />
+          <img class="w-12" v-else-if="getPositionInLeaderboard(student) === 2" src="~/assets/images/leaderboard/silver.png" alt="Silver" />
+          <img class="w-12" v-else src="~/assets/images/leaderboard/bronze.png" alt="Bronze" />
           <span
             :class="{
-              'text-[#FFC02E]': getIndexInLeaderboard(student) === 0,
-              'text-[#B5B7BB]': getIndexInLeaderboard(student) === 1,
-              'text-[#CD7F32]': getIndexInLeaderboard(student) === 2,
+              'text-[#FFC02E]': getPositionInLeaderboard(student) === 1,
+              'text-[#B5B7BB]': getPositionInLeaderboard(student) === 2,
+              'text-[#CD7F32]': getPositionInLeaderboard(student) === 3,
             }"
-            class="text-6xl font-semibold truncate max-w-full px-8"
+            class="text-6xl font-semibold max-w-full"
           >
-            {{ student.averageScore }}</span
-          >
+            {{ student.averageScore.toFixed(2) }}
+          </span>
           <span class="text-lg">Nilai</span>
         </div>
       </div>
     </div>
-    <div class="w-full overflow-x-auto px-4 rounded-[15px] overflow-hidden">
-      <table class="w-full table-auto overflow-hidden">
-        <thead class="">
-          <tr>
-            <th class="bg-[#1D1E21] px-4 py-4 text-center rounded-s-full">Posisi</th>
-            <th class="bg-[#1D1E21] px-4 py-4 text-center">Nama Santri</th>
-            <th class="bg-[#1D1E21] px-4 py-4 text-center max-sm:hidden">Kelas</th>
-            <!-- <th v-if="props.title === 'tahfizh' || props.title === 'keseluruhan'" class="bg-[#1D1E21] px-4 py-4 text-center max-sm:hidden">Halaqah</th>
-            <th v-if="props.title === 'it' || props.title === 'keseluruhan'" class="bg-[#1D1E21] px-4 py-4 text-center max-sm:hidden">IT</th> -->
-            <th class="bg-[#1D1E21] px-4 py-4 text-center rounded-e-full">Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-if="loading" v-for="i in 10" class="">
-            <td class="px-4 py-3" v-for="i in 4"><div class="bg-white/10 rounded-xl w-full h-4 animate-pulse"></div></td>
-          </tr>
-          <tr v-else v-for="student in leaderboard.slice(3)" class="">
-            <td class="px-4 py-3 text-center">
-              <!-- <UIcon name="fa-caret-up" class="text-green-500 mr-3" /> -->
-              {{ getIndexInLeaderboard(student) + 1 }}
-            </td>
-            <td class="px-4 py-3">
-              <div class="flex items-center gap-2">
-                <UAvatar :src="`https://app.dreamapps.id/storage/students/photo/${student.photo}`" :alt="student.name" />
-                <!-- <img class="rounded-full object-cover object-top w-8 aspect-square mr-3" :src="`https://app.dreamapps.id/storage/students/photo/${student.photo}`" :alt="`Profile picture of ${student.name}`" /> -->
-                <span class="truncate max-w-fit">{{ student.name }}</span>
-              </div>
-            </td>
-            <td class="px-4 py-3 text-center max-sm:hidden">{{ student.pondok }}</td>
-            <!-- <td v-if="props.title === 'tahfizh' || props.title === 'keseluruhan'" class="px-4 py-3 text-center max-sm:hidden">{{ student.halaqah }}</td>
-            <td v-if="props.title === 'keseluruhan' || props.title === 'it'" class="px-4 py-3 text-center max-sm:hidden">{{ student.it }}</td> -->
-            <td class="px-4 py-3 text-center">
-              <button class="bg-blue-500 text-white px-4 py-1 rounded-[25px] truncate max-w-full">{{ student.averageScore }}</button>
-            </td>
-          </tr>
-          <!-- <tr class="bg-gray-800">
-            <td class="px-4 py-2 text-center"><i class="fas fa-caret-down text-red-500 mr-2"></i>5</td>
-            <td class="px-4 py-2 text-center">
-              <div class="flex items-center justify-center">
-                <img class="rounded-full w-8 h-8 mr-2" src="https://storage.googleapis.com/a1aa/image/XTa432WZNGUQ5MMWpGGP9HFuepDIv7PApYvDsFMdeJ0.jpg" alt="Profile picture of the fifth place holder" />Nama Santri
-              </div>
-            </td>
-            <td class="px-4 py-2 text-center">3 QBS</td>
-            <td class="px-4 py-2 text-center">Ust Husain</td>
-            <td class="px-4 py-2 text-center">Programming</td>
-            <td class="px-4 py-2 text-center"><button class="bg-blue-500 text-white px-4 py-1 rounded-[25px]">8452</button></td>
-          </tr> -->
-        </tbody>
-      </table>
+
+    <!-- Full Leaderboard -->
+    <div class="w-full px-4 rounded-[15px]">
+      <div class="max-w-full overflow-x-auto">
+        <div class="min-w-[700px]">
+          <UTable :columns="columns" :data="data?.slice(3)" :loading="pending" loading-color="primary" loading-animation="carousel" class="border-gray-600 border-[0.5px] rounded-lg" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-interface studentLeaderboard {
-  studentId: string;
-  name: string;
-  photo: string;
-  pondok: number;
-  averageScore: number;
-}
+import type { TableColumn } from "@nuxt/ui";
 
-const getIndexInLeaderboard = (object: any) => {
-  return leaderboard.value.findIndex((student) => student.name === object.name);
-};
+const UAvatar = resolveComponent("UAvatar");
 
 const props = defineProps({
   title: {
@@ -115,37 +66,48 @@ const props = defineProps({
   },
 });
 
-const loading = ref(true);
+interface StudentLeaderboard {
+  studentId: string;
+  name: string;
+  photo: string;
+  pondok: number;
+  averageScore: number;
+}
 
-const getLeaderboard = async () => {
-  try {
-    const data = await $fetch(`/api/student/leaderboard?kategori=${props.title != "keseluruhan" ? props.title : ""}`, {
-      method: "GET",
-    });
-    const leaderboardData = data as studentLeaderboard[];
-    if (data) {
-      leaderboard.value = leaderboardData;
-      loading.value = false;
-    }
-  } catch (error) {
-    console.error("Error fetching leaderboard data:", error);
-  }
+const { data, pending, error, refresh } = await useFetch<StudentLeaderboard[]>(`/api/student/leaderboard?kategori=${props.title !== "keseluruhan" ? props.title : ""}`);
+
+// Mendapatkan posisi santri berdasarkan ID
+const getPositionInLeaderboard = (student: StudentLeaderboard, studentId?: string) => {
+  const index = studentId ? data.value?.findIndex((s) => s.studentId === studentId) : data.value?.findIndex((s) => s.studentId === student.studentId);
+  return index !== undefined && index >= 0 ? index + 1 : -1;
 };
 
-onMounted(() => {
-  getLeaderboard();
-});
-
-const leaderboard = ref<studentLeaderboard[]>([
-  // {
-  //   name: "Muhammad Hafizh Hanifuddin",
-  //   photo: "https://app.dreamapps.id/storage/students/photo/222303192.webp",
-  //   pondok: "3 QBS",
-  //   // halaqah: "Ust Husain",
-  //   // it: "ODT",
-  //   averageScore: 100,
-  // },
-]);
+// Kolom tabel bawah
+const columns: TableColumn<StudentLeaderboard>[] = [
+  {
+    accessorKey: "studentId",
+    header: "Position",
+    cell: ({ row }) => `#${getPositionInLeaderboard({} as StudentLeaderboard, row.getValue("studentId"))}`,
+  },
+  {
+    accessorKey: "photo",
+    header: "Santri",
+    cell: ({ row }) => {
+      return h("div", { class: "flex items-center gap-3" }, [
+        h(UAvatar, { src: `https://app.dreamapps.id/storage/students/photo/${row.getValue("photo")}`, alt: row.original.name, size: "lg", ui: { image: "object-top" } }),
+        h("div", undefined, h("p", { class: "font-medium text-highlighted" }, row.original.name)),
+      ]);
+    },
+  },
+  {
+    accessorKey: "pondok",
+    header: "Kelas",
+    cell: ({ row }) => `Kelas ${row.getValue("pondok")}`,
+  },
+  {
+    accessorKey: "averageScore",
+    header: "Nilai Rata-Rata",
+    cell: ({ row }) => h("span", { class: "font-semibold py-1 px-3 rounded-full bg-blue-500 text-white" }, row.getValue("averageScore").toFixed(2)),
+  },
+];
 </script>
-
-<style></style>
