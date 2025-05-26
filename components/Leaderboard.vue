@@ -34,9 +34,9 @@
               'text-[#B5B7BB]': getIndexInLeaderboard(student) === 1,
               'text-[#CD7F32]': getIndexInLeaderboard(student) === 2,
             }"
-            class="text-6xl font-semibold truncate max-w-full px-8"
+            class="text-6xl font-semibold max-w-full"
           >
-            {{ student.averageScore }}</span
+            {{ student.averageScore.toFixed(2) }}</span
           >
           <span class="text-lg">Nilai</span>
         </div>
@@ -61,20 +61,20 @@
           <tr v-else v-for="student in leaderboard.slice(3)" class="">
             <td class="px-4 py-3 text-center">
               <!-- <UIcon name="fa-caret-up" class="text-green-500 mr-3" /> -->
-              {{ getIndexInLeaderboard(student) + 1 }}
+              #{{ getIndexInLeaderboard(student) + 1 }}
             </td>
             <td class="px-4 py-3">
               <div class="flex items-center gap-2">
-                <UAvatar :src="`https://app.dreamapps.id/storage/students/photo/${student.photo}`" :alt="student.name" />
+                <UAvatar :ui="{ image: 'object-top' }" :src="`https://app.dreamapps.id/storage/students/photo/${student.photo}`" :alt="student.name" />
                 <!-- <img class="rounded-full object-cover object-top w-8 aspect-square mr-3" :src="`https://app.dreamapps.id/storage/students/photo/${student.photo}`" :alt="`Profile picture of ${student.name}`" /> -->
                 <span class="truncate max-w-fit">{{ student.name }}</span>
               </div>
             </td>
-            <td class="px-4 py-3 text-center max-sm:hidden">{{ student.pondok }}</td>
+            <td class="px-4 py-3 text-center max-sm:hidden">Kelas {{ student.pondok }}</td>
             <!-- <td v-if="props.title === 'tahfizh' || props.title === 'keseluruhan'" class="px-4 py-3 text-center max-sm:hidden">{{ student.halaqah }}</td>
             <td v-if="props.title === 'keseluruhan' || props.title === 'it'" class="px-4 py-3 text-center max-sm:hidden">{{ student.it }}</td> -->
             <td class="px-4 py-3 text-center">
-              <button class="bg-blue-500 text-white px-4 py-1 rounded-[25px] truncate max-w-full">{{ student.averageScore }}</button>
+              <span class="bg-blue-500 text-white px-4 py-1 rounded-[25px] truncate max-w-full">{{ student.averageScore.toFixed(2) }}</span>
             </td>
           </tr>
           <!-- <tr class="bg-gray-800">
