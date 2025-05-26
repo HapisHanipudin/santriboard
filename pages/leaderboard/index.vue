@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TabWrapper :tabs="tabTitles">
+    <TabWrapper class="max-w-full" :tabs="tabTitles">
       <Tab title="allRounded"><Leaderboard /></Tab>
       <Tab title="tahfizh"><Leaderboard title="tahfizh" /></Tab>
       <Tab title="it"><Leaderboard title="it" /></Tab>
