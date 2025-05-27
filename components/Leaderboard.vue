@@ -14,7 +14,7 @@
         class="flex md:flex-col items-center max-sm:gap-4 gap-3 justify-center"
       >
         <div class="flex flex-col items-center gap-2 max-md:w-1/3">
-          <div class="max-w-36 aspect-square rounded-4xl bg-[#3E62FE] overflow-hidden">
+          <div class="max-w-36 aspect-square rounded-4xl bg-primary overflow-hidden">
             <img class="w-full h-auto object-cover object-top rounded-4xl" :src="`https://app.dreamapps.id/storage/students/photo/${student.photo}`" :alt="student.name" />
           </div>
           <div class="flex flex-col items-center w-full">
@@ -46,12 +46,12 @@
       <table class="w-full table-auto overflow-hidden">
         <thead class="">
           <tr>
-            <th class="bg-[#1D1E21] px-4 py-4 text-center rounded-s-full">Posisi</th>
-            <th class="bg-[#1D1E21] px-4 py-4 text-center">Nama Santri</th>
-            <th class="bg-[#1D1E21] px-4 py-4 text-center max-sm:hidden">Kelas</th>
-            <!-- <th v-if="props.title === 'tahfizh' || props.title === 'keseluruhan'" class="bg-[#1D1E21] px-4 py-4 text-center max-sm:hidden">Halaqah</th>
-            <th v-if="props.title === 'it' || props.title === 'keseluruhan'" class="bg-[#1D1E21] px-4 py-4 text-center max-sm:hidden">IT</th> -->
-            <th class="bg-[#1D1E21] px-4 py-4 text-center rounded-e-full">Score</th>
+            <th class="bg-card-dark px-4 py-4 text-center rounded-s-full">Posisi</th>
+            <th class="bg-card-dark px-4 py-4 text-center">Nama Santri</th>
+            <th class="bg-card-dark px-4 py-4 text-center max-sm:hidden">Kelas</th>
+            <!-- <th v-if="props.title === 'tahfizh' || props.title === 'keseluruhan'" class="bg-card-dark px-4 py-4 text-center max-sm:hidden">Halaqah</th>
+            <th v-if="props.title === 'it' || props.title === 'keseluruhan'" class="bg-card-dark px-4 py-4 text-center max-sm:hidden">IT</th> -->
+            <th class="bg-card-dark px-4 py-4 text-center rounded-e-full">Score</th>
           </tr>
         </thead>
         <tbody>

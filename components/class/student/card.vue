@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-[#1D1E21] px-3 py-5 rounded-2xl flex items-center flex-col gap-2 border-[0.5px] border-[#3E3E40]">
+  <div class="bg-bg-dark px-3 py-5 rounded-2xl flex items-center flex-col gap-2 border-[0.5px] border-border">
     <div class="rounded-2xl w-32 h-auto aspect-square overflow-hidden">
       <img :src="`https://app.dreamapps.id/storage/students/photo/${student.student.photo}`" class="object-cover object-top" alt="" />
     </div>
     <p class="font-semibold text-center truncate max-w-full">{{ student.student.name }}</p>
     <div class="flex gap-3">
       <UModal>
-        <UButton icon="gravity-ui:pencil-to-line" class="px-5 text-[#3E62FE] rounded-lg" size="xl" color="neutral" variant="solid" />
+        <UButton icon="gravity-ui:pencil-to-line" class="px-5 text-primary rounded-lg" size="xl" color="neutral" variant="solid" />
 
         <template #content> <FormNote :kelas="kelas" :student="student" /> </template>
       </UModal>
@@ -20,8 +20,8 @@
           <FormAssesmentBahasa @close-modal="isOpen = false" :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'bahasa'" />
         </template>
       </UModal>
-      <!-- <button class="py-2 px-5 rounded-lg bg-white flex items-center justify-center"><UIcon name="gravity-ui:pencil-to-line" class="text-[#3E62FE]" size="25" /></button>
-      <button class="py-2 px-5 rounded-lg bg-[#3E62FE] flex items-center justify-center"><UIcon name="majesticons:file-plus" class="" size="25" /></button> -->
+      <!-- <button class="py-2 px-5 rounded-lg bg-white flex items-center justify-center"><UIcon name="gravity-ui:pencil-to-line" class="text-primary" size="25" /></button>
+      <button class="py-2 px-5 rounded-lg bg-primatext-primary flex items-center justify-center"><UIcon name="majesticons:file-plus" class="" size="25" /></button> -->
     </div>
   </div>
 </template>

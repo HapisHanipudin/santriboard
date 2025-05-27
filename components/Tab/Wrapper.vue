@@ -8,7 +8,7 @@
         </button>
         <div
           :style="{ transform: `translateX(${props.tabs.findIndex((tab) => tab.title === selectedTitle)}00%)`, width: `calc(1/${props.tabs.length} * 100%)` }"
-          class="h-full bg-[#3E62FE] absolute top-0 left-0 -z-0 rounded-2xl transition-transform duration-500 ease-in-out"
+          class="h-full bg-primary absolute top-0 left-0 -z-0 rounded-2xl transition-transform duration-500 ease-in-out"
         ></div>
       </div>
     </div>

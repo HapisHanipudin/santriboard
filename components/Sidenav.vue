@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-[#3E62FE] py-6 lg:rounded-4xl rounded-r-4xl px-4 max-lg:h-dvh">
+  <div class="bg-primary py-6 lg:rounded-4xl rounded-r-4xl px-4 max-lg:h-dvh">
     <div>
       <h1 class="text-3xl text-center p-4 my-6">SI Board</h1>
     </div>
@@ -20,10 +20,10 @@
         class="absolute transition-transform duration-500 ease-in-out -top-0.5 -right-4 w-[105%] rounded-s-full h-16 bg-[#18181B] -z-0"
       >
         <span class="w-4 h-4 bg-[#18181B] absolute -bottom-4 right-0">
-          <div class="w-full h-full rounded-tr-full bg-[#3E62FE]"></div>
+          <div class="w-full h-full rounded-tr-full bg-primary"></div>
         </span>
         <span class="w-4 h-4 bg-[#18181B] absolute -top-4 right-0">
-          <div class="w-full h-full rounded-br-full bg-[#3E62FE]"></div>
+          <div class="w-full h-full rounded-br-full bg-primary"></div>
         </span>
       </div>
     </div>

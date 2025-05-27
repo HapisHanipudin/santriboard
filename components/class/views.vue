@@ -2,7 +2,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
     <div v-if="loading" v-for="i in 6" class="bg-white/10 rounded-xl w-full h-40 animate-pulse"></div>
     <ClassCard v-else-if="!loading && classes.length > 0" v-for="(kelas, index) in classes" :key="index" :kelas="kelas" :index="index" />
-    <div v-else-if="!loading && classes.length === 0" class="bg-[#1D1E21] rounded-xl w-full h-40 flex items-center justify-center">
+    <div v-else-if="!loading && classes.length === 0" class="bg-card-dark rounded-xl w-full h-40 flex items-center justify-center">
       <p class="text-gray-400 text-2xl">Tidak ada kelas yang dapat dilihat</p>
     </div>
   </div>

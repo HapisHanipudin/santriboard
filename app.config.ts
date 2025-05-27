@@ -1,7 +1,7 @@
 export default defineAppConfig({
   ui: {
     colors: {
-      primary: "blue-ribbon",
+      primary: "primary",
       neutral: "zinc",
     },
     modal: {
