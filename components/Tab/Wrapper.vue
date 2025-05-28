@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-4">
     <div class="p-2 rounded-3xl bg-zinc-700">
       <div :style="{ 'grid-template-columns': `repeat(${props.tabs.length}, minmax(0, 1fr))` }" class="w-full grid relative">
-        <button @click="selectTitle(tab.title)" v-for="(tab, index) in props.tabs" :key="index" class="flex cursor-pointer justify-center items-center gap-2 z-10 py-2">
+        <button @click="selectTitle(tab.title)" v-for="(tab, index) in props.tabs" :key="index" class="flex cursor-pointer justify-center items-center gap-2 z-10 p-2">
           <UIcon v-if="tab.icon" :name="`${tab.icon}`" class="text-2xl" />
           <span class="text-xl xl:text-2xl capitalize max-md:hidden truncate">{{ tab.display }}</span>
         </button>
