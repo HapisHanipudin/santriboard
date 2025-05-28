@@ -14,8 +14,8 @@
         <UButton icon="majesticons:file-plus" class="px-5 text-white rounded-lg" size="xl" color="primary" variant="solid" />
 
         <template #content>
-          <div class="py-6 h-(--container-2xl) rounded-2xl">
-            <div class="overflow-auto h-full px-6">
+          <div class="py-6 max-h-[90dvh] h-(--container-2xl) rounded-2xl flex items-center justify-center">
+            <div class="overflow-auto h-full px-6 max-md:w-full md:flex md:justify-center md:items-center">
               <div class="flex flex-col items-center justify-center gap-4">
                 <FormAssesmentTahfizh @close-modal="isOpen = false" :kelas="kelas" :student="student" v-if="kelas.divisionId == 'tahfizh'" />
                 <FormAssesmentIt @close-modal="isOpen = false" :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'it'" />

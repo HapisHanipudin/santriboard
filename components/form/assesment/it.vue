@@ -36,7 +36,6 @@
           <UButton class="w-full rounded-xl" size="xl" color="neutral" variant="subtle" icon="i-lucide-calendar">
             {{ modelValue ? df.format(modelValue.toDate(getLocalTimeZone())) : "Select a date" }}
           </UButton>
-
           <template #content>
             <UCalendar v-model="modelValue" class="p-2" />
           </template>
