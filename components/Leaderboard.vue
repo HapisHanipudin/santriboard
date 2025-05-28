@@ -13,17 +13,17 @@
         }"
         class="flex md:flex-col items-center max-sm:gap-4 gap-3 justify-center"
       >
-        <div class="flex flex-col items-center gap-2 max-md:w-1/3">
+        <div class="flex flex-col items-center gap-2 max-md:max-w-1/3">
           <div class="max-w-36 aspect-square rounded-4xl bg-primary overflow-hidden">
             <img class="w-full h-auto object-cover object-top rounded-4xl" :src="`https://app.dreamapps.id/storage/students/photo/${student.photo}`" :alt="student.name" />
           </div>
           <div class="flex flex-col items-center w-full">
-            <span class="text-lg font-bold text-center w-full max-sm:truncate">{{ student.name }}</span>
-            <span class="text-lg text-gray-400 text-center max-sm:truncate">Kelas {{ student.pondok }}</span>
+            <span class="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-center w-full max-sm:truncate">{{ student.name }}</span>
+            <span class="text-xs sm:text-sm md:text-base lg:text-lg text-gray-400 text-center max-sm:truncate">Kelas {{ student.pondok }}</span>
           </div>
         </div>
         <div
-          class="flex items-center justify-center flex-col sm:bg-gradient-to-tr to-[#191B2A] from-[#111111] from-10% via-85% to-95% md:rounded-t-4xl max-md:rounded-r-4xl max-md:rounded-l-lg md:rounded-b-lg w-44 md:w-48 lg:w-44 xl:w-60 aspect-square"
+          class="flex items-center justify-center flex-col sm:bg-gradient-to-tr to-[#191B2A] from-[#111111] from-10% via-85% to-95% md:rounded-t-4xl max-md:rounded-r-4xl max-md:rounded-l-lg md:rounded-b-lg w-36 md:w-40 lg:w-44 xl:w-60 aspect-square"
         >
           <img class="w-12" v-if="getIndexInLeaderboard(student) === 0" src="~/assets/images/leaderboard/gold.png" alt="" />
           <img class="w-12" v-else-if="getIndexInLeaderboard(student) === 1" src="~/assets/images/leaderboard/silver.png" alt="" />
@@ -34,11 +34,11 @@
               'text-[#B5B7BB]': getIndexInLeaderboard(student) === 1,
               'text-[#CD7F32]': getIndexInLeaderboard(student) === 2,
             }"
-            class="text-6xl font-semibold max-w-full"
+            class="text-xl sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-semibold max-w-full"
           >
             {{ student.averageScore.toFixed(2) }}</span
           >
-          <span class="text-lg">Nilai</span>
+          <span class="text-sm sm:text-base lg:text-lg">Nilai</span>
         </div>
       </div>
     </div>

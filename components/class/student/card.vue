@@ -14,10 +14,16 @@
         <UButton icon="majesticons:file-plus" class="px-5 text-white rounded-lg" size="xl" color="primary" variant="solid" />
 
         <template #content>
-          <FormAssesmentTahfizh @close-modal="isOpen = false" :kelas="kelas" :student="student" v-if="kelas.divisionId == 'tahfizh'" />
-          <FormAssesmentIt @close-modal="isOpen = false" :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'it'" />
-          <FormAssesmentKarakter @close-modal="isOpen = false" :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'karakter'" />
-          <FormAssesmentBahasa @close-modal="isOpen = false" :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'bahasa'" />
+          <div class="py-6 h-(--container-2xl) rounded-2xl">
+            <div class="overflow-auto h-full px-6">
+              <div class="flex flex-col items-center justify-center gap-4">
+                <FormAssesmentTahfizh @close-modal="isOpen = false" :kelas="kelas" :student="student" v-if="kelas.divisionId == 'tahfizh'" />
+                <FormAssesmentIt @close-modal="isOpen = false" :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'it'" />
+                <FormAssesmentKarakter @close-modal="isOpen = false" :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'karakter'" />
+                <FormAssesmentBahasa @close-modal="isOpen = false" :kelas="kelas" :student="student" v-else-if="kelas.divisionId == 'bahasa'" />
+              </div>
+            </div>
+          </div>
         </template>
       </UModal>
       <!-- <button class="py-2 px-5 rounded-lg bg-white flex items-center justify-center"><UIcon name="gravity-ui:pencil-to-line" class="text-primary" size="25" /></button>
