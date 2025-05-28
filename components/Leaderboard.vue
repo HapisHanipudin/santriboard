@@ -34,7 +34,7 @@
               'text-[#B5B7BB]': getIndexInLeaderboard(student) === 1,
               'text-[#CD7F32]': getIndexInLeaderboard(student) === 2,
             }"
-            class="text-xl sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-semibold max-w-full"
+            class="text-4xl lg:text-5xl xl:text-6xl font-semibold max-w-full"
           >
             {{ student.averageScore.toFixed(2) }}</span
           >
