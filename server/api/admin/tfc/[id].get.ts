@@ -1,11 +1,11 @@
-import { defineEventHandler } from 'h3';
-import { getTeachersByClass } from '../../../db/assignTeacherToClass';
+import { defineEventHandler } from "h3";
+import { getTeachersByClass } from "../../../db/teacherClasses";
 
 export default defineEventHandler(async (event) => {
   const { classId } = event.context.params!;
   try {
     return await getTeachersByClass(classId);
   } catch (error) {
-    return { error: error instanceof Error ? error.message : 'Unknown error' };
+    return { error: error instanceof Error ? error.message : "Unknown error" };
   }
 });

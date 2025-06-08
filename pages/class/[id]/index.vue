@@ -9,16 +9,34 @@
         <span v-for="(teacher, index) in data?.teachers" class="text-gray-400">{{ index >= 1 ? ", " : "" }} {{ teacher.teacher.name }}</span>
       </p>
     </div>
-    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      <ClassStudentCard v-for="student in data?.students" :kelas="kelas" :key="student.id" :student="student" />
-    </div>
+    <UTabs :ui="{ trigger: 'data-[state=active]:text-white ' }" :items="tabTitles">
+      <template #santri>
+        <ClassStudentViews :students="data?.students || []" :kelas="kelas" />
+      </template>
+      <template #asatidz> ini asatidz </template>
+    </UTabs>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { capitalize } from "vue";
+const loading = ref(true);
 
 const { id } = useRoute().params;
+
+const tabTitles = [
+  {
+    label: "Santri",
+    description: "Dafttar siswa di kelas ini.",
+    icon: "i-lucide-user",
+    slot: "santri" as const,
+  },
+  {
+    label: "Asatidz",
+    description: "Daftar guru di kelas ini.",
+    icon: "i-lucide-book", // Icon related to teacher
+    slot: "asatidz" as const,
+  },
+];
 
 interface Student {
   id: string;
@@ -61,6 +79,7 @@ const getClass = async () => {
     const response = res as ApiResponse;
     data.value = response;
     kelas.value = { id: response.id, name: response.name, divisionId: response.divisionId, teachers: response.teachers };
+    loading.value = false;
   } catch (error) {
     console.error(error);
     // Handle the error here
