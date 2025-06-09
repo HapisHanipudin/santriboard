@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     const teacherClasses = await assignTeachersToClass({ classId, teachers, semesterId: semester.id });
     return { message: "Teachers assigned successfully", data: teacherClasses };
   } else {
-    event.res.statusCode = 400;
+    event.node.res.statusCode = 400;
     return { error: "Invalid teachers data" };
   }
 });

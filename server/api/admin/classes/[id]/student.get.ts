@@ -20,11 +20,7 @@ export default defineEventHandler(async (event) => {
     // Cast ke ClassRaw supaya TypeScript paham
     const classRaw = classData as ClassRaw;
 
-    const filteredData = filterClassData(classRaw, {
-      showDivisionId: true,
-      showTeacherIds: true,
-      showStudentIds: true,
-    });
+    const filteredData = filterClassData(classRaw);
 
     return filteredData;
   } catch (err) {

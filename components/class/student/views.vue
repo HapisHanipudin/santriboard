@@ -3,8 +3,11 @@
     <div class="flex items-center justify-between gap-2">
       <h1 class="text-2xl font-medium capitalize">Santri {{ kelas.name }}</h1>
       <div>
-        <UModal class="w-full max-w-md text-white">
+        <UModal v-model:open="addSantri" class="w-full max-w-md text-white">
           <UButton icon="i-lucide-plus">Tambah Santri</UButton>
+          <template #content>
+            <FormAddStudent :kelas="kelas" @close="addSantri = false" @success="addSantri = false" />
+          </template>
         </UModal>
       </div>
     </div>
@@ -15,6 +18,8 @@
 </template>
 
 <script lang="ts" setup>
+const addSantri = ref(false);
+
 const session = useSessionStore();
 
 const { students, kelas } = defineProps<{

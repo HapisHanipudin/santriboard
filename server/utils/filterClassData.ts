@@ -1,3 +1,5 @@
+import { studentBaseTransformer } from "../transformers/student";
+
 export type Teacher = {
   id: string;
   teacherId: string;
@@ -26,33 +28,31 @@ export type ClassRaw = {
   students: Student[];
 };
 
-export function filterClassData(
-  data: ClassRaw,
-  options: {
-    showDivisionId?: boolean;
-    showTeacherIds?: boolean;
-    showStudentIds?: boolean;
-  }
-) {
+export function filterClassData(data: ClassRaw) {
   return {
     id: data.id,
     name: data.name,
-    ...(options.showDivisionId ? { divisionId: data.divisionId } : {}),
+    divisionId: data.divisionId,
 
     teachers: data.teachers.map((t) => ({
-      ...(options.showTeacherIds ? { id: t.id, teacherId: t.teacherId, semesterId: t.semesterId } : {}),
+      id: t.id,
+      teacherId: t.teacherId,
+      semesterId: t.semesterId,
       teacher: {
         name: t.teacher.name,
       },
     })),
 
     students: data.students.map((s) => ({
-      ...(options.showStudentIds ? { id: s.id, studentId: s.studentId, semesterId: s.semesterId } : {}),
-      student: {
-        name: s.student.name,
-        nis: s.student.nis,
-        photo: s.student.photo,
-      },
+      id: s.id,
+      studentId: s.studentId,
+      semesterId: s.semesterId,
+      student: studentBaseTransformer(s.student),
+      // student: {
+      //   name: s.student.name,
+      //   nis: s.student.nis,
+      //   photo: s.student.photo,
+      // },
     })),
   };
 }

@@ -13,7 +13,9 @@
       <template #santri>
         <ClassStudentViews :students="data?.students || []" :kelas="kelas" />
       </template>
-      <template #asatidz> ini asatidz </template>
+      <template #asatidz>
+        <ClassTeacherViews :kelas="kelas" />
+      </template>
     </UTabs>
   </div>
 </template>
