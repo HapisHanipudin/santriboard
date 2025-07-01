@@ -9,7 +9,6 @@ generator dbml {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 enum NotificationStatus {
@@ -28,6 +27,7 @@ enum Frequency {
 enum Gender {
 p
  l
+ L
 }
 
 enum ProjectStatus {
@@ -147,7 +147,50 @@ model AssessmentDetail {
   assessmentId     Int          @unique
 }
 
+model TimelineActivities {
+  id               String       @id @default(cuid())
+  studentClassesId  String
+  date             DateTime
+  activityType     ActivityType
+  targetPage       Float?       // target halaman
+  actualPage       Float?       // halaman aktual yang disetor (baru)
+  createdAt        DateTime     @default(now())
+}
 
+model ExamTahfizh {
+  id               String       @id @default(cuid())
+  studentClassesId  String
+  juzNumber        Int          // nomor juz, misal 1, 2 dst
+  preparedAt       DateTime?    // tanggal mulai persiapan ujian
+  doneAt           DateTime?    // tanggal ujian selesai
+  score            Int?         // nilai ujian
+  createdAt        DateTime     @default(now())
+
+  studentClass     StudentClasses @relation(fields: [studentClassesId], references: [id])
+}
+
+
+model ManzilProgress {
+  id               String       @id @default(cuid())
+  studentClassesId  String
+  startPage        Float
+  endPage          Float
+  type             Int          // 3, 5, atau 10 halaman
+  preparedAt       DateTime?    // mulai persiapan Manzil
+  doneAt           DateTime?    // selesai murajaah
+  createdAt        DateTime     @default(now())
+
+  studentClass     StudentClasses @relation(fields: [studentClassesId], references: [id])
+}
+
+
+
+enum ActivityType {
+  Sabak
+  Sabqi
+  Manzil
+  Ujian
+}
 
 
 enum AssessmentType {
@@ -448,6 +491,9 @@ model StudentClasses {
   class      Classes    @relation(fields: [classId], references: [id])
   semester   Semesters  @relation(fields: [semesterId], references: [id])
   scores    Score[]
+    manzilProgress ManzilProgress[]
+    examTahfizh ExamTahfizh[]
+
   evaluations Evaluations[]
   assesment   Assessment[]
   @@unique([studentId, classId, semesterId])

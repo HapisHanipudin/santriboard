@@ -66,6 +66,16 @@ Table AssessmentDetail {
   assessmentId Int [unique, not null]
 }
 
+Table TimelineActivities {
+  id String [pk]
+  studentClassesId String [not null]
+  date DateTime [not null]
+  activityType ActivityType [not null]
+  targetPage Float
+  actualPage Float
+  createdAt DateTime [default: `now()`, not null]
+}
+
 Table Notifications {
   id String [pk]
   title String [not null]
@@ -345,6 +355,7 @@ Enum Frequency {
 Enum Gender {
   p
   l
+  L
 }
 
 Enum ProjectStatus {
@@ -386,6 +397,13 @@ Enum Division {
   IT
   BAHASA
   KARAKTER
+}
+
+Enum ActivityType {
+  Sabak
+  Sabqi
+  Manzil
+  Ujian
 }
 
 Enum AssessmentType {
